@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+
+<center>
+<p> Welcome, {{user.username}}. </p>
+<p> Upload your code here: </p>
+<p>  </p>
+<form method="post" action=".">
+  {% csrf_token %} 
+  {{ form.as_p }}
+
+  <input type="submit" value="{% trans 'Submit' %}" />
+  <input type="hidden" name="next" value="{{ next }}" />
+</form>
+</center>
+
+    {% else %}
+
+<center>
+<p> Please <a href='/accounts/login'> Login </a> or <a href='/accounts/register'> Register </a> to continue. </p>
+</center>
+<p>{% trans "Forgotten password" %}? <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>!</p>
+<p>{% trans "Not registered" %}? <a href="{% url 'registration_register' %}">{% trans "Register" %}</a>!</p>
+
+
+    {% endif %}
+
+
+{% endblock %}
