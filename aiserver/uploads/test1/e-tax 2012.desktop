@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=e-tax 2012
-Exec=env WINEPREFIX="/home/smiley/.wine" wine C:\\\\Program\\ Files\\ \\(x86\\)\\\\etax2012\\\\etax2012.exe 
-Type=Application
-StartupNotify=true
-Path=/home/smiley/.wine/dosdevices/c:/Program Files (x86)/etax2012/
-Icon=41CA_etax.0
