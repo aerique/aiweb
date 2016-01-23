@@ -1,0 +1,23 @@
+<form enctype="multipart/form-data" method="post" action="/aiweb/profile/upload_success/">
+   {% csrf_token %}   
+   <table>
+       {{form.as_table}}
+    </table>
+    <input type="submit" value="Submit" id="Save"/>
+</form>
+
+<!--
+<form action="{% url "profile" %}" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <p>{{ form.non_field_errors }}</p>
+  
+  <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+  
+  <p>
+      {{ form.docfile.errors }}
+      {{ form.docfile }}
+  </p>
+  
+  <p><input type="submit" value="Upload"/></p>
+</form>
+-->
