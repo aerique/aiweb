@@ -1,3 +1,9 @@
+{% if upload_success %}
+  <p> Upload successful! </p>
+{% endif %}
+<p> Upload your code here: </p>
+<p>  </p>
+
 <form enctype="multipart/form-data" method="post" action="/aiweb/profile/upload_success/">
    {% csrf_token %}   
    <table>

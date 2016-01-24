@@ -7,11 +7,6 @@
 <center>
 
     <p> Welcome, {{user.username}}. </p>
-    {% if upload_success %}
-      <p> Upload successful! </p>
-    {% endif %}
-    <p> Upload your code here: </p>
-    <p>  </p>
 
     {% with template_name='upload'|stringformat:"s"|add:".html" %}
         {% include "aiweb_templates/"|add:template_name %}

@@ -8,6 +8,13 @@ from django.template.context_processors import csrf
 from django.shortcuts import render_to_response
 
 import os
+
+import logging
+
+import imp
+
+manager = imp.load_source('manager', '../manager/manager.py')
+
 # Create your views here.
 
 
@@ -37,9 +44,11 @@ def handle_uploaded_file(ffile, user):
     if not os.path.exists(path):
         os.makedirs(path)
 
-    with open(path + "/" + ffile.name, 'wb+') as destination:
+    filepath = (path + "/" + ffile.name)
+    with open(filepath, 'wb+') as destination:
         for chunk in ffile.chunks():
             destination.write(chunk)
+        manager.handle_submission(os.path.abspath(filepath), user.username)
 
 def profile(request, status="normal"):
     if request.method == 'POST':
