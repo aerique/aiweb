@@ -1,16 +1,12 @@
-{% if upload_success %}
-  <p> Upload successful! </p>
-{% endif %}
-<p> Upload your code here: </p>
-<p>  </p>
-
 <form enctype="multipart/form-data" method="post" action="/aiweb/profile/upload_success/">
    {% csrf_token %}   
    <table>
        {{form.as_table}}
-    </table>
-    <input type="submit" value="Submit" id="Save"/>
+   </table>
+   <input id="gamename" type="hidden" name="gamename" value={{ gamename }}>
+   <input type="submit" value="Submit" id="Save"/>
 </form>
+
 
 <!--
 <form action="{% url "profile" %}" method="post" enctype="multipart/form-data">

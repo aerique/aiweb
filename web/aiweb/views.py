@@ -39,7 +39,7 @@ def index(request):
 class UploadFileForm(forms.Form):
     file  = forms.FileField()
 
-def handle_uploaded_file(ffile, user):
+def handle_uploaded_file(ffile, user, gamename):
     path = ("uploads/" + user.username)
     if not os.path.exists(path):
         os.makedirs(path)
@@ -49,14 +49,15 @@ def handle_uploaded_file(ffile, user):
         for chunk in ffile.chunks():
             destination.write(chunk)
             destination.close()
-    manager.handle_submission(os.path.abspath(filepath), user.username)
+    manager.handle_submission(os.path.abspath(filepath), user.username, gamename)
 
 def profile(request, status="normal"):
     if request.method == 'POST':
         a=request.POST
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.FILES['file'], request.user)
+            print(dir(form))
+            handle_uploaded_file(request.FILES['file'], request.user, form.data['gamename'])
             return HttpResponseRedirect('/aiweb/profile/upload_success/')
     else:
         form = UploadFileForm()
