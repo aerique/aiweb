@@ -48,7 +48,8 @@ def handle_uploaded_file(ffile, user):
     with open(filepath, 'wb+') as destination:
         for chunk in ffile.chunks():
             destination.write(chunk)
-        manager.handle_submission(os.path.abspath(filepath), user.username)
+            destination.close()
+    manager.handle_submission(os.path.abspath(filepath), user.username)
 
 def profile(request, status="normal"):
     if request.method == 'POST':
