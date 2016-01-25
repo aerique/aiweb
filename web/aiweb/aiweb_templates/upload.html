@@ -1,4 +1,4 @@
-<form enctype="multipart/form-data" method="post" action="/aiweb/profile/upload_success/">
+<form enctype="multipart/form-data" method="post" action="/aiweb/profile/upload_{{gamename}}_success/">
    {% csrf_token %}   
    <table>
        {{form.as_table}}

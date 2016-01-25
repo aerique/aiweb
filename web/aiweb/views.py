@@ -11,9 +11,11 @@ import os
 
 import logging
 
-import imp
+#import imp
 
-manager = imp.load_source('manager', '../manager/manager.py')
+#manager = imp.load_source('manager', '../manager/manager.py')
+
+import aiweb_tools.manager.manager
 
 # Create your views here.
 
@@ -49,21 +51,25 @@ def handle_uploaded_file(ffile, user, gamename):
         for chunk in ffile.chunks():
             destination.write(chunk)
             destination.close()
-    manager.handle_submission(os.path.abspath(filepath), user.username, gamename)
+    aiweb_tools.manager.manager.handle_submission(os.path.abspath(filepath), user.username, gamename)
+    aiweb_tools.manager.manager.assign_tasks()
 
 def profile(request, status="normal"):
     if request.method == 'POST':
         a=request.POST
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            print(dir(form))
+            #print(dir(form))
             handle_uploaded_file(request.FILES['file'], request.user, form.data['gamename'])
-            return HttpResponseRedirect('/aiweb/profile/upload_success/')
+            return HttpResponseRedirect('/aiweb/profile/upload_' + form.data['gamename']+ '_success/')
     else:
         form = UploadFileForm()
-        upload_success = (status == "upload_success")
+        upload_tron_success = (status == "upload_Tron_success")
+        upload_ants_success = (status == "upload_Ants_success")
         c = {'form': form, 
              'user': request.user, 
-             'upload_success': upload_success}
+             'upload_tron_success': upload_tron_success,
+             'upload_ants_success': upload_ants_success,
+	     }
         c.update(csrf(request))
         return render_to_response('aiweb_templates/profile.html', c)
