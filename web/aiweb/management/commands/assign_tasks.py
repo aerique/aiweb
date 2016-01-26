@@ -11,6 +11,6 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		aiweb_tools.manager.manager.assign_tasks()
-		#self.stdout.write(self.style.SUCCESS('Assigning tasks'))
+		self.stdout.write(self.style.SUCCESS('Assigning tasks'))
 
 
