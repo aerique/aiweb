@@ -11,14 +11,14 @@ class Worker:
 	def __init__(self):
 		self.uuid = uuid.uuid4()
 
-	def request_file_content(self):
+	def task_request_content(self):
 		content = my_ip + "\n" + self.uuid.hex
 		return content
 
 	def request_task(self):
 		srcname = "worker-ready_" + (datetime.datetime.now().isoformat()).replace(":", "-") + "_" + self.uuid.hex
 		f = open(srcname, 'w')
-		f.write(self.request_file_content())
+		f.write(self.task_request_content())
 		f.close()
 		subprocess.call(["scp", srcname, config.task_username + "@" + 
 			config.task_ip + "://" +

@@ -35,7 +35,7 @@ def send_submission (filepath, destname):
 	subprocess.call(["rm", filepath]);
 
 def add_task(ip_addr, prefix, file_content):
-	srcname = prefix + (datetime.datetime.now().isoformat()).replace(":", "-")
+	srcname = prefix + "_" + (datetime.datetime.now().isoformat()).replace(":", "-")
 	f = open(srcname, 'w')
 	f.write(file_content)
 	f.close()
@@ -57,19 +57,20 @@ def handle_submission(filepath, username, gamename):
 
 def send_task_to_worker(task, worker_file):
 	print("send_task_to_worker")
-#	worker_fo = open(worker_file)
-#	worker_ip = worker_fo.readline()
-	worker_ip = open(worker_file).readline().strip()
-	print("worker_ip = " + worker_ip)
-
-#	worker_ip = worker_ip[:-1]
-#	print("worker_ip = " + worker_ip)
-#	worker_ip = worker_ip.strip()
-#	print("worker_ip = " + worker_ip) # Something weird was going on here
-	print (" ".join(["scp", task, config.task_username + "@" + worker_ip + "://" + config.task_worker_path]))
+	worker_fo = open(worker_file)
+	worker_ip = worker_fo.readline().strip()
+	worker_id = worker_fo.readline().strip()
+	print(worker_ip)
+	with open (task, "a") as taskfile:
+		taskfile.write(" " + worker_id)
+	print("id = " + worker_id)
 	subprocess.call(["scp", task, config.task_username + "@" + worker_ip
 			+ "://" + config.task_worker_path])
+	subprocess.call(["touch", task + ".ready"])
+	subprocess.call(["scp", task + ".ready", config.task_username + "@" + worker_ip
+			+ "://" + config.task_worker_path])
 	subprocess.call(["rm", task])
+	subprocess.call(["rm", task + ".ready"])
 
 def process_game(blah):
 	pass
@@ -93,12 +94,12 @@ def assign_tasks():
 #		print("Task: " + task.split("/")[-1])
 	for file in glob.glob(config.task_worker_path + "worker-ready*"):
 		print ("considering task file: " + file)
-		if (file.endswith(".ready")):
-			pass
-		else:
-			print(file)
-			find_task(file)
+		ending = ".ready"
+		if (file.endswith(ending)):
+			real = file[:-len(ending)]
+			print(real)
+			find_task(real)
 			subprocess.call(["rm", file])
-			subprocess.call(["rm", file + ".ready"])
+			subprocess.call(["rm", real])
 	print('tasks assigned')
 
