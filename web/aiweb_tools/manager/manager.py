@@ -66,9 +66,9 @@ def send_task_to_worker(task, worker_file):
 #	print("worker_ip = " + worker_ip)
 #	worker_ip = worker_ip.strip()
 #	print("worker_ip = " + worker_ip) # Something weird was going on here
-	print (" ".join(["scp", task, config.task_username + "@" + worker_ip + "://" + config.task_path]))
+	print (" ".join(["scp", task, config.task_username + "@" + worker_ip + "://" + config.task_worker_path]))
 	subprocess.call(["scp", task, config.task_username + "@" + worker_ip
-					+ "://" + config.task_path])
+			+ "://" + config.task_worker_path])
 	subprocess.call(["rm", task])
 
 def process_game(blah):
@@ -92,8 +92,13 @@ def assign_tasks():
 #	for task in tasks:
 #		print("Task: " + task.split("/")[-1])
 	for file in glob.glob(config.task_worker_path + "worker-ready*"):
-		print(file)
-		find_task(file)
-		subprocess.call(["rm", file])
+		print ("considering task file: " + file)
+		if (file.endswith(".ready")):
+			pass
+		else:
+			print(file)
+			find_task(file)
+			subprocess.call(["rm", file])
+			subprocess.call(["rm", file + ".ready"])
 	print('tasks assigned')
 
