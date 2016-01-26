@@ -53,10 +53,18 @@ def handle_submission(filepath, username, gamename):
     add_task (config.task_ip, "compile", "compile " + destname)
 
 def send_task_to_worker(task, worker_file):
-    worker_ip = open(worker_file).readline()
-    subprocess.call(["scp", task, config.task_username + "@" + config.worker_ip
+    print("send_task_to_worker")
+    worker_ip = open(worker_file).readline().strip()
+    print("worker_ip = " + worker_ip)
+#    worker_ip = worker_ip.strip()
+#    print("worker_ip = " + worker_ip)
+    print (" ".join(["scp", task, config.task_username + "@" + worker_ip + "://" + config.task_path]))
+    subprocess.call(["scp", task, config.task_username + "@" + worker_ip
                     + "://" + config.task_path])
     subprocess.call(["rm", task])
+
+def process_game(blah):
+    pass
 
 def find_task(worker_file):
     tasks = glob.glob(config.task_path + "*")
@@ -71,6 +79,7 @@ def find_task(worker_file):
         process_game(worker_file)
 
 def assign_tasks():
+    self.stdout.write(self.style.SUCCESS('Assigning tasks'))
 #    tasks = glob.glob(task_path + "*")
 #    for task in tasks:
 #    	print("Task: " + task.split("/")[-1])
