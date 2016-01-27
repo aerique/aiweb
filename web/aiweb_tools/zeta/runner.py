@@ -13,8 +13,6 @@ import signal
 import time
 from subprocess import Popen, PIPE, call
 
-import worker.config
-
 class Runner(object):
     """Runs a bot"""
     
