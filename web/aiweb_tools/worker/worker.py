@@ -86,11 +86,15 @@ class Worker:
 		target = (path + "compile/")
 		os.makedirs (target)
 		shutil.copyfile (config.datastore_submission_path + submission, target + submission)
+		subprocess.call(["unzip", target + submission, "-d", target])
 
-		subm_data = "_".split(submission)
+		subm_data = submission.split("_")
 		username = subm_data[0]
-		print(username)
-		subm = aiweb_tools.zeta.submission.Submission(username, submission, path)
+		print("username" + username)
+		subm = aiweb_tools.zeta.submission.Submission(username, submission, target)
+		aiweb_tools.zeta.language.compile_submission(subm)
+		subprocess.call(["rm", "-rf", target])
+		print(subm.full_report())
 		
 
 

@@ -352,6 +352,7 @@ class Compiler(object):
 def detect_languages(subm):
     old_cwd = os.getcwd()
     os.chdir(subm.directory)
+    subprocess.call(["ls"])
     try:
         for lg in languages:
             if languages[lg].get("disabled"): continue
@@ -359,7 +360,9 @@ def detect_languages(subm):
             if type(main_files) not in (list, tuple):
                 main_files = (main_files,)
             for main_file in main_files:
+                print("checking for: " + main_file)
                 if os.path.exists(main_file):
+                    print("matched: " + main_file)
                     yield (lg, main_file)
     finally:
         os.chdir(old_cwd)

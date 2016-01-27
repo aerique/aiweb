@@ -15,27 +15,27 @@ short_messages = {
 
 long_messages = {
     UNCOMPILED :
-            ("Unfortunately, your latest submission to the Google AI "
-             "Challenge was not compiled for some reason. Please check "
+            ("Unfortunately, your latest submission "
+             "was not compiled for some reason. Please check "
              "the error messages below for more information."),
     COMPILE_FAILED : 
-            ("Unfortunately, your latest submission to the Google AI "
-             "Challenge did not compile successfully. Please check the "
+            ("Unfortunately, your latest submission "
+             "did not compile successfully. Please check the "
              "error messages below for more information. Fix as many of "
              "the errors as you can, then submit your code again."),
     UNTESTED :
-            ("Unfortunately, your latest submission to the Google AI "
-             "Challenge was not tested for some reason, though it appears "
+            ("Unfortunately, your latest submission "
+             "was not tested for some reason, though it appears "
              "to have compiled successfully. Please check the error messages "
              "below for more information."),
     TEST_FAILED : 
-            ("Unfortunately, your latest submission to the Google AI "
-             "Challenge did not pass all of the submission tests. Please "
+            ("Unfortunately, your latest submission "
+             "did not pass all of the submission tests. Please "
              "check the error messages below for more information. Fix as "
              "many of the errors as you can, then submit your code again."),
     READY :
-            ("This is just to let you know that your latest submission "
-             "to the Google AI Challenge has successfully compiled and "
+            ("Your latest submission "
+             "has successfully compiled and "
              "passed all of the submission tests. Here is the output of "
              "the compile script, in case you're curious:"),
 }
@@ -76,7 +76,7 @@ class Submission(object):
         """ Generate a report of what happened to the submission, with
             compilation details (and test results if necessary), with the
             intent of being delivered to the submitter. """
-        s = "%s,\n\nYour submission (id: %d) " % (self.username, self.sub_id)
+        s = "%s,\n\nYour submission (id: %s) " % (self.username, self.sub_id)
         s += short_messages[self.status] + "\n\n"
         s += long_messages[self.status] + "\n\n"
         if self.status == TEST_FAILED:
