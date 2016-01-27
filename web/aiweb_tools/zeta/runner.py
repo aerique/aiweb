@@ -28,10 +28,10 @@ class Runner(object):
     def create_working_dir(self):
         working = "$AICHALLENGE_PREFIX/var/lib/aichallenge/working/%s"
         self.working = os.path.expandvars(working % self.user)
-        old_umask = os.umask(07007)
+        old_umask = os.umask("07007")
         shutil.copytree(self.origin, self.working, True)
         os.chown(self.working, -1, pwd.getpwnam(self.user).pw_gid)
-        os.chmod(self.working, 0770)
+        os.chmod(self.working, "0770")
         os.umask(old_umask)
     
     def remove_working_dir(self):

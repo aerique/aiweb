@@ -13,4 +13,5 @@ class Command(BaseCommand):
 		worker = aiweb_tools.worker.worker.Worker()
 		worker.request_task()
 		self.stdout.write(self.style.SUCCESS('Running worker %s' % worker.uuid.hex))
+		worker.await_task()
 

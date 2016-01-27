@@ -11,7 +11,7 @@ import subprocess
 import time
 import traceback
 
-from zeta.runner import Runner, TimeoutError
+from aiweb_tools.zeta.runner import Runner, TimeoutError
 
 SAFEPATH = re.compile('[a-zA-Z0-9_.$-]+$')
 
@@ -40,7 +40,7 @@ class Chmod(CompileAction):
     def __call__(self, sources, subm, runner):
         for source in sources:
             try:
-                os.chmod(source, 0644)
+                os.chmod(source, "0644")
             except Exception as e:
                 subm.compile_errors += "Error chmoding %s - %s\n" % (source, e)
                 return False

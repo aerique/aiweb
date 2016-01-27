@@ -1,6 +1,6 @@
 import os.path
-import worker.language
-from zeta.runner import Runner
+import aiweb_tools.zeta.language
+from aiweb_tools.zeta.runner import Runner
 
 # statuses
 UNCOMPILED, COMPILE_FAILED, UNTESTED, TEST_FAILED, READY = range(5)
@@ -65,7 +65,7 @@ class Submission(object):
         self.test_results = ""
         
         if self.language is None:
-            languages = list(worker.language.detect_languages(self))
+            languages = list(aiweb_tools.zeta.language.detect_languages(self))
             if len(languages) == 1:
                 self.language, main_file = languages[0]
 
@@ -89,14 +89,14 @@ class Submission(object):
     
     def get_command(self, directory):
         """return the command needed to run the bot"""
-        return worker.language.get_command(self, directory)
+        return aiweb_tools.zeta.language.get_command(self, directory)
 
     def compile(self, max_time=300):
         """ Determines which language this submission is coded in, and
             compiles it. Optionally, a time limit may be specified to prevent
             overlong compilation times. """
         assert self.status == UNCOMPILED # don't attempt multiple compilations
-        if worker.language.compile_submission(self, max_time):
+        if aiweb_tools.zeta.language.compile_submission(self, max_time):
             self.status = UNTESTED # compile success
             return True
         else:
