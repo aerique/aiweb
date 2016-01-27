@@ -69,8 +69,9 @@ class System(CompileAction):
 			for source in sources:
 				cmd = [arg.format(file=source, bot=BOT, path=os.getcwd())
 						for arg in self.args]
+				print(cmd)
 				subm.compile_output += ' '.join(cmd) + '\n'
-				runner.run(cmd, should_stop=False)
+				runner.compile_run(cmd, should_stop=False)
 				out, err = runner.process.communicate()
 				subm.compile_output += out
 				subm.compile_errors += err
@@ -80,11 +81,12 @@ class System(CompileAction):
 		else:
 			cmd = [arg.format(bot=BOT, path=os.getcwd())
 					for arg in self.args] + sources
+			print(cmd)
 			subm.compile_output += ' '.join(cmd) + '\n'
-			runner.run(cmd, should_stop=False)
+			runner.compile_run(cmd, should_stop=False)
 			out, err = runner.process.communicate()
-			subm.compile_output += out
-			subm.compile_errors += err
+			subm.compile_output += str(out)
+			subm.compile_errors += str(err)
 			return runner.process.returncode == 0
 
 # The master list of languages!
@@ -220,7 +222,7 @@ languages = {
 		"output_ext": ".native",
 		"nuke_globs": [BOT + ".native"],
 		"compile": [
-			System("ocamlbuild {bot}.native"),
+			System("ocamlbuild -lib unix {bot}.native"),
 		],
 		"run": "{path}/{bot}.native"
 	},
@@ -300,6 +302,7 @@ class Compiler(object):
 			for pattern in self.nukeglobs:
 				self.nukeglob(pattern)
 			for action in self.actions:
+				print(action)
 				sources = (self.safeglob_multi(action.sourceglobs)
 						   + self.deepglob_multi(action.deepglobs))
 				if not action(sources, subm, self.runner):
@@ -429,10 +432,10 @@ def compile_submission(subm, max_time=300):
 		finally:
 			if success:
 				# replace the origin directory
-				tmp = "%s.%d.tmp" % (compiler.runner.origin, time.time())
-				shutil.copytree(compiler.runner.working, tmp, True)
-				shutil.rmtree(compiler.runner.origin)
-				shutil.move(tmp, compiler.runner.origin)
+				#tmp = "%s.%d.tmp" % (compiler.runner.origin, time.time())
+				#shutil.copytree(compiler.runner.working, tmp, True)
+				#shutil.rmtree(compiler.runner.origin)
+				#shutil.move(tmp, compiler.runner.origin)
 				
 				# tag the submission as compiled
 				meta_dir = compiler.runner.origin + "/.aichallenge"

@@ -93,7 +93,7 @@ class Worker:
 		print("username" + username)
 		subm = aiweb_tools.zeta.submission.Submission(username, submission, target)
 		aiweb_tools.zeta.language.compile_submission(subm)
-		subprocess.call(["rm", "-rf", target])
+#		subprocess.call(["rm", "-rf", target])
 		print(subm.full_report())
 		
 
