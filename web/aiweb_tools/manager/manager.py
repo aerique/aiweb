@@ -99,6 +99,7 @@ def assign_tasks():
 			real = file[:-len(ending)]
 			print(real)
 			find_task(real)
+			# FIXME needs to confirm task completion
 			subprocess.call(["rm", file])
 			subprocess.call(["rm", real])
 	print('tasks assigned')
