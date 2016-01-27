@@ -11,7 +11,7 @@ import subprocess
 import time
 import traceback
 
-from worker.runner import Runner, TimeoutError
+from zeta.runner import Runner, TimeoutError
 
 SAFEPATH = re.compile('[a-zA-Z0-9_.$-]+$')
 

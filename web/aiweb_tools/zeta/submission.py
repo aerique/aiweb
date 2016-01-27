@@ -1,6 +1,6 @@
 import os.path
 import worker.language
-from worker.runner import Runner
+from zeta.runner import Runner
 
 # statuses
 UNCOMPILED, COMPILE_FAILED, UNTESTED, TEST_FAILED, READY = range(5)
