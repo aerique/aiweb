@@ -24,7 +24,7 @@ long_messages = {
 			 "error messages below for more information. Fix as many of "
 			 "the errors as you can, then submit your code again."),
 	UNTESTED :
-			("Unfortunately, your latest submission "
+			("Your latest submission "
 			 "was not tested for some reason, though it appears "
 			 "to have compiled successfully. Please check the error messages "
 			 "below for more information."),

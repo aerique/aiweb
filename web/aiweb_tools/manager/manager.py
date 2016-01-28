@@ -104,3 +104,23 @@ def assign_tasks():
 			subprocess.call(["rm", real])
 	print('tasks assigned')
 
+def process_report(path):
+	real = path[:-len('.ready')]
+	filename = real.split('/')[-1]
+	prefix = filename.split('.')[0]
+	parts = prefix.split('_')
+	username = parts[0]
+	game = parts[1]
+	timestamp = parts[2]
+	with open(real) as fo:
+		content = fo.readlines()
+		print(username)
+		print(game)
+		print(timestamp)
+		print(content)
+
+
+def process_reports():
+	print("processing reports")
+	for file in glob.glob(config.webserver_results_path + "*-report.txt.ready"):
+		process_report(file)

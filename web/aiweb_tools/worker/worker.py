@@ -6,11 +6,13 @@ import os.path
 import time
 import shutil
 
-from .. import config
+#from .. import config
+from aiweb_tools import config
 import aiweb_tools.zeta.submission
+from aiweb_tools import comms
 
 my_ip = "127.0.0.1" # Change this for each server running workers, unless using a single-server install for all parts including webserver
-worker_temp = "/home/" + config.task_username + "/aiweb/worker_tmp/"
+#worker_temp = "/home/" + config.task_username + "/aiweb/worker_tmp/"
 
 class Worker:
 	def __init__(self):
@@ -80,21 +82,35 @@ class Worker:
 		print("compiling: " + submission)
 		if not os.path.isfile(config.datastore_submission_path + submission):
 			get_submission(config.datastore_submission_path + submission)
-		path = worker_temp + self.uuid.hex + "/"
+		path = config.worker_compiled + submission + "/"
 		if not os.path.exists(path):
 			os.makedirs(path)
-		target = (path + "compile/")
-		os.makedirs (target)
-		shutil.copyfile (config.datastore_submission_path + submission, target + submission)
-		subprocess.call(["unzip", target + submission, "-d", target])
+			target = (path )#+ "compile/")
+#			os.makedirs (target)
+			subprocess.call(["unzip", config.datastore_submission_path + submission, "-d", target])
+	
+			subm_data = submission.split("_")
+			username = subm_data[0]
+			print("username" + username)
+			subm = aiweb_tools.zeta.submission.Submission(username, submission, target)
+			subm.compile()
+	#		subprocess.call(["rm", "-rf", target])
+			print(subm.full_report())
+			self.send_compile_result(path, submission, subm)
 
-		subm_data = submission.split("_")
-		username = subm_data[0]
-		print("username" + username)
-		subm = aiweb_tools.zeta.submission.Submission(username, submission, target)
-		aiweb_tools.zeta.language.compile_submission(subm)
-#		subprocess.call(["rm", "-rf", target])
-		print(subm.full_report())
+	def save_report(self, submission, path):
+		content = submission.full_report()
+		with open(path, 'w') as fo:
+			fo.write(content)
+
+	def send_compile_result(self, path, sub_id, submission):
+		zipfile = path + sub_id + "-compiled.zip"
+		subprocess.call(["ls", path])
+		subprocess.call(["zip", "-r", zipfile, path, "-i", path + "*"])
+		comms.send_file_datastore_ready(zipfile, config.datastore_submission_path)
+		reportfile = path + sub_id + "-report.txt" 
+		self.save_report(submission, reportfile)
+		comms.send_file_webserver_ready(reportfile, config.webserver_results_path)
 		
 
 

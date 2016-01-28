@@ -12,7 +12,14 @@ datastore_port = 22
 datastore_username = username
 datastore_submission_path = "/home/" + datastore_username + "/aiweb/submissions/"
 
+webserver_ip = "127.0.0.1"
+webserver_port = 22
+webserver_username = username
+webserver_results_path = "/home/" + username + "/aiweb/results/"
+ 
+
 isolate_bin = "/home/" +  username + "/aiweb/isolate/isolate"
+worker_compiled = "/home/" +  username + "/aiweb/compiled/"
 
 #temp_dir = "temp/"
 
