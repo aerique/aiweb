@@ -5,12 +5,20 @@ from aiweb_tools.zeta.runner import Runner
 # statuses
 UNCOMPILED, COMPILE_FAILED, UNTESTED, TEST_FAILED, READY = range(5)
 
+#short_messages = {
+#	UNCOMPILED : "has not been compiled.",
+#	COMPILE_FAILED : "failed to compile.",
+#	UNTESTED : "has not been tested.",
+#	TEST_FAILED : "failed one or more test cases.",
+#	READY : "is ready for battle!",
+#}
+
 short_messages = {
-	UNCOMPILED : "has not been compiled.",
-	COMPILE_FAILED : "failed to compile.",
-	UNTESTED : "has not been tested.",
-	TEST_FAILED : "failed one or more test cases.",
-	READY : "is ready for battle!",
+	UNCOMPILED : "Uncompiled",
+	COMPILE_FAILED : "Compile failed",
+	UNTESTED : "Untested",
+	TEST_FAILED : "Test failed",
+	READY : "Ready",
 }
 
 long_messages = {
