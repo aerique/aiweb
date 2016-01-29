@@ -99,7 +99,7 @@ class Worker:
 			self.send_compile_result(path, submission, subm)
 
 	def save_report(self, submission, path):
-		content = submission.full_report()
+		content = submission.vshort_message() + "\n" + submission.language + "\n" + submission.full_report()
 		with open(path, 'w') as fo:
 			fo.write(content)
 

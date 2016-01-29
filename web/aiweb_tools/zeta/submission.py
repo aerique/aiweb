@@ -5,15 +5,15 @@ from aiweb_tools.zeta.runner import Runner
 # statuses
 UNCOMPILED, COMPILE_FAILED, UNTESTED, TEST_FAILED, READY = range(5)
 
-#short_messages = {
-#	UNCOMPILED : "has not been compiled.",
-#	COMPILE_FAILED : "failed to compile.",
-#	UNTESTED : "has not been tested.",
-#	TEST_FAILED : "failed one or more test cases.",
-#	READY : "is ready for battle!",
-#}
-
 short_messages = {
+	UNCOMPILED : "has not been compiled.",
+	COMPILE_FAILED : "failed to compile.",
+	UNTESTED : "has not been tested.",
+	TEST_FAILED : "failed one or more test cases.",
+	READY : "is ready for battle!",
+}
+
+vshort_messages = {
 	UNCOMPILED : "Uncompiled",
 	COMPILE_FAILED : "Compile failed",
 	UNTESTED : "Untested",
@@ -79,6 +79,8 @@ class Submission(object):
 
 	def summary(self):
 		return "Submission %d %s" % (self.sub_id, short_messages[self.status])
+	def vshort_message(self):
+		return short_messages[self.status]
 	
 	def full_report(self):
 		""" Generate a report of what happened to the submission, with

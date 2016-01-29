@@ -7,6 +7,7 @@ class Submission(models.Model):
 	game_id = models.CharField (max_length = 32)
 	timestamp = models.CharField (max_length = 32)
 	submission_id = models.CharField (max_length = 100)
+	language = models.CharField (max_length = 32, default="?")
 	status = models.CharField (max_length = 32)
 	report = models.CharField (max_length = 5000)
 	
