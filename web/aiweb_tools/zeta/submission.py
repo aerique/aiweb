@@ -80,7 +80,7 @@ class Submission(object):
 	def summary(self):
 		return "Submission %d %s" % (self.sub_id, short_messages[self.status])
 	def vshort_message(self):
-		return short_messages[self.status]
+		return vshort_messages[self.status]
 	
 	def full_report(self):
 		""" Generate a report of what happened to the submission, with

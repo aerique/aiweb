@@ -6,6 +6,8 @@ import glob
 import sys
 from django.core.management.base import BaseCommand
 
+import aiweb.models
+
 from .. import config
 
 def send_submission (filepath, destname):
@@ -34,9 +36,11 @@ def handle_submission(filepath, username, gamename):
 
 	print("Processing submission at " + filepath);
 
-	destname = username + "_" + gamename + "_" + (datetime.datetime.now().isoformat()).replace(":", "-")
+	timestamp = (datetime.datetime.now().isoformat()).replace(":", "-")
+	destname = username + "_" + gamename + "_" + timestamp
 
 	send_submission (filepath, destname)
+	add_submission_report(username, gamename, timestamp, destname, "Uncompiled", "Unknown", "")
 
 	# FIXME better protection against filename collisions desirable
 	add_task (config.task_ip, "compile", "compile " + destname)
@@ -71,7 +75,9 @@ def find_task(worker_file):
 				send_task_to_worker (task, worker_file)
 				finished = 1
 	if (finished == 0):
-		process_game(worker_file)
+		return 0
+#		process_game(worker_file)
+	else: return 1
 
 def assign_tasks():
 	print('Assigning tasks')
@@ -84,10 +90,9 @@ def assign_tasks():
 		if (file.endswith(ending)):
 			real = file[:-len(ending)]
 			print(real)
-			find_task(real)
-			# FIXME needs to confirm task completion
-			subprocess.call(["rm", file])
-			subprocess.call(["rm", real])
+			if find_task(real):
+				subprocess.call(["rm", file])
+				subprocess.call(["rm", real])
 	print('tasks assigned')
 
 def process_report(path, add_submission_report):
@@ -118,3 +123,16 @@ def process_reports(add_submission_report):
 	print("processing reports")
 	for file in glob.glob(config.webserver_results_path + "*-report.txt.ready"):
 		process_report(file, add_submission_report)
+
+
+def add_submission_report(username, game, timestamp, prefix, status, language, content):
+	subm = aiweb.models.Submission.objects.create(
+		username = username,
+		game_id = game,
+		timestamp = timestamp,
+		submission_id = prefix,
+		status = status,
+		language = language,
+		report = content)
+	subm.save()
+
