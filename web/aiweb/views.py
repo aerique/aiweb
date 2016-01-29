@@ -54,7 +54,7 @@ def handle_uploaded_file(ffile, user, gamename):
 			destination.write(chunk)
 			destination.close()
 	aiweb_tools.manager.manager.handle_submission(os.path.abspath(filepath), user.username, gamename)
-	aiweb_tools.manager.manager.assign_tasks()
+#	aiweb_tools.manager.manager.assign_tasks()
 
 def profile(request, status="normal"):
 	if request.method == 'POST':
@@ -71,7 +71,8 @@ def profile(request, status="normal"):
 		submissions = aiweb.models.Submission.objects.filter(username=request.user.username)
 		subm_count = submissions.count()
 		subm_limit = 5
-		submissions = reversed(submissions.order_by('timestamp')[subm_count - subm_limit:])
+		count_from = max(0, subm_count - subm_limit)
+		submissions = reversed(submissions.order_by('timestamp')[count_from:])
 		c = {'form': form, 
 			 'user': request.user, 
 			 'upload_tron_success': upload_tron_success,

@@ -18,20 +18,6 @@ def send_submission (filepath, destname):
 	subprocess.call(["scp", filepath, config.datastore_username + "@" + 
 					config.datastore_ip + "://" +
 					config.datastore_submission_path + destname]);
-
-# Probably not needed - submission will never be looked at until compile 
-# task has been added to task list.
-
-#	ready_filename = filepath + ".ready"
-
-#	subprocess.call(["touch", ready_filename]);
-
-#	subprocess.call(["scp", ready_filename, datastore_username + "@" + 
-#					datastore_ip + "://" + 
-#			datastore_submission_path + destname+ ".ready"]);
-
-#	subprocess.call(["rm", ready_filename]);
-
 	subprocess.call(["rm", filepath]);
 
 def add_task(ip_addr, prefix, file_content):

@@ -1,6 +1,27 @@
 <p> Your recent submissions: </p>
-<table>
+<table border="1">
+
+<tr>
+<th>
+game
+</th>
+<th>
+timestamp
+</th>
+<th>
+language
+</th>
+<th>
+status
+</th>
+<th>
+report
+</th>
+</tr>
+
 {% for subm in submissions %}
+
+
 <tr>
 <td>
 {{ subm.game_id }}
@@ -15,7 +36,9 @@
 {{ subm.status }}
 </td>
 <td>
+<pre>
 {{ subm.report }}
+</pre>
 </td>
 </tr>
 {% endfor %}
