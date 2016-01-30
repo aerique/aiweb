@@ -17,6 +17,10 @@ webserver_port = 22
 webserver_username = username
 webserver_results_path = "/home/" + username + "/aiweb/results/"
  
+matchmaker_ip = "127.0.0.1"
+matchmaker_port = 22
+matchmaker_username = username
+matchmaker_path = "/home/" + matchmaker_username + "/aiweb/matchmaker/"
 
 isolate_bin = "/home/" +  username + "/aiweb/isolate/isolate"
 worker_compiled = "/home/" +  username + "/aiweb/compiled/"

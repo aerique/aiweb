@@ -99,13 +99,16 @@ class Worker:
 			self.send_compile_result(path, submission, subm)
 
 	def save_report(self, submission, path):
-		content = submission.vshort_message() + "\n" + submission.language + "\n" + submission.full_report()
+		lang = ""
+		if not (submission.language == None):
+			lang = submission.language
+		content = submission.vshort_message() + "\n" + lang + "\n" + submission.full_report()
 		with open(path, 'w') as fo:
 			fo.write(content)
 
 	def send_compile_result(self, path, sub_id, submission):
 		zipfile = path + sub_id + "-compiled.zip"
-		subprocess.call(["ls", path])
+		#subprocess.call(["ls", path])
 		subprocess.call(["zip", "-r", zipfile, path, "-i", path + "*"])
 		comms.send_file_datastore_ready(zipfile, config.datastore_submission_path)
 		reportfile = path + sub_id + "-report.txt" 

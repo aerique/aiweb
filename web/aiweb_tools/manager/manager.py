@@ -7,6 +7,7 @@ import sys
 from django.core.management.base import BaseCommand
 
 import aiweb.models
+import aiweb_tools.comms
 
 from .. import config
 
@@ -47,37 +48,32 @@ def handle_submission(filepath, username, gamename):
 
 def send_task_to_worker(task, worker_file):
 	print("send_task_to_worker")
-	worker_fo = open(worker_file)
-	worker_ip = worker_fo.readline().strip()
-	worker_id = worker_fo.readline().strip()
+	with open(worker_file) as worker_fo:
+		worker_ip = worker_fo.readline().strip()
+		worker_id = worker_fo.readline().strip()
 	print(worker_ip)
 	with open (task, "a") as taskfile:
 		taskfile.write(" " + worker_id)
 	print("id = " + worker_id)
-	subprocess.call(["scp", task, config.task_username + "@" + worker_ip
-			+ "://" + config.task_worker_path])
-	subprocess.call(["touch", task + ".ready"])
-	subprocess.call(["scp", task + ".ready", config.task_username + "@" + worker_ip
-			+ "://" + config.task_worker_path])
+	aiweb_tools.comms.send_task_worker_ip(task, worker_ip)
 	subprocess.call(["rm", task])
-	subprocess.call(["rm", task + ".ready"])
 
-def process_game(blah):
-	pass
+def find_game(worker_file):
+	aiweb_tools.comms.send_file_matchmaker_ready(worker_file, config.matchmaker_path)
 
 def find_task(worker_file):
 	tasks = glob.glob(config.task_path + "*")
-	finished = 0
+	finished = False
 	for task in tasks:
-		if (finished == 0):
+		if not finished:
 			taskname = task.split("/")[-1]
 			if not (taskname.startswith("worker-ready")):
 				send_task_to_worker (task, worker_file)
-				finished = 1
-	if (finished == 0):
-		return 0
-#		process_game(worker_file)
-	else: return 1
+				finished = True
+	if not finished:
+		find_game(worker_file)
+	#return True # return finished
+	return finished
 
 def assign_tasks():
 	print('Assigning tasks')
