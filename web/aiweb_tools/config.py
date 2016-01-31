@@ -1,5 +1,6 @@
 # FIXME before publication, change username!
 username = "smiley"
+games_running = ["Tron", "Ants"]
 
 task_ip = "127.0.0.1"
 task_port = 22

@@ -19,5 +19,7 @@ class Bot(models.Model):
 	submission_id = models.CharField (max_length = 100)
 	compile_time = models.DateTimeField(auto_now_add = True)
 	games_played = models.DecimalField(decimal_places = 0, max_digits = 16)
+	rank = models.DecimalField(decimal_places = 0, max_digits = 16, default = 0)
+	selection_weight = models.DecimalField(decimal_places = 12, max_digits = 24, default = 1)
 
 
