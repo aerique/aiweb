@@ -10,6 +10,7 @@ import shutil
 from aiweb_tools import config
 import aiweb_tools.zeta.submission
 from aiweb_tools import comms
+import aiweb_tools.match
 
 my_ip = "127.0.0.1" # Change this for each server running workers, unless using a single-server install for all parts including webserver
 #worker_temp = "/home/" + config.task_username + "/aiweb/worker_tmp/"
@@ -59,20 +60,31 @@ class Worker:
 
 		
 	def task_is_mine(self, taskfile):
-		with open(taskfile) as fo:
-			line = fo.readline().strip()
-			return line.endswith(self.uuid.hex)
+		fname = taskfile.split("/")[-1]
+		if fname.startswith("compile"):
+			with open(taskfile) as fo:
+				line = fo.readline().strip()
+				return line.endswith(self.uuid.hex)
+		elif fname.startswith("match_"):
+			stripped = fname.strip("match_")
+			return stripped.startswith(self.uuid.hex)
 
 	def do_task(self, taskfile):
 		print("doing task: " + taskfile)
-		with open(taskfile) as fo:
-			line = fo.readline().strip().split(" ")
-			if len(line) < 2:
-				print("Error: task file should have at least 2 columns")
-				pass
-			else:
-				if line[0] == "compile":
-					self.compile(line[1])
+		fname = taskfile.split("/")[-1]
+		if fname.startswith("compile"):
+			with open(taskfile) as fo:
+				line = fo.readline().strip().split(" ")
+				if len(line) < 2:
+					print("Error: compile task file should have at least 2 columns")
+					pass
+				else:
+					if line[0] == "compile":
+						self.compile(line[1])
+		elif fname.startswith("match"):
+			match = aiweb_tools.match.Match()
+			match.read(taskfile)
+			print("Running match: " + str(match))
 		self.request_task()
 
 	def get_submission(self, filepath):
@@ -125,4 +137,15 @@ class Worker:
 		comms.send_file_matchmaker_ready(filepath, config.matchmaker_path)
 		
 
+class Worker_data:
+	uuid = ""
+	ip_addr = ""
+	def write(self, filepath):
+		with open(filepath, 'w') as fo:
+			fo.write(self.ip_addr)
+			fo.write(self.uuid)
+	def read(self, filepath):
+		with open(filepath) as fo:
+			self.ip_addr = fo.readline().strip()
+			self.uuid = fo.readline().strip()
 

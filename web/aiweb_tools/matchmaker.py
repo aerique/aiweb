@@ -8,6 +8,8 @@ import subprocess
 import os.path
 import aiweb.models
 import aiweb_tools.games
+import aiweb_tools.match
+import aiweb_tools.worker.worker
 import random
 
 class Matchmaker:
@@ -31,8 +33,11 @@ class Matchmaker:
 		if filename.startswith('compiled'):
 			self.add_compile_data(filepath)
 		else:
-			match = self.make_match()
-			self.send_match_to_worker(match, filepath)
+			try:
+				match = self.make_match()
+				self.send_match_to_worker(match, filepath)
+			except AssertionError as e:
+				aiweb_tools.comms.send_file_taskserver_ready(filepath, config.task_worker_path)
 
 	def add_compile_data(self, filepath):
 		with open(filepath) as fo:
@@ -60,15 +65,23 @@ class Matchmaker:
 		bot.save(using='matchmaker')
 
 	def  send_match_to_worker(self, match, workerfile):
-		#FIXME currently this sends workerfile back to task pool
-		aiweb_tools.comms.send_file_taskserver_ready(workerfile, config.task_worker_path)
+		worker_data = aiweb_tools.worker.worker.Worker_data()
+		worker_data.read(workerfile)
+		filepath = config.matchmaker_path + "match_" + worker_data.uuid + match.short_string()
+		match.set_for_worker(worker_data.uuid)
+		match.write_file(filepath)
+
+		aiweb_tools.comms.send_task_worker_ip(filepath, worker_data.ip_addr)
+		subprocess.call(["rm", filepath])
+
+		#aiweb_tools.comms.send_file_taskserver_ready(workerfile, config.task_worker_path)
 
 	def make_match(self):
 		games = config.games_running
 		gamename = random.choice(games)
 		print("chosen " + gamename)
-		#bots = aiweb.models.Bot.objects.using('matchmaker').filter(game_id = gamename).order_by('selection_weight')
-		bots = aiweb.models.Bot.objects.using('matchmaker').all()
+		bots = aiweb.models.Bot.objects.using('matchmaker').filter(game_id = gamename).order_by('selection_weight')
+		#bots = aiweb.models.Bot.objects.using('matchmaker').all()
 		num_bots = bots.count()
 
 		game = aiweb_tools.games.get_game(gamename)
@@ -80,15 +93,17 @@ class Matchmaker:
 			print ("Not enough bots to play " + gamename)
 			print ("Need: " + str(game.min_players))
 			print ("Have: " + str(num_bots))
-			return False
+			raise AssertionError("Not enough bots to play " + gamename)
 		else:
 			selected = self.select_random_players(game.min_players, num_bots)
 			print(selected)
+			match = aiweb_tools.match.Match()
 			for i in selected:
-				print(bots[i].username)
-				print(bots[i].game_id)
-				print(bots[i].submission_id)
-			return True
+				match.add_bot(bots[i].submission_id)
+#				print(bots[i].username)
+#				print(bots[i].game_id)
+#				print(bots[i].submission_id)
+			return match
 
 	def select_random_players(self, num_players, num_bots):
 		result = []
