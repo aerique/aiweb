@@ -57,4 +57,4 @@ class Matchmaker:
 		bot.save(using='matchmaker')
 
 	def  make_match_for_worker(self, filepath):
-		pass
+		aiweb_tools.comms.send_file_taskserver_ready(filepath, config.task_worker_path)

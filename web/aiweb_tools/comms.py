@@ -26,6 +26,11 @@ def send_file_matchmaker_ready(filepath, target):
 			+ config.matchmaker_ip
 			+ "://" + target, config.matchmaker_port)
 
+def send_file_taskserver_ready(filepath, target):
+	send_file_ready(filepath, config.task_username + "@" 
+			+ config.task_ip
+			+ "://" + target, config.task_port)
+
 def send_task_worker_ip(filepath, ip_addr):
 	send_file_ready(filepath, config.task_username + "@" + ip_addr
 			+ "://" + config.task_worker_path, config.task_port)
