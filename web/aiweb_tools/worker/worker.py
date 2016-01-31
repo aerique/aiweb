@@ -91,12 +91,13 @@ class Worker:
 	
 			subm_data = submission.split("_")
 			username = subm_data[0]
+			game_id = subm_data[1]
 			print("username" + username)
 			subm = aiweb_tools.zeta.submission.Submission(username, submission, target)
 			subm.compile()
 	#		subprocess.call(["rm", "-rf", target])
-			print(subm.full_report())
-			self.send_compile_result(path, submission, subm)
+			#print(subm.full_report())
+			self.send_compile_result(path, submission, game_id, subm)
 
 	def save_report(self, submission, path):
 		lang = ""
@@ -106,7 +107,7 @@ class Worker:
 		with open(path, 'w') as fo:
 			fo.write(content)
 
-	def send_compile_result(self, path, sub_id, submission):
+	def send_compile_result(self, path, sub_id, game_id, submission):
 		zipfile = path + sub_id + "-compiled.zip"
 		#subprocess.call(["ls", path])
 		subprocess.call(["zip", "-r", zipfile, path, "-i", path + "*"])
@@ -114,6 +115,14 @@ class Worker:
 		reportfile = path + sub_id + "-report.txt" 
 		self.save_report(submission, reportfile)
 		comms.send_file_webserver_ready(reportfile, config.webserver_results_path)
+		self.send_matchmaker_compile_info(path, submission.username, game_id, sub_id)
+
+	def send_matchmaker_compile_info(self, path, username, game_id, submission_id):
+		filepath = path + "compiled_" + submission_id
+		content = username + "\n" + game_id + "\n" + submission_id + "\n"
+		with open (filepath, 'w') as fo:
+			fo.write(content)
+		comms.send_file_matchmaker_ready(filepath, config.matchmaker_path)
 		
 
 
