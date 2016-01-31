@@ -57,7 +57,6 @@ def handle_uploaded_file(ffile, user, gamename):
 #	aiweb_tools.manager.manager.assign_tasks()
 
 def profile(request, status="normal"):
-	print("Long unique string")
 	if request.method == 'POST':
 		a=request.POST
 		form = UploadFileForm(request.POST, request.FILES)

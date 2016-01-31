@@ -37,3 +37,6 @@ def send_stringfile (file_content, filename, target, send):
 	send(filename, target)
 	
 
+def filename(filepath):
+	return filepath.split("/")[-1]
+
