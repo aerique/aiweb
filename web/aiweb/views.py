@@ -57,13 +57,19 @@ def handle_uploaded_file(ffile, user, gamename):
 #	aiweb_tools.manager.manager.assign_tasks()
 
 def profile(request, status="normal"):
+	print("Long unique string")
 	if request.method == 'POST':
 		a=request.POST
 		form = UploadFileForm(request.POST, request.FILES)
 		if form.is_valid():
 			#print(dir(form))
-			handle_uploaded_file(request.FILES['file'], request.user, form.data['gamename'])
-			return HttpResponseRedirect('/aiweb/profile/upload_' + form.data['gamename']+ '_success/')
+			if not (request.FILES['file']) == "":
+				handle_uploaded_file(request.FILES['file'], request.user, form.data['gamename'])
+				return HttpResponseRedirect('/aiweb/profile/upload_' + form.data['gamename']+ '_success/')
+			else:
+				return HttpResponseRedirect('/aiweb/profile/')
+		else: 
+			return HttpResponseRedirect('/aiweb/profile/')
 	else:
 		form = UploadFileForm()
 		upload_tron_success = (status == "upload_Tron_success")

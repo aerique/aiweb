@@ -122,13 +122,21 @@ def process_reports(add_submission_report):
 
 
 def add_submission_report(username, game, timestamp, prefix, status, language, content):
-	subm = aiweb.models.Submission.objects.create(
-		username = username,
-		game_id = game,
-		timestamp = timestamp,
-		submission_id = prefix,
-		status = status,
-		language = language,
-		report = content)
+	subm_list = aiweb.models.Submission.objects.filter(username=username, game_id = game, timestamp = timestamp, submission_id = prefix)
+	if len(subm_list) < 1:
+		subm = aiweb.models.Submission.objects.create(
+			username = username,
+			game_id = game,
+			timestamp = timestamp,
+			submission_id = prefix,
+			status = status,
+			language = language,
+			report = content)
+	else:
+		subm = subm_list[0]
+		subm.status = status
+		subm.language = language
+		subm.report = content
+
 	subm.save()
 

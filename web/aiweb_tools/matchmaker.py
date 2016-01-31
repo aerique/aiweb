@@ -6,7 +6,7 @@ class Matchmaker:
 			for file in glob.glob(config.matchmaker_path + "*" + ready):
 				print(file)
 				real = (file[:-len(ready)])
-				self.do_task(real)
+				self.make_match_for_worker(real)
 				subprocess.call(["rm", real])
 				subprocess.call(["rm", file])
 			time.sleep(5)
@@ -14,4 +14,5 @@ class Matchmaker:
 
 		subprocess.call(["rm", stopfile])
 
-	def  do_task(self):
+	def  make_match_for_worker(self):
+		pass
