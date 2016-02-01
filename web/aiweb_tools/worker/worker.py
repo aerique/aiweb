@@ -84,6 +84,7 @@ class Worker:
 		elif fname.startswith("match"):
 			match = aiweb_tools.match.Match()
 			match.read(taskfile)
+			self.run_match(match)
 			print("Running match: " + str(match))
 		self.request_task()
 
@@ -135,6 +136,9 @@ class Worker:
 		with open (filepath, 'w') as fo:
 			fo.write(content)
 		comms.send_file_matchmaker_ready(filepath, config.matchmaker_path)
+
+	def run_match(self, match):
+		pass
 		
 
 class Worker_data:

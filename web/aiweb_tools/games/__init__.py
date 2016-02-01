@@ -14,16 +14,13 @@ class Game:
 	num_teams = 0
 	min_players = 2
 	max_players = 2
-	num_players = 2
-	turn_limit = 200
-	time_limit = 500
-	time_type = SD_PER_MOVE
-	continuous = True	#  bots are kept running between turns
+	teams = []
 	players = []
+	opts = {}
 
 
-	def __init__(self, players):
+	def __init__(self, opts, players, teams=[]):
+		self.opts = opts
 		self.players = players
+		self.teams = teams
 
-	def select_players(self, players):
-		pass
