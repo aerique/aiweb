@@ -98,6 +98,7 @@ class Matchmaker:
 			selected = self.select_random_players(game.min_players, num_bots)
 			print(selected)
 			match = aiweb_tools.match.Match()
+			match.gamename = gamename
 			for i in selected:
 				match.add_bot(bots[i].submission_id)
 #				print(bots[i].username)

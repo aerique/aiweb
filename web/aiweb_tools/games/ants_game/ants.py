@@ -6,8 +6,11 @@ from collections import deque, defaultdict
 
 from fractions import Fraction
 import operator
-from game import Game
 from copy import deepcopy
+
+
+from .game import Game
+
 try:
     from sys import maxint
 except ImportError:

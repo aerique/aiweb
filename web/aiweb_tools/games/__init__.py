@@ -24,3 +24,5 @@ class Game:
 		self.players = players
 		self.teams = teams
 
+	def run_game(self):
+		pass

@@ -1,7 +1,16 @@
 from aiweb_tools.games import engine
 from aiweb_tools.games.ants_game import ants
+from aiweb_tools.games import Game
+from aiweb_tools import games
 
-class Ants(aiweb_tools.games.Game):
+import os.path
+
+from aiweb_tools import config
+
+maps_path =  "/home/" + config.username + "/aiweb/ants/maps/"
+temp_map = "temp_map.map"
+
+class Ants(games.Game):
 	gamename = "Ants"
 	opts = {
 		## ants/engine opts:  (see http://aichallenge.org/game_settings.php)
@@ -26,5 +35,14 @@ class Ants(aiweb_tools.games.Game):
 		#self.opts = opts
 		self.players = players
 		#self.teams = teams
+
+	def run_game(self):
+		map_path = os.path.join(maps_path, temp_map)
+		with open(map_path) as fo:
+			map_text = "".join(fo.readlines())
+		self.opts['map'] = map_text
+		game = ants.Ants(self.opts)
+		engine.run_game(game, self.players, self.opts)
+
  
 Game = Ants

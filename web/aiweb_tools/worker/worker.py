@@ -12,6 +12,10 @@ import aiweb_tools.zeta.submission
 from aiweb_tools import comms
 import aiweb_tools.match
 
+from aiweb_tools import games
+
+from aiweb_tools.games import engine
+
 my_ip = "127.0.0.1" # Change this for each server running workers, unless using a single-server install for all parts including webserver
 #worker_temp = "/home/" + config.task_username + "/aiweb/worker_tmp/"
 
@@ -137,9 +141,19 @@ class Worker:
 			fo.write(content)
 		comms.send_file_matchmaker_ready(filepath, config.matchmaker_path)
 
+	def get_bot_command(self, bot):
+		print(bot)
+		return ""
+
+	def get_bot_commands(self, bots):
+		print("Bot commands:")
+		return [self.get_bot_command(bot) for bot in bots]
+
 	def run_match(self, match):
-		pass
-		
+		game_class = games.get_game(match.gamename)
+		players = self.get_bot_commands(match.bots)
+		game = game_class(None, players)
+		game.run_game()
 
 class Worker_data:
 	uuid = ""
