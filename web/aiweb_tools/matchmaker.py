@@ -97,19 +97,23 @@ class Matchmaker:
 		else:
 			selected = self.select_random_players(game.min_players, num_bots)
 			print(selected)
+			print(str(len(selected)))
 			match = aiweb_tools.match.Match()
+			print("bots selected upon creation: " + str(len(match.bots)))
+			match.bots = [] # FIXME wtf, this contains data from previous instances upon creation
 			match.gamename = gamename
 			for i in selected:
 				match.add_bot(bots[i].submission_id)
-#				print(bots[i].username)
-#				print(bots[i].game_id)
-#				print(bots[i].submission_id)
+				print(bots[i].username)
+				print(bots[i].game_id)
+				print(bots[i].submission_id)
+			print("bots selected: " + str(len(match.bots)))
 			return match
 
-	def select_random_players(self, num_players, num_bots):
+	def select_random_players(self, num_players, num_options):
 		result = []
 		while len(result) < num_players:
-			selected = random.randint(0, num_bots - 1)
+			selected = random.randint(0, num_options - 1)
 			if selected in result:
 				pass
 			else:
