@@ -73,7 +73,7 @@ def find_task(worker_file):
 	if not finished:
 		find_game(worker_file)
 	#return True # return finished
-	return finished
+	return True
 
 def assign_tasks():
 	print('Assigning tasks')
