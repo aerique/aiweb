@@ -42,7 +42,8 @@ class Ants(games.Game):
 			map_text = "".join(fo.readlines())
 		self.opts['map'] = map_text
 		game = ants.Ants(self.opts)
-		engine.run_game(game, self.players, self.opts)
+		game_result = engine.run_game(game, self.players, self.opts)
+		print(game_result)
 
  
 Game = Ants

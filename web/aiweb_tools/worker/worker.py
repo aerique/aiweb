@@ -88,8 +88,8 @@ class Worker:
 		elif fname.startswith("match"):
 			match = aiweb_tools.match.Match()
 			match.read(taskfile)
-			self.run_match(match)
 			print("Running match: " + str(match))
+			self.run_match(match)
 		self.request_task()
 
 	def get_submission(self, filepath):
@@ -157,7 +157,7 @@ class Worker:
 		path = self.compiled_bot_path(bot)
 		if not os.path.exists(path):
 			self.get_compiled_bot(bot)
-		return path + bot
+		return (path, path + "MyBot.native") # FIXME OCaml only
 
 	def get_bot_commands(self, bots):
 		print("Bot commands:")
