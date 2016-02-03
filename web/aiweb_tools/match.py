@@ -21,7 +21,7 @@ class Match:
 			fo.write(self.for_worker + "\n")
 			fo.write(str(len(self.bots)) + "\n")
 			for bot in self.bots:
-				fo.write(bot)
+				fo.write(bot + "\n")
 	
 	def read(self, filepath):
 		with open(filepath) as fo:

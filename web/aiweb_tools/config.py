@@ -26,6 +26,8 @@ matchmaker_path = "/home/" + matchmaker_username + "/aiweb/matchmaker/"
 isolate_bin = "/home/" +  username + "/aiweb/isolate/isolate"
 worker_compiled = "/home/" +  username + "/aiweb/compiled/"
 
+sleeptime = 1.0
+
 #temp_dir = "temp/"
 
 

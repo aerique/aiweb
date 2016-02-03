@@ -57,7 +57,7 @@ class Worker:
 					self.do_task(real)
 					subprocess.call(["rm", real])
 					subprocess.call(["rm", file])
-			time.sleep(5)
+			time.sleep(config.sleeptime)
 			print("checking for tasks")
 
 		subprocess.call(["rm", stopfile])
@@ -99,7 +99,7 @@ class Worker:
 		print("compiling: " + submission)
 		if not os.path.isfile(config.datastore_submission_path + submission):
 			get_submission(config.datastore_submission_path + submission)
-		path = config.worker_compiled + submission + "/"
+		path = self.compiled_bot_path(submission)
 		if not os.path.exists(path):
 			os.makedirs(path)
 			target = (path )#+ "compile/")
@@ -141,9 +141,23 @@ class Worker:
 			fo.write(content)
 		comms.send_file_matchmaker_ready(filepath, config.matchmaker_path)
 
+	def compiled_bot_path(self, bot):
+		return config.worker_compiled + bot + "/"
+
+	def get_compiled_bot(self, bot):
+		path = self.compiled_bot_path(bot)
+		os.mkdir(path)
+
+		zipfile = bot + "-compiled.zip"
+		comms.get_submission(zipfile)
+		subprocess.call(["unzip", zipfile, "-d", path])
+
 	def get_bot_command(self, bot):
 		print(bot)
-		return ""
+		path = self.compiled_bot_path(bot)
+		if not os.path.exists(path):
+			self.get_compiled_bot(bot)
+		return path + bot
 
 	def get_bot_commands(self, bots):
 		print("Bot commands:")

@@ -23,7 +23,7 @@ class Matchmaker:
 				self.process_request(real)
 				subprocess.call(["rm", real])
 				subprocess.call(["rm", file])
-			time.sleep(5)
+			time.sleep(config.sleeptime)
 			print("checking for requests")
 
 		subprocess.call(["rm", stopfile])

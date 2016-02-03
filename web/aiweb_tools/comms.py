@@ -40,6 +40,15 @@ def send_stringfile (file_content, filename, target, send):
 	f.write(file_content)
 	f.close()
 	send(filename, target)
+
+def have_submission(filename):
+	return os.path.exists(config.datastore_submission_path)
+
+def get_submission(filename):
+	subprocess.call(["scp", config.datastore_username + 
+		"@" + config.datastore_ip + "://" + 
+		config.datastore_submission_path + filename, 
+		config.datastore_submission_path])
 	
 
 def filename(filepath):

@@ -26,7 +26,7 @@ class Command(BaseCommand):
 			# Process reports
 			aiweb_tools.manager.manager.process_reports(aiweb_tools.manager.manager.add_submission_report)
 			self.stdout.write(self.style.SUCCESS('Processed reports'))
-			time.sleep(5)
+			time.sleep(config.sleeptime)
 
 		subprocess.call(["rm", stopfile])
 
