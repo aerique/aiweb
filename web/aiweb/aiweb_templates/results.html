@@ -1,0 +1,14 @@
+
+<p>
+Results:
+</p>
+
+{% if results_list %}
+	<ul>
+	{% for result in results_list %}
+		<li><a href="/aiweb/replays/{{ result.replay }}/">{{ result.replay }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No results are available.</p>
+{% endif %}

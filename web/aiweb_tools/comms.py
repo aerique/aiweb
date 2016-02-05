@@ -1,4 +1,6 @@
 import subprocess
+import cloudpickle
+import os.path
 
 from aiweb_tools import config
 
@@ -41,6 +43,14 @@ def send_stringfile (file_content, filename, target, send):
 	f.close()
 	send(filename, target)
 
+def send_result (match, result):
+	filename = match.uuid.hex + "-match-result.txt"
+	f = open(filename, 'wb')
+	cloudpickle.dump(result, f)
+	f.close()
+	send_file_webserver_ready(filename, config.webserver_results_path)
+	subprocess.call(["rm", filename])
+
 def have_submission(filename):
 	return os.path.exists(config.datastore_submission_path)
 
@@ -53,4 +63,17 @@ def get_submission(filename):
 
 def filename(filepath):
 	return filepath.split("/")[-1]
+
+def get_replay_id():
+	filepath = config.webserver_results_path + "replay_id.txt"
+	if not os.path.exists(filepath):
+		with open(filepath, 'w') as fo:
+			fo.write(str(0))
+	with open(filepath) as fo:
+		this_id = int(fo.readline().strip())
+	next_id = this_id + 1
+	with open(filepath, 'w') as fo:
+		fo.write(str(next_id))
+	return this_id
+
 

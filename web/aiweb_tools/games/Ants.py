@@ -11,29 +11,30 @@ maps_path =  "/home/" + config.username + "/aiweb/ants/maps/"
 temp_map = "temp_map.map"
 
 class Ants(games.Game):
-	gamename = "Ants"
-	opts = {
-		## ants/engine opts:  (see http://aichallenge.org/game_settings.php)
-		'turns':1000,	# 1500 on aichallenge
-		'loadtime': 5000,
-		'turntime': 5000,
-		'viewradius2': 77,
-		'attackradius2': 5,
-		'spawnradius2': 1,
-		'attack': 'focus',
-		'food': 'symmetric',
-		'food_rate': (5,11), # total food
-		'food_turn': (19,37), # per turn
-		'food_start': (75,175), # per land area
-		'food_visible': (3,5), # in starting loc
-		'cutoff_percent': 0.85,
-		'cutoff_turn': 150,
-		'kill_points': 2,
-	}
 
-	def __init__(self, opts, players, teams=[]):
+	def __init__(self, opts, players, player_names, teams=[]):
 		#self.opts = opts
+		self.gamename = "Ants"
+		self.opts = {
+			## ants/engine opts:  (see http://aichallenge.org/game_settings.php)
+			'turns':1000,	# 1500 on aichallenge
+			'loadtime': 5000,
+			'turntime': 5000,
+			'viewradius2': 77,
+			'attackradius2': 5,
+			'spawnradius2': 1,
+			'attack': 'focus',
+			'food': 'symmetric',
+			'food_rate': (5,11), # total food
+			'food_turn': (19,37), # per turn
+			'food_start': (75,175), # per land area
+			'food_visible': (3,5), # in starting loc
+			'cutoff_percent': 0.85,
+			'cutoff_turn': 150,
+			'kill_points': 2,
+		}
 		self.players = players
+		self.player_names = player_names
 		#self.teams = teams
 
 	def run_game(self):
@@ -43,7 +44,9 @@ class Ants(games.Game):
 		self.opts['map'] = map_text
 		game = ants.Ants(self.opts)
 		game_result = engine.run_game(game, self.players, self.opts)
+		game_result['playernames'] = self.player_names
 		print(game_result)
+		return game_result
 
  
 Game = Ants

@@ -16,13 +16,18 @@ class Game:
 	max_players = 2
 	teams = []
 	players = []
+	player_names = []
 	opts = {}
 
 
-	def __init__(self, opts, players, teams=[]):
+	def __init__(self, opts, players, player_names, teams=[]):
 		self.opts = opts
 		self.players = players
+		self.player_names = player_names
 		self.teams = teams
 
+	def player_name(self, player):
+		return player.split('_')[0]
+
 	def run_game(self):
-		pass
+		return {}

@@ -2,6 +2,7 @@ import logging
 import subprocess
 import datetime
 import glob
+import cloudpickle 
 
 import sys
 from django.core.management.base import BaseCommand
@@ -125,6 +126,7 @@ def add_submission_report(username, game, timestamp, prefix, status, language, c
 	subm_list = aiweb.models.Submission.objects.filter(username=username, game_id = game, timestamp = timestamp, submission_id = prefix)
 	if len(subm_list) < 1:
 		subm = aiweb.models.Submission.objects.create(
+			user = aiweb.models.User.objects.get(username=username),
 			username = username,
 			game_id = game,
 			timestamp = timestamp,
@@ -139,4 +141,31 @@ def add_submission_report(username, game, timestamp, prefix, status, language, c
 		subm.report = content
 
 	subm.save()
+
+def process_match_results():
+	print("processing match results")
+	for file in glob.glob(config.webserver_results_path + "*-match-result.txt.ready"):
+		process_match_result(file)
+	
+def process_match_result(path):
+	real = path[:-len('.ready')]
+	print("processing match result: " + real)
+	with open(real, 'rb') as fo:
+		result_dict = cloudpickle.load(fo)
+		replay_id = aiweb_tools.comms.get_replay_id()
+		replay_path = config.webserver_results_path + str(replay_id) + ".replay"
+		result = aiweb.models.Result.objects.create(
+			player_names = " ".join(result_dict['playernames']),
+			scores = " ".join([str(x) for x in result_dict['score']]),
+			statuses = " ".join(result_dict['status']),
+			ranks = " ".join([str(x) for x in result_dict['rank']]),
+			game_message = "",
+			replay = replay_path.split("/")[-1])
+		result.save()
+
+		with open(replay_path, 'w') as fo:
+			fo.write(repr(result_dict['replaydata']))
+	subprocess.call(["rm", real])
+	subprocess.call(["rm", path])
+	
 

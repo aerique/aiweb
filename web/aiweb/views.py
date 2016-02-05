@@ -78,11 +78,17 @@ def profile(request, status="normal"):
 		subm_limit = 5
 		count_from = max(0, subm_count - subm_limit)
 		submissions = reversed(submissions.order_by('timestamp')[count_from:])
+		results = aiweb.models.Result.objects.all()
+		results_count = results.count()
+		results_limit = 25
+		count_from = max(0, results_count - results_limit)
+		results = reversed(results.order_by('id')[count_from:])
 		c = {'form': form, 
 			 'user': request.user, 
 			 'upload_tron_success': upload_tron_success,
 			 'upload_ants_success': upload_ants_success,
 			 'submissions': submissions,
+			 'results_list': results
 		 }
 		c.update(csrf(request))
 		return render_to_response('aiweb_templates/profile.html', c)

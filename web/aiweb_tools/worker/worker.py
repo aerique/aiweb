@@ -163,11 +163,16 @@ class Worker:
 		print("Bot commands:")
 		return [self.get_bot_command(bot) for bot in bots]
 
+	def get_player_name(self, bot):
+		return bot.split('_')[0]
+
 	def run_match(self, match):
 		game_class = games.get_game(match.gamename)
 		players = self.get_bot_commands(match.bots)
-		game = game_class(None, players)
-		game.run_game()
+		player_names = [self.get_player_name(player) for player in match.bots]
+		game = game_class(None, players, player_names)
+		result = game.run_game()
+		comms.send_result(match, result)
 
 class Worker_data:
 	uuid = ""
