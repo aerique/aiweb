@@ -1,10 +1,9 @@
-<p> Upload your code for {{ gamename }}: </p>
-<form enctype="multipart/form-data" method="post" action="/aiweb/profile/upload_{{gamename}}_success/">
+<p> Upload your code: </p>
+<form enctype="multipart/form-data" method="post" action="/aiweb/profile/upload_success/">
    {% csrf_token %}   
    <table>
        {{form.as_table}}
    </table>
-   <input id="gamename" type="hidden" name="gamename" value={{ gamename }}>
    <input type="submit" value="Submit" id="Save"/>
 </form>
 

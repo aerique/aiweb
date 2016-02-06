@@ -40,7 +40,7 @@ class Chmod(CompileAction):
 	def __call__(self, sources, subm, runner):
 		for source in sources:
 			try:
-				os.chmod(source, "0644")
+				os.chmod(source, 644)
 			except Exception as e:
 				subm.compile_errors += "Error chmoding %s - %s\n" % (source, e)
 				return False
@@ -73,8 +73,8 @@ class System(CompileAction):
 				subm.compile_output += ' '.join(cmd) + '\n'
 				runner.compile_run(cmd, should_stop=False)
 				out, err = runner.process.communicate()
-				subm.compile_output += out
-				subm.compile_errors += err
+				subm.compile_output += str(out)
+				subm.compile_errors += str(err)
 				if runner.process.returncode != 0:
 					success = False
 			return success
@@ -192,7 +192,7 @@ languages = {
 			System("javac", deepglobs=["*.java"]),
 			System("jar cfe {bot}.jar {bot}", deepglobs=["*.class"]),
 		],
-		"run": "java -jar {bot}",
+		"run": "java -jar {path}/{bot}.jar",
 	},
 
 	"Javascript": {
@@ -240,7 +240,13 @@ languages = {
 	"Python": {
 		"main_ext": ".py",
 		"nuke_globs": ["*.pyc"],
-		"run": "python {bot}.py",
+		"run": "python2 {path}/{bot}.py",
+	},
+
+	"Python3": {
+		"main_ext": ".py3",
+		"nuke_globs": ["*.pyc"],
+		"run": "python {path}/{bot}.py3",
 	},
 
 	"Ruby": {
@@ -455,7 +461,7 @@ def compile_submission(subm, max_time=300):
 
 def get_command(subm, directory):
 	""" Return the command used to run the given submission. """
-	if subm.language not in languages: raise(ValueError, "unrecognized language")
+	if subm.language not in languages: raise(ValueError( "unrecognized language: " + str(subm.language)))
 	cmd = languages[subm.language].get("run", "{path}/{bot}")
 	cmd = cmd.format(bot=BOT, path=directory)
 	return cmd

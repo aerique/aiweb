@@ -1,6 +1,7 @@
 import subprocess
 import cloudpickle
 import os.path
+import json
 
 from aiweb_tools import config
 
@@ -60,6 +61,13 @@ def get_submission(filename):
 		config.datastore_submission_path + filename, 
 		config.datastore_submission_path])
 	
+
+def load_replay(id):
+	path = config.webserver_results_path + id
+	with open(path, 'r') as fo:
+		replay = fo.readline()
+	return replay
+
 
 def filename(filepath):
 	return filepath.split("/")[-1]

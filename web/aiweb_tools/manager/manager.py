@@ -3,6 +3,7 @@ import subprocess
 import datetime
 import glob
 import cloudpickle 
+import json
 
 import sys
 from django.core.management.base import BaseCommand
@@ -34,15 +35,31 @@ def add_task(ip_addr, prefix, file_content):
 					config.task_path ]);
 	subprocess.call(["rm", srcname])
 
-def handle_submission(filepath, username, gamename):
+def detect_game(filepath):
+	filename = filepath.split('/')[-1]
+	result = None
+	for game in config.games_active:
+		if filename.lower().startswith(game.lower()):
+			result = game
+	return result
+
+def handle_submission(filepath, username):
 
 	print("Processing submission at " + filepath);
 
+	gamename = detect_game(filepath)
 	timestamp = (datetime.datetime.now().isoformat()).replace(":", "-")
-	destname = username + "_" + gamename + "_" + timestamp
+	destname = username + "_" + str(gamename) + "_" + timestamp
+	if gamename == None:
+		message = "Please submit a zipfile with a filename beginning with the name of one of the active games.\n For example, 'Ants-sub123.zip' is valid, as is 'Tron_abcde.zip'\n Currently active games are:"
+		for game in config.games_active:
+			message += "\n" + game
+		add_submission_report(username, "Undetected", timestamp, destname, "Game not detected", "Unknown", message)
+	else:
 
-	send_submission (filepath, destname)
-	add_submission_report(username, gamename, timestamp, destname, "Uncompiled", "Unknown", "")
+
+		send_submission (filepath, destname)
+		add_submission_report(username, gamename, timestamp, destname, "Uncompiled", "Unknown", "")
 
 	# FIXME better protection against filename collisions desirable
 	add_task (config.task_ip, "compile", "compile " + destname)
@@ -154,17 +171,31 @@ def process_match_result(path):
 		result_dict = cloudpickle.load(fo)
 		replay_id = aiweb_tools.comms.get_replay_id()
 		replay_path = config.webserver_results_path + str(replay_id) + ".replay"
+		if 'scores' in result_dict:
+			scores = " ".join([str(x) for x in result_dict['score']])
+		else:
+			scores = ""
+		if 'status' in result_dict:
+			status= " ".join([str(x) for x in result_dict['status']])
+		else:
+			status = ""
+		if 'rank' in result_dict:
+			rank= " ".join([str(x) for x in result_dict['rank']])
+		else:
+			rank = ""
 		result = aiweb.models.Result.objects.create(
 			player_names = " ".join(result_dict['playernames']),
-			scores = " ".join([str(x) for x in result_dict['score']]),
-			statuses = " ".join(result_dict['status']),
-			ranks = " ".join([str(x) for x in result_dict['rank']]),
+			scores = scores,
+			statuses = status,
+			ranks = rank,
 			game_message = "",
 			replay = replay_path.split("/")[-1])
 		result.save()
 
-		with open(replay_path, 'w') as fo:
-			fo.write(repr(result_dict['replaydata']))
+		if 'replaydata' in result_dict:
+			with open(replay_path, 'w') as fo:
+				json.dump(result_dict['replaydata'], fo)
+
 	subprocess.call(["rm", real])
 	subprocess.call(["rm", path])
 	

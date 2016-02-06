@@ -1,0 +1,28 @@
+
+<html>
+<head>
+<title>Ant Canvas</title>
+<script type="text/javascript" src="/static/aiweb/ants/visualizer.js"></script>	
+<script type="text/javascript">
+	window.isFullscreenSupported = function() {
+	return false;
+	};
+
+	function init() {
+		var options = new Options();
+		options.data_dir = '/static/aiweb/ants/data/';
+		options.embedded = true;
+		var visualizer = new Visualizer(document.body, options);
+		visualizer.loadReplayData('{{ replaydata|safe }}');
+	}
+</script>
+<style type="text/css">
+	html { margin:0; padding:0; }
+	body { margin:0; padding:0; overflow:hidden; }
+</style>
+</head>
+<body>
+   <script>init();</script>
+</body>
+</html>
+

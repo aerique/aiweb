@@ -2,22 +2,22 @@ from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-
 from django import forms
 from django.template.context_processors import csrf
 from django.shortcuts import render_to_response
 
+import os
+import logging
+
 import aiweb.models
 
-import os
-
-import logging
+import aiweb_tools.comms
+import aiweb_tools.manager.manager
 
 #import imp
 
 #manager = imp.load_source('manager', '../manager/manager.py')
 
-import aiweb_tools.manager.manager
 
 # Create your views here.
 
@@ -43,7 +43,7 @@ def index(request):
 class UploadFileForm(forms.Form):
 	file  = forms.FileField()
 
-def handle_uploaded_file(ffile, user, gamename):
+def handle_uploaded_file(ffile, user):
 	path = ("uploads/" + user.username)
 	if not os.path.exists(path):
 		os.makedirs(path)
@@ -53,7 +53,7 @@ def handle_uploaded_file(ffile, user, gamename):
 		for chunk in ffile.chunks():
 			destination.write(chunk)
 			destination.close()
-	aiweb_tools.manager.manager.handle_submission(os.path.abspath(filepath), user.username, gamename)
+	aiweb_tools.manager.manager.handle_submission(os.path.abspath(filepath), user.username) # ,gamename
 #	aiweb_tools.manager.manager.assign_tasks()
 
 def profile(request, status="normal"):
@@ -63,16 +63,15 @@ def profile(request, status="normal"):
 		if form.is_valid():
 			#print(dir(form))
 			if not (request.FILES['file']) == "":
-				handle_uploaded_file(request.FILES['file'], request.user, form.data['gamename'])
-				return HttpResponseRedirect('/aiweb/profile/upload_' + form.data['gamename']+ '_success/')
+				handle_uploaded_file(request.FILES['file'], request.user)
+				return HttpResponseRedirect('/aiweb/profile/upload_success/')
 			else:
 				return HttpResponseRedirect('/aiweb/profile/')
 		else: 
 			return HttpResponseRedirect('/aiweb/profile/')
 	else:
 		form = UploadFileForm()
-		upload_tron_success = (status == "upload_Tron_success")
-		upload_ants_success = (status == "upload_Ants_success")
+		upload_success = (status == "upload_success")
 		submissions = aiweb.models.Submission.objects.filter(username=request.user.username)
 		subm_count = submissions.count()
 		subm_limit = 5
@@ -85,10 +84,20 @@ def profile(request, status="normal"):
 		results = reversed(results.order_by('id')[count_from:])
 		c = {'form': form, 
 			 'user': request.user, 
-			 'upload_tron_success': upload_tron_success,
-			 'upload_ants_success': upload_ants_success,
+			 'upload_success': upload_success,
 			 'submissions': submissions,
 			 'results_list': results
 		 }
 		c.update(csrf(request))
 		return render_to_response('aiweb_templates/profile.html', c)
+
+def replay(request, id="none"):
+	if not (id=="none"):
+		replaydata = aiweb_tools.comms.load_replay(id)
+		context = {
+			'replaydata': replaydata,
+		}
+		print(replaydata)
+		return render_to_response('aiweb_templates/ants_visualizer.html', context)
+
+

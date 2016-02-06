@@ -95,26 +95,26 @@ class Worker:
 	def get_submission(self, filepath):
 		subprocess.call(["scp", config.datastore_username + "@" + config.datatore_ip + "://" + filepath, filepath])
 
-	def compile(self, submission):
-		print("compiling: " + submission)
-		if not os.path.isfile(config.datastore_submission_path + submission):
-			get_submission(config.datastore_submission_path + submission)
-		path = self.compiled_bot_path(submission)
+	def compile(self, subm_id):
+		print("compiling: " + subm_id)
+		if not os.path.isfile(config.datastore_submission_path + subm_id):
+			self.get_submission(config.datastore_submission_path + subm_id)
+		path = self.compiled_bot_path(subm_id)
 		if not os.path.exists(path):
 			os.makedirs(path)
 			target = (path )#+ "compile/")
 #			os.makedirs (target)
-			subprocess.call(["unzip", config.datastore_submission_path + submission, "-d", target])
+			subprocess.call(["unzip", config.datastore_submission_path + subm_id, "-d", target])
 	
-			subm_data = submission.split("_")
+			subm_data = subm_id.split("_")
 			username = subm_data[0]
 			game_id = subm_data[1]
 			print("username" + username)
-			subm = aiweb_tools.zeta.submission.Submission(username, submission, target)
+			subm = aiweb_tools.zeta.submission.Submission(username, subm_id, target)
 			subm.compile()
 	#		subprocess.call(["rm", "-rf", target])
 			#print(subm.full_report())
-			self.send_compile_result(path, submission, game_id, subm)
+			self.send_compile_result(path, subm_id, game_id, subm)
 
 	def save_report(self, submission, path):
 		lang = ""
@@ -124,15 +124,21 @@ class Worker:
 		with open(path, 'w') as fo:
 			fo.write(content)
 
-	def send_compile_result(self, path, sub_id, game_id, submission):
-		zipfile = path + sub_id + "-compiled.zip"
+	def send_compile_result(self, path, subm_id, game_id, submission):
+		runfile = path + "run_command"
+		if os.path.exists(runfile):	# make sure they don't put malicious commands in here, by deleting the file if it exists
+			subprocess.call("chmod", "u+rw", runfile)
+			subprocess.call("rm", "-f", runfile)
+		with open(runfile, 'w') as fo:
+			fo.write(submission.get_command(config.worker_compiled + subm_id))
+		zipfile = path + subm_id + "-compiled.zip"
 		#subprocess.call(["ls", path])
 		subprocess.call(["zip", "-r", zipfile, path, "-i", path + "*"])
 		comms.send_file_datastore_ready(zipfile, config.datastore_submission_path)
-		reportfile = path + sub_id + "-report.txt" 
+		reportfile = path + subm_id + "-report.txt" 
 		self.save_report(submission, reportfile)
 		comms.send_file_webserver_ready(reportfile, config.webserver_results_path)
-		self.send_matchmaker_compile_info(path, submission.username, game_id, sub_id)
+		self.send_matchmaker_compile_info(path, submission.username, game_id, subm_id)
 
 	def send_matchmaker_compile_info(self, path, username, game_id, submission_id):
 		filepath = path + "compiled_" + submission_id
@@ -157,7 +163,10 @@ class Worker:
 		path = self.compiled_bot_path(bot)
 		if not os.path.exists(path):
 			self.get_compiled_bot(bot)
-		return (path, path + "MyBot.native") # FIXME OCaml only
+		with open(path + "run_command") as fo:
+			run_command = fo.readline().strip()
+		print(run_command)
+		return (path, run_command)
 
 	def get_bot_commands(self, bots):
 		print("Bot commands:")
@@ -167,9 +176,9 @@ class Worker:
 		return bot.split('_')[0]
 
 	def run_match(self, match):
-		game_class = games.get_game(match.gamename)
 		players = self.get_bot_commands(match.bots)
 		player_names = [self.get_player_name(player) for player in match.bots]
+		game_class = games.get_game(match.gamename)
 		game = game_class(None, players, player_names)
 		result = game.run_game()
 		comms.send_result(match, result)

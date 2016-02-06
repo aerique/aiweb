@@ -77,7 +77,7 @@ class Matchmaker:
 		#aiweb_tools.comms.send_file_taskserver_ready(workerfile, config.task_worker_path)
 
 	def make_match(self):
-		games = config.games_running
+		games = config.games_active
 		gamename = random.choice(games)
 		print("chosen " + gamename)
 		bots = aiweb.models.Bot.objects.using('matchmaker').filter(game_id = gamename).order_by('selection_weight')

@@ -1,7 +1,5 @@
 import sys
 
-SD_PER_MOVE, SD_ABSOLUTE, FISCHER = range(3)
-
 def get_game(name):
 	"""get the game class from the module requested"""
 	full_name = 'aiweb_tools.games.' + name
