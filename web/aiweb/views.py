@@ -93,11 +93,20 @@ def profile(request, status="normal"):
 
 def replay(request, id="none"):
 	if not (id=="none"):
-		replaydata = aiweb_tools.comms.load_replay(id)
+		replaydata = aiweb_tools.comms.load_replaydata(id)
+		replay = aiweb_tools.comms.load_replay(id)
 		context = {
 			'replaydata': replaydata,
 		}
 		print(replaydata)
-		return render_to_response('aiweb_templates/ants_visualizer.html', context)
+		if 'gamename' in replay:
+			if replay['gamename'].lower() == "ants":
+				return render_to_response('aiweb_templates/ants_visualizer.html', context)
+			elif replay['gamename'].lower() == "tron":
+				return render_to_response('aiweb_templates/tron_visualizer.html', context)
+			else:
+				return render_to_response('aiweb_templates/ants_visualizer.html', context)
+		else:
+			return render_to_response('aiweb_templates/ants_visualizer.html', context)
 
 

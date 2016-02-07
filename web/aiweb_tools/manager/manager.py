@@ -193,8 +193,10 @@ def process_match_result(path):
 		result.save()
 
 		if 'replaydata' in result_dict:
+			replay = result_dict['replaydata']
+			replay['gamename'] = result_dict['challenge']
 			with open(replay_path, 'w') as fo:
-				json.dump(result_dict['replaydata'], fo)
+				json.dump(replay, fo)
 
 	subprocess.call(["rm", real])
 	subprocess.call(["rm", path])

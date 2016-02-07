@@ -19,7 +19,7 @@ class Tron(games.Game):
 			## ants/engine opts:  (see http://aichallenge.org/game_settings.php)
 			'turns':1000,	# 1500 on aichallenge
 			'loadtime': 5000,
-			'turntime': 5000,
+			'turntime': 500,
 			'cutoff_percent': 0.85,
 			'cutoff_turn': 150,
 			'kill_points': 2,

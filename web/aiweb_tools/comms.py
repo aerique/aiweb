@@ -62,10 +62,16 @@ def get_submission(filename):
 		config.datastore_submission_path])
 	
 
-def load_replay(id):
+def load_replaydata(id):
 	path = config.webserver_results_path + id
 	with open(path, 'r') as fo:
 		replay = fo.readline()
+	return replay
+
+def load_replay(id):
+	path = config.webserver_results_path + id
+	with open(path, 'r') as fo:
+		replay = json.load(fo)
 	return replay
 
 
