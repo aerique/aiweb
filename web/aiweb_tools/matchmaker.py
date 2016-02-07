@@ -24,7 +24,7 @@ class Matchmaker:
 				subprocess.call(["rm", real])
 				subprocess.call(["rm", file])
 			time.sleep(config.sleeptime)
-			print("checking for requests")
+			#print("checking for requests")
 
 		subprocess.call(["rm", stopfile])
 
@@ -67,7 +67,7 @@ class Matchmaker:
 	def  send_match_to_worker(self, match, workerfile):
 		worker_data = aiweb_tools.worker.worker.Worker_data()
 		worker_data.read(workerfile)
-		filepath = config.matchmaker_path + "match_" + worker_data.uuid + match.short_string()
+		filepath = config.matchmaker_path + "match" + config.delimiter + worker_data.uuid + match.short_string()
 		match.set_for_worker(worker_data.uuid)
 		match.write_file(filepath)
 

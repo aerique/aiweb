@@ -1,4 +1,5 @@
 import sys
+from aiweb_tools import config
 
 def get_game(name):
 	"""get the game class from the module requested"""

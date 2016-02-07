@@ -29,7 +29,7 @@ class Worker:
 
 	def request_task(self):
 		print("Requesting task")
-		srcname = "worker-ready_" + (datetime.datetime.now().isoformat()).replace(":", "-") + "_" + self.uuid.hex
+		srcname = "worker-ready" + config.delimiter + (datetime.datetime.now().isoformat()).replace(":", "-") + config.delimiter + self.uuid.hex
 		f = open(srcname, 'w')
 		f.write(self.task_request_content())
 		f.close()
@@ -47,7 +47,7 @@ class Worker:
 		
 
 	def await_task(self):
-		stopfile = (config.task_worker_path + "stop_" + self.uuid.hex) 
+		stopfile = (config.task_worker_path + "stop" + config.delimiter + self.uuid.hex) 
 		while not os.path.isfile(stopfile):
 			ready = ".ready"
 			for file in glob.glob(config.task_worker_path + "*" + ready):
@@ -69,8 +69,8 @@ class Worker:
 			with open(taskfile) as fo:
 				line = fo.readline().strip()
 				return line.endswith(self.uuid.hex)
-		elif fname.startswith("match_"):
-			stripped = fname.strip("match_")
+		elif fname.startswith("match" + config.delimiter):
+			stripped = fname.strip("match" + config.delimiter)
 			return stripped.startswith(self.uuid.hex)
 
 	def do_task(self, taskfile):
@@ -93,7 +93,7 @@ class Worker:
 		self.request_task()
 
 	def get_submission(self, filepath):
-		subprocess.call(["scp", config.datastore_username + "@" + config.datatore_ip + "://" + filepath, filepath])
+		subprocess.call(["scp", config.datastore_username + "@" + config.datastore_ip + "://" + filepath, filepath])
 
 	def compile(self, subm_id):
 		print("compiling: " + subm_id)
@@ -106,7 +106,7 @@ class Worker:
 #			os.makedirs (target)
 			subprocess.call(["unzip", config.datastore_submission_path + subm_id, "-d", target])
 	
-			subm_data = subm_id.split("_")
+			subm_data = subm_id.split(config.delimiter)
 			username = subm_data[0]
 			game_id = subm_data[1]
 			print("username" + username)
@@ -141,7 +141,7 @@ class Worker:
 		self.send_matchmaker_compile_info(path, submission.username, game_id, subm_id)
 
 	def send_matchmaker_compile_info(self, path, username, game_id, submission_id):
-		filepath = path + "compiled_" + submission_id
+		filepath = path + "compiled" + config.delimiter + submission_id
 		content = username + "\n" + game_id + "\n" + submission_id + "\n"
 		with open (filepath, 'w') as fo:
 			fo.write(content)
@@ -173,7 +173,7 @@ class Worker:
 		return [self.get_bot_command(bot) for bot in bots]
 
 	def get_player_name(self, bot):
-		return bot.split('_')[0]
+		return bot.split(config.delimiter)[0]
 
 	def run_match(self, match):
 		players = self.get_bot_commands(match.bots)

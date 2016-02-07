@@ -26,7 +26,7 @@ def send_submission (filepath, destname):
 	subprocess.call(["rm", filepath]);
 
 def add_task(ip_addr, prefix, file_content):
-	srcname = prefix + "_" + (datetime.datetime.now().isoformat()).replace(":", "-")
+	srcname = prefix + config.delimiter + (datetime.datetime.now().isoformat()).replace(":", "-")
 	f = open(srcname, 'w')
 	f.write(file_content)
 	f.close()
@@ -49,7 +49,7 @@ def handle_submission(filepath, username):
 
 	gamename = detect_game(filepath)
 	timestamp = (datetime.datetime.now().isoformat()).replace(":", "-")
-	destname = username + "_" + str(gamename) + "_" + timestamp
+	destname = username + config.delimiter + str(gamename) + config.delimiter + timestamp
 	if gamename == None:
 		message = "Please submit a zipfile with a filename beginning with the name of one of the active games.\n For example, 'Ants-sub123.zip' is valid, as is 'Tron_abcde.zip'\n Currently active games are:"
 		for game in config.games_active:
@@ -94,7 +94,7 @@ def find_task(worker_file):
 	return True
 
 def assign_tasks():
-	print('Assigning tasks')
+	#print('Assigning tasks')
 #	tasks = glob.glob(task_path + "*")
 #	for task in tasks:
 #		print("Task: " + task.split("/")[-1])
@@ -107,14 +107,14 @@ def assign_tasks():
 			if find_task(real):
 				subprocess.call(["rm", file])
 				subprocess.call(["rm", real])
-	print('tasks assigned')
+	#print('tasks assigned')
 
 def process_report(path, add_submission_report):
 	real = path[:-len('.ready')]
 	filename = real.split('/')[-1]
 	fsplit = filename.split('.')
 	prefix = fsplit[0] + "." + fsplit[1].split('-')[0]
-	parts = prefix.split('_')
+	parts = prefix.split(config.delimiter)
 	username = parts[0]
 	game = parts[1]
 	timestamp = parts[2]
