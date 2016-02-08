@@ -1,0 +1,3 @@
+[submodule "web/aiweb_tools/isolate"]
+	path = web/aiweb_tools/isolate
+	url = https://github.com/cms-dev/isolate.git
