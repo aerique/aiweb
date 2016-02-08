@@ -131,7 +131,7 @@ class Worker:
 			subprocess.call("rm", "-f", runfile)
 		with open(runfile, 'w') as fo:
 			fo.write(submission.get_command(config.worker_compiled + subm_id))
-		subprocess.call(["chmod", "u+r", runfile])
+		subprocess.call(["chmod", "u+r", path + "*"])
 		zipfile = path + subm_id + "-compiled.zip"
 		subprocess.call(["zip", "-r", zipfile, path, "-i", path + "*"])
 		comms.send_file_datastore_ready(zipfile, config.datastore_submission_path)

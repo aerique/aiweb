@@ -40,7 +40,7 @@ class Chmod(CompileAction):
 	def __call__(self, sources, subm, runner):
 		for source in sources:
 			try:
-				os.chmod(source, 644)
+				os.chmod(source, 0o644)
 			except Exception as e:
 				subm.compile_errors += "Error chmoding %s - %s\n" % (source, e)
 				return False

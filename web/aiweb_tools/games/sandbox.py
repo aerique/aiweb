@@ -556,7 +556,8 @@ class IsolatedHouse(House):
 		working_directory = self.working_directory
 		self.child_queue = Queue()
 		shell_command = shlex.split(shell_command.replace('\\','/'))
-		shell_command = [config.isolate_bin, "--box", str(self.box_id), "-d", self.origin, "--run" ] + shell_command
+#		shell_command = [config.isolate_bin, "--box", str(self.box_id), "-d", self.origin, "--run" ] + shell_command
+		shell_command = [config.isolate_bin, "--box", str(self.box_id), "-d", self.origin, "--env=HOME=" + self.working_directory, "--run" ] + shell_command
 		print(" ".join(shell_command))
 		try:
 			self.command_process = subprocess.Popen(shell_command,
@@ -601,14 +602,21 @@ class IsolatedHouse(House):
 			lockfile = config.lock_dir + "lock_box." + str(test)
 			if os.path.exists(lockfile):
 				test += 1
+				time.sleep(config.sleeptime)
 			else:
 				try:
 					with open(lockfile, 'x') as fo:
-						subprocess.call([config.isolate_bin, '--init', '--box', str(test)])
-						print ("Got isolated box")
+#						print("Calling isolate")
+						cmd = [config.isolate_bin, '--init', '--box', str(test)]
+#						print(" ".join(cmd))
+						subprocess.call(cmd)
+#						print ("Got isolated box")
 						result = test
 				except Exception as e:
+					print(lockfile)
+					print(str(e))
 					test += 1
+					sleep(config.sleeptime)
 		return result
 
 
@@ -618,7 +626,7 @@ def get_sandbox(working_dir, secure=None):
 		secure = _SECURE_DEFAULT
 	if secure:
 #		return Jail(working_dir)
-		print("IsolatedHouse sandbox chosen")
+		print("IsolatedHouse sandbox chosen for " + working_dir)
 		return IsolatedHouse(working_dir)
 	else:
 		print("House sandbox chosen")

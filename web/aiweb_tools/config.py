@@ -26,8 +26,8 @@ matchmaker_port = 22
 matchmaker_username = username
 matchmaker_path = prefix + "matchmaker/"
 
-isolate_bin = prefix + "/isolate/isolate"
-worker_compiled = prefix + "/compiled/"
+isolate_bin = prefix + "isolate/isolate"
+worker_compiled = prefix + "compiled/"
 runner_working = prefix + "runner/"
 runner_prefix = "aiweb"
 lock_dir = prefix + "lock/"
