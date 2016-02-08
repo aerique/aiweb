@@ -7,7 +7,7 @@ import os.path
 
 from aiweb_tools import config
 
-maps_path =  "/home/" + config.username + "/aiweb/ants/maps/"
+maps_path =  config.prefix + "ants/maps/"
 temp_map = "temp_map.map"
 
 class Ants(games.Game):
@@ -19,7 +19,7 @@ class Ants(games.Game):
 			## ants/engine opts:  (see http://aichallenge.org/game_settings.php)
 			'turns':1000,	# 1500 on aichallenge
 			'loadtime': 5000,
-			'turntime': 5000,
+			'turntime': 500,
 			'viewradius2': 77,
 			'attackradius2': 5,
 			'spawnradius2': 1,
@@ -46,6 +46,9 @@ class Ants(games.Game):
 		game = ants.Ants(self.opts)
 		game_result = engine.run_game(game, self.players, self.opts)
 		game_result['playernames'] = self.player_names
+		game_result['replaydata']['playernames'] = self.player_names
+		game_result['replaydata']['user_ids'] = self.player_names
+		print("Player names = " + str(self.player_names))
 		print(game_result)
 		return game_result
 

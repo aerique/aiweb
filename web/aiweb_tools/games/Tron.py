@@ -7,7 +7,7 @@ import os.path
 
 from aiweb_tools import config
 
-maps_path =  "/home/" + config.username + "/aiweb/tron/maps/"
+maps_path =  config.prefix + "tron/maps/"
 temp_map = "temp_map.map"
 
 class Tron(games.Game):

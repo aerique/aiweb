@@ -605,9 +605,9 @@ Visualizer.prototype.tryStart = function() {
 				this.state.order[k] = i;
 			}
 			// add player buttons
-			if (this.state.replay.hasDuration) {
+			//if (this.state.replay.hasDuration) {
 				this.addPlayerButtons();
-			}
+			//}
 			// add static buttons
 			if (this.state.options['interactive']) {
 				if (!this.btnMgr.groups['playback']) {
@@ -1084,11 +1084,11 @@ Visualizer.prototype.updatePlayerButtonText = function() {
 	for (i = 0; i < this.state.replay.players; i++) {
 		idx = this.state.order[i];
 		caption = this.state.replay.meta['playernames'][idx];
-		if (this.state.config['label'] === 1) {
-			caption = String.fromCharCode(0x3b1 + i) + ' ' + caption;
-		} else {
-			caption = this.state.ranks[idx] + '. ' + caption;
-		}
+//		if (this.state.config['label'] === 1) {
+//			caption = String.fromCharCode(0x3b1 + i) + ' ' + caption;
+//		} else {
+//			caption = this.state.ranks[idx] + '. ' + caption;
+//		}
 		btnGrp.buttons[i + 1].setText(caption);
 	}
 };

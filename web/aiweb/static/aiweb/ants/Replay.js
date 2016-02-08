@@ -499,6 +499,9 @@ function Replay(replay, debug, highlightUser) {
 			highlightPlayer = this.meta['user_ids'].indexOf(highlightUser, 0);
 			if (highlightPlayer === -1) highlightPlayer = undefined;
 		}
+		if (this.meta['replaydata']['playernames'] instanceof Array) {
+			this.meta['playernames'] = this.meta['replaydata']['playernames']
+		}
 		this.addMissingMetaData(highlightPlayer);
 	}
 }
