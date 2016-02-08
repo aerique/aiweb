@@ -10,10 +10,10 @@ Still under active development.
 
  - Run all of the following:
 
-   $ ./manage.py runserver
-   $ ./manage.py webserver_backend
-   $ ./manage.py run_matchmaker
-   $ ./manage.py run_worker
+   - $ ./manage.py runserver
+   - $ ./manage.py webserver_backend
+   - $ ./manage.py run_matchmaker
+   - $ ./manage.py run_worker
 
  - See the requirements of the Isolate submodule if you have trouble running games.
 
