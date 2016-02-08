@@ -99,12 +99,12 @@ def assign_tasks():
 #	for task in tasks:
 #		print("Task: " + task.split("/")[-1])
 	for file in glob.glob(config.task_worker_path + "worker-ready*"):
-		print ("considering task file: " + file)
+#		print ("considering task file: " + file)
 		ending = ".ready"
 		if (file.endswith(ending)):
 			real = file[:-len(ending)]
-			print(real)
 			if find_task(real):
+				print(real)
 				subprocess.call(["rm", file])
 				subprocess.call(["rm", real])
 	#print('tasks assigned')
@@ -134,7 +134,7 @@ def process_report(path, add_submission_report):
 
 
 def process_reports(add_submission_report):
-	print("processing reports")
+#	print("processing reports")
 	for file in glob.glob(config.webserver_results_path + "*-report.txt.ready"):
 		process_report(file, add_submission_report)
 
@@ -160,7 +160,7 @@ def add_submission_report(username, game, timestamp, prefix, status, language, c
 	subm.save()
 
 def process_match_results():
-	print("processing match results")
+#	print("processing match results")
 	for file in glob.glob(config.webserver_results_path + "*-match-result.txt.ready"):
 		process_match_result(file)
 	

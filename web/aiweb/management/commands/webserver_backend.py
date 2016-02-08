@@ -21,13 +21,13 @@ class Command(BaseCommand):
 
 			# Assign tasks
 			aiweb_tools.manager.manager.assign_tasks()
-			self.stdout.write(self.style.SUCCESS('Assigning tasks'))
+#			self.stdout.write(self.style.SUCCESS('Assigning tasks'))
 
 			# Process reports
 			aiweb_tools.manager.manager.process_reports(aiweb_tools.manager.manager.add_submission_report)
-			self.stdout.write(self.style.SUCCESS('Processed reports'))
+#			self.stdout.write(self.style.SUCCESS('Processed reports'))
 			aiweb_tools.manager.manager.process_match_results()
-			self.stdout.write(self.style.SUCCESS('Processed match results'))
+#			self.stdout.write(self.style.SUCCESS('Processed match results'))
 
 			time.sleep(config.sleeptime)
 

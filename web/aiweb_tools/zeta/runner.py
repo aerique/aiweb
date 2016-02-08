@@ -18,7 +18,7 @@ from .. import config
 class Runner(object):
 	"""Runs a bot"""
 	
-	def __init__(self, origin=None, use_working=True):
+	def __init__(self, origin=None, use_working=False):
 #		self.user = self.acquire_user()
 		self.origin = origin
 		self.process = None
@@ -29,23 +29,23 @@ class Runner(object):
 		self.working = origin
 	
 #	def create_working_dir(self):
-#		working = "$AICHALLENGE_PREFIX/var/lib/aichallenge/working/%s"
+#		working = config.runner_working + "%s"
 #		self.working = os.path.expandvars(working % self.user)
-#		old_umask = os.umask("07007")
+#		old_umask = os.umask(7007)
 #		shutil.copytree(self.origin, self.working, True)
 #		os.chown(self.working, -1, pwd.getpwnam(self.user).pw_gid)
-#		os.chmod(self.working, "0770")
+#		os.chmod(self.working, 770)
 #		os.umask(old_umask)
 	
-	def remove_working_dir(self):
-		if self.working != self.origin:
-			shutil.rmtree(self.working)
+#	def remove_working_dir(self):
+#		if self.working != self.origin:
+#			shutil.rmtree(self.working)
 	
 	def run(self, command, cwd="{working}", should_stop=True):
 		cwd = cwd.format(working=self.working, origin=self.origin)
 		if isinstance(command, str): command = shlex.split(command)
-#		command = ["sudo", "-Hnu", self.user, "--"] + command
-		command = [config.isolate_bin, "-t", str(self.time_limit_seconds), "--run" ] + command
+		command = ["sudo", "-Hnu", self.user, "--"] + command
+#		command = [config.isolate_bin, "-t", str(self.time_limit_seconds), "--run" ] + command
 		self.process = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, cwd=cwd)
 		time.sleep(0.3) # some initial setup time
 		if should_stop: self.send_signal(signal.SIGSTOP)
@@ -66,7 +66,7 @@ class Runner(object):
 	
 	def done(self):
 		"""done with the runner -- release the user and clear the work dir"""
-		self.remove_working_dir()
+#		self.remove_working_dir()
 #		self.release_user(self.user)
 	
 	def kill(self):
@@ -87,7 +87,7 @@ class Runner(object):
 	
 #	def acquire_user(self):
 #		"""find and lock a user for running untrusted code"""
-#		lock_dir = os.path.expandvars("$AICHALLENGE_PREFIX/var/run/aichallenge")
+#		lock_dir = os.path.expandvars(config.lock_dir)
 #		while True:
 #			for user in users():
 #				try:
@@ -96,9 +96,9 @@ class Runner(object):
 #					return user
 #				except OSError:
 #					pass
-			
+#       		
 #			time.sleep(5)
-	
+#       
 #	def release_user(self, user):
 #		"""release the lock on a runner user"""
 #		lock_dir = os.path.expandvars("$AICHALLENGE_PREFIX/var/run/aichallenge")
@@ -107,8 +107,8 @@ class Runner(object):
 #
 #def users():
 #	try:
-#		for n in xrange(100):
-#			user = 'aichallenge-run%d' % n
+#		for n in range(0, 100):
+#			user = '%s-run%d' % (config.runner_prefix, n)
 #			pwd.getpwnam(user)
 #			yield user
 #	except KeyError:

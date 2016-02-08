@@ -127,12 +127,12 @@ class Worker:
 	def send_compile_result(self, path, subm_id, game_id, submission):
 		runfile = path + "run_command"
 		if os.path.exists(runfile):	# make sure they don't put malicious commands in here, by deleting the file if it exists
-			subprocess.call("chmod", "u+rw", runfile)
+			subprocess.call(["chmod", "u+rw", runfile])
 			subprocess.call("rm", "-f", runfile)
 		with open(runfile, 'w') as fo:
 			fo.write(submission.get_command(config.worker_compiled + subm_id))
+		subprocess.call(["chmod", "u+r", runfile])
 		zipfile = path + subm_id + "-compiled.zip"
-		#subprocess.call(["ls", path])
 		subprocess.call(["zip", "-r", zipfile, path, "-i", path + "*"])
 		comms.send_file_datastore_ready(zipfile, config.datastore_submission_path)
 		reportfile = path + subm_id + "-report.txt" 

@@ -32,6 +32,7 @@ class Ants(games.Game):
 			'cutoff_percent': 0.85,
 			'cutoff_turn': 150,
 			'kill_points': 2,
+			'secure_jail' : True
 		}
 		self.players = players
 		self.player_names = player_names
