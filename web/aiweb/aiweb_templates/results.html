@@ -4,11 +4,26 @@ Results:
 </p>
 
 {% if results_list %}
-	<ul>
+	<table border="1">
+	<th>game</th>
+	<th>player_names</th>
+	<th>ranks</th>
+	<th>scores</th>
+	<th>statuses</th>
+	<th>game_message</th>
+	<th>replay</th>
 	{% for result in results_list %}
-		<li><a href="/aiweb/replay/{{ result.replay }}/">{{ result.replay }}</a></li>
+		<tr>
+		<td>{{result.gamename}}</td>
+		<td>{{result.player_names}}</td>
+		<td>{{result.ranks}}</td>
+		<td>{{result.scores}}</td>
+		<td>{{result.statuses}}</td>
+		<td>{{result.game_message}}</td>
+		<td><a href="/aiweb/replay/{{ result.replay }}/">{{ result.replay }}</a></td>
+		</tr>
 	{% endfor %}
-	</ul>
+	</table>
 {% else %}
 	<p>No results are available.</p>
 {% endif %}

@@ -184,6 +184,7 @@ def process_match_result(path):
 		else:
 			rank = ""
 		result = aiweb.models.Result.objects.create(
+			gamename = result_dict['challenge'],
 			player_names = " ".join(result_dict['playernames']),
 			scores = scores,
 			statuses = status,

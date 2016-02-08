@@ -1,5 +1,4 @@
-# FIXME before publication, change username
-username = "smiley"
+username = "aiweb"
 games_defunct = []
 games_active = ["Tron", "Ants"]
 

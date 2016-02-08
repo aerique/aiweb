@@ -12,8 +12,9 @@ class Submission(models.Model):
 	language = models.CharField (max_length = 32, default="?")
 	status = models.CharField (max_length = 32)
 	report = models.CharField (max_length = 5000)
-	
+
 class Result(models.Model):
+	gamename = models.CharField (max_length = 32, default="")
 	submissions = models.ManyToManyField(Submission)
 	player_names = models.CharField (max_length = 650)
 	scores = models.CharField (max_length = 100)
