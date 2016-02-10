@@ -10,7 +10,7 @@ short_messages = {
 	COMPILE_FAILED : "failed to compile.",
 	UNTESTED : "has not been tested.",
 	TEST_FAILED : "failed one or more test cases.",
-	READY : "is ready for battle!",
+	READY : "is ready for matches!",
 }
 
 vshort_messages = {
@@ -99,7 +99,10 @@ class Submission(object):
 	
 	def get_command(self, directory):
 		"""return the command needed to run the bot"""
-		return aiweb_tools.zeta.language.get_command(self, directory)
+		try:
+			return aiweb_tools.zeta.language.get_command(self, directory)
+		except ValueError as e:
+			return str(e)
 
 	def compile(self, max_time=300):
 		""" Determines which language this submission is coded in, and
@@ -128,3 +131,16 @@ class Submission(object):
 			if logger is not None:
 				logger.info('compiling %s' % self.directory)
 			return self.compile(max_time)
+
+	def set_test_status(self, passed, errors=""):
+		if passed:
+			self.status = READY
+		else: 
+			self.status = TEST_FAILED
+			self.compile_errors += "\n\nTest Message: " + errors
+
+	def is_ready(self):
+		return self.status == READY
+
+
+

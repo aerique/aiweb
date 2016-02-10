@@ -47,8 +47,9 @@ class Ants(games.Game):
 		game = ants.Ants(self.opts)
 		game_result = engine.run_game(game, self.players, self.opts)
 		game_result['playernames'] = self.player_names
-		game_result['replaydata']['playernames'] = self.player_names
-		game_result['replaydata']['user_ids'] = self.player_names
+		if 'replaydata' in game_result:
+			game_result['replaydata']['playernames'] = self.player_names
+			game_result['replaydata']['user_ids'] = self.player_names
 		print("Player names = " + str(self.player_names))
 		print(game_result)
 		return game_result

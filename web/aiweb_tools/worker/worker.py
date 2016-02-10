@@ -111,10 +111,32 @@ class Worker:
 			game_id = subm_data[1]
 			print("username" + username)
 			subm = aiweb_tools.zeta.submission.Submission(username, subm_id, target)
+			print("Compiling")
 			subm.compile()
+			print("Running functional test")
+			self.functional_test(game_id, subm)
 	#		subprocess.call(["rm", "-rf", target])
 			#print(subm.full_report())
 			self.send_compile_result(path, subm_id, game_id, subm)
+
+	def functional_test(self, gamename, submission):
+		""" Run a test game for submission to see if it crashes """
+		game_class = games.get_game(gamename)
+		players = [(submission.directory, submission.get_command(config.worker_compiled + submission.sub_id))] * 2
+		print(players)
+#		players = self.get_bot_commands([submission.sub_id, submission.sub_id])
+		game = game_class(None, players, [submission.username, submission.username])
+		result = game.run_game()
+		if 'status' in result:
+			if result['status'][0] in ('crashed', 'timeout', 'invalid'):
+				submission.set_test_status(False, result['status'][0] + "\n" + result['errors'][0])
+			else:
+				submission.set_test_status(True)
+		else:
+			print("status not in result:")
+			print (str(result))
+				
+		
 
 	def save_report(self, submission, path):
 		lang = ""
@@ -138,7 +160,8 @@ class Worker:
 		reportfile = path + subm_id + "-report.txt" 
 		self.save_report(submission, reportfile)
 		comms.send_file_webserver_ready(reportfile, config.webserver_results_path)
-		self.send_matchmaker_compile_info(path, submission.username, game_id, subm_id)
+		if (submission.is_ready()):
+			self.send_matchmaker_compile_info(path, submission.username, game_id, subm_id)
 
 	def send_matchmaker_compile_info(self, path, username, game_id, submission_id):
 		filepath = path + "compiled" + config.delimiter + submission_id

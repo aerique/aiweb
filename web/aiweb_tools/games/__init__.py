@@ -26,7 +26,7 @@ class Game:
 		self.teams = teams
 
 	def player_name(self, player):
-		return player.split('_')[0]
+		return player.split('_')[0] # .split(config.delimiter)[0] ?
 
 	def run_game(self):
 		return {}

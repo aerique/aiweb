@@ -557,7 +557,8 @@ class IsolatedHouse(House):
 		self.child_queue = Queue()
 		shell_command = shlex.split(shell_command.replace('\\','/'))
 #		shell_command = [config.isolate_bin, "--box", str(self.box_id), "-d", self.origin, "--run" ] + shell_command
-		shell_command = [config.isolate_bin, "--box", str(self.box_id), "-d", self.origin, "-d", config.bin_dir, "--env=HOME=" + self.working_directory, "--run" ] + shell_command
+#		shell_command = [config.isolate_bin, "--box", str(self.box_id), "-d", self.origin, "-d", config.bin_dir, -d config.java_dir, "--env=HOME=" + self.working_directory, "--run", "--" ] + shell_command
+		shell_command = [config.isolate_bin, "--box", str(self.box_id), "-d", self.origin, "-d", config.bin_dir, "--env=HOME=" + self.working_directory, "--run", "--" ] + shell_command
 		print(" ".join(shell_command))
 		try:
 			self.command_process = subprocess.Popen(shell_command,
