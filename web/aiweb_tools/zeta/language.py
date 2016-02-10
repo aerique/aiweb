@@ -13,6 +13,8 @@ import traceback
 
 from aiweb_tools.zeta.runner import Runner, TimeoutError
 
+from aiweb_tools import config
+
 SAFEPATH = re.compile('[a-zA-Z0-9_.$-]+$')
 
 BOT = "MyBot"
@@ -131,7 +133,7 @@ languages = {
 		"compile": [
 			System("gmcs -warn:0 -out:{bot}", sourceglobs=["*.cs"]),
 		],
-		"run": "mono {bot}.exe",
+		"run": config.bin_dir + "mono {bot}.exe",
 	},
 
 	"C++": {
@@ -146,13 +148,13 @@ languages = {
 
 	"Clojure": {
 		"main_ext": ".clj",
-		"run": "clojure {bot}.clj",
+		"run": config.bin_dir + "clojure {bot}.clj",
 		"disabled": True,
 	},
 
 	"CoffeeScript": {
 		"main_ext": ".coffee",
-		"run": "coffee {bot}.coffee",
+		"run": config.bin_dir + "coffee {bot}.coffee",
 	},
 
 	"Go": {
@@ -172,7 +174,7 @@ languages = {
 			System("groovyc", sourceglobs=["*.groovy"]),
 			System("jar cfe {bot}.jar {bot}", sourceglobs=["*.class"]),
 		],
-		"run": "java -cp {bot}.jar:/usr/share/groovy/"
+		"run": config.bin_dir + "java -cp {bot}.jar:/usr/share/groovy/"
 			   "embeddable/groovy-all-1.7.5.jar {bot}",
 	},
 
@@ -192,12 +194,12 @@ languages = {
 			System("javac", deepglobs=["*.java"]),
 			System("jar cfe {bot}.jar {bot}", deepglobs=["*.class"]),
 		],
-		"run": "java -jar {path}/{bot}.jar",
+		"run": config.bin_dir + "java -jar {path}/{bot}.jar",
 	},
 
 	"Javascript": {
 		"main_ext": ".js",
-		"run": "node {bot}.js",
+		"run": config.bin_dir + "node {bot}.js",
 	},
 
 	"Lisp": {
@@ -213,7 +215,7 @@ languages = {
 
 	"Lua": {
 		"main_ext": ".lua",
-		"run": "lua {bot}.lua",
+		"run": config.bin_dir + "lua {bot}.lua",
 		"disabled": True,
 	},
 
@@ -229,29 +231,29 @@ languages = {
 
 	"Perl": {
 		"main_ext": ".pl",
-		"run": "perl {bot}.pl",
+		"run": config.bin_dir + "perl {bot}.pl",
 	},
 
 	"PHP": {
 		"main_ext": ".php",
-		"run": "php {bot}.pl",
+		"run": config.bin_dir + "php {bot}.pl",
 	},
 
 	"Python": {
 		"main_ext": ".py",
 		"nuke_globs": ["*.pyc"],
-		"run": "python2 {path}/{bot}.py",
+		"run": config.bin_dir + "python2 {path}/{bot}.py",
 	},
 
 	"Python3": {
 		"main_ext": ".py3",
 		"nuke_globs": ["*.pyc"],
-		"run": "python {path}/{bot}.py3",
+		"run": config.bin_dir + "python {path}/{bot}.py3",
 	},
 
 	"Ruby": {
 		"main_ext": ".rb",
-		"run": "ruby1.9.1 {bot}.rb",
+		"run": config.bin_dir + "ruby {bot}.rb",
 	},
 
 	"Scala": {
@@ -262,13 +264,13 @@ languages = {
 			System("scalac", sourceglobs=["*.scala"]),
 		],
 		# needs the classname, not the name of the file
-		"run": "scala {bot}",
+		"run": config.bin_dir + "scala {bot}",
 	},
 
 	"Scheme": {
 		"main_ext": ".ss",
 		# This is highly dependent on which Scheme interpreter is used.
-		"run": "scheme {bot}.ss",
+		"run": config.bin_dir + "scheme {bot}.ss",
 		"disabled": True,
 	},
 }
