@@ -186,8 +186,8 @@ def process_match_result(path):
 		errors = []
 		if 'errors' in result_dict:
 			for error in result_dict['errors']:
-				err_obj = aiweb.models.Error.objects.create(text = error) 
-				errors.append[err_obj]
+				err_obj = aiweb.models.BotError.objects.create(text = error) 
+				errors.append(err_obj)
 		result = aiweb.models.Result.objects.create(
 			gamename = result_dict['challenge'],
 			player_names = " ".join(result_dict['playernames']),
@@ -197,7 +197,8 @@ def process_match_result(path):
 			game_message = "",
 			replay = replay_path.split("/")[-1])
 		for error in errors:
-			result.errors.add(error)
+			error.save()
+			result.bot_errors.add(error)
 		result.save()
 
 		if 'replaydata' in result_dict:
