@@ -13,6 +13,9 @@ class Submission(models.Model):
 	status = models.CharField (max_length = 32)
 	report = models.CharField (max_length = 5000)
 
+class BotError(models.Model):
+	text = models.CharField (max_length = 5000)
+
 class Result(models.Model):
 	gamename = models.CharField (max_length = 32, default="")
 	submissions = models.ManyToManyField(Submission)
@@ -22,7 +25,7 @@ class Result(models.Model):
 	ranks = models.CharField (max_length = 100)
 	game_message = models.CharField (max_length = 100)
 	replay = models.CharField (max_length = 100)
-
+	bot_errors = models.ManyToManyField(BotError)
 
 # This is for use by the matchmaking server with a separate DB
 class Bot(models.Model):

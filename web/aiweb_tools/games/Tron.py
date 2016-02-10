@@ -23,7 +23,8 @@ class Tron(games.Game):
 			'cutoff_percent': 0.85,
 			'cutoff_turn': 150,
 			'kill_points': 2,
-			'secure_jail' : True
+			'secure_jail' : True,
+			'capture_errors' : True,
 		}
 		self.players = players
 		self.player_names = player_names
