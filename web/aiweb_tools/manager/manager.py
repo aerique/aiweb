@@ -198,6 +198,7 @@ def process_match_result(path):
 			replay = replay_path.split("/")[-1])
 		for error in errors:
 			error.save()
+			print(error.text)
 			result.bot_errors.add(error)
 		result.save()
 

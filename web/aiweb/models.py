@@ -26,6 +26,8 @@ class Result(models.Model):
 	game_message = models.CharField (max_length = 100)
 	replay = models.CharField (max_length = 100)
 	bot_errors = models.ManyToManyField(BotError)
+	def statuses_as_list(self):
+		return self.statuses.split(' ')
 
 # This is for use by the matchmaking server with a separate DB
 class Bot(models.Model):

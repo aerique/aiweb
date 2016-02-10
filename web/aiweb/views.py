@@ -69,11 +69,13 @@ def profile(request, status="normal"):
 		count_from = max(0, results_count - results_limit)
 		results = reversed(results.order_by('id')[count_from:])
 		c = {'form': form, 
-			 'user': request.user, 
-			 'upload_success': upload_success,
-			 'submissions': submissions,
-			 'results_list': results
-		 }
+			'user': request.user, 
+			'upload_success': upload_success,
+			'submissions': submissions,
+			'results_list': results}
+#		for result in results:
+#			for error in result.bot_errors.all():
+#				print(error.text)
 		c.update(csrf(request))
 		return render_to_response('aiweb_templates/profile.html', c)
 

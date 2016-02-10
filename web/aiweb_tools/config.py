@@ -30,6 +30,7 @@ worker_compiled = prefix + "compiled/"
 runner_working = prefix + "runner/"
 runner_prefix = "aiweb"
 lock_dir = prefix + "lock/"
+bin_dir = "/usr/bin/"
 
 sleeptime = 0.5
 delimiter = "____" # FIXME filter for this in usernames!

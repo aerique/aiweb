@@ -18,7 +18,23 @@ Results:
 		<td>{{result.player_names}}</td>
 		<td>{{result.ranks}}</td>
 		<td>{{result.scores}}</td>
-		<td>{{result.statuses}}</td>
+		<td>
+			<p>
+			{{result.statuses}}
+			</p>
+			{% for error in result.bot_errors.all %}
+				<p><pre>{{error.text}}</pre></p>
+			{% endfor %}
+		<!--
+		{% for status in result.statuses_as_list %}
+			{% with forloop.counter0 as count_err %}
+			{% with error=result.bot_errors.all.count_err %}
+				<p>{{status}}: {{error.text}}</p>
+			{% endwith %}
+			{% endwith %}
+		{% endfor %}
+		-->
+		</td>
 		<td>{{result.game_message}}</td>
 		<td><a href="/aiweb/replay/{{ result.replay }}/">{{ result.replay }}</a></td>
 		</tr>
