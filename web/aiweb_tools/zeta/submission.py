@@ -137,10 +137,13 @@ class Submission(object):
 			self.status = READY
 		else: 
 			self.status = TEST_FAILED
-			self.compile_errors += "\n\nTest Message: " + errors
+			self.test_results += "\n" + errors
 
 	def is_ready(self):
 		return self.status == READY
+
+	def compile_success(self):
+		return self.status == READY or self.status == UNTESTED
 
 
 

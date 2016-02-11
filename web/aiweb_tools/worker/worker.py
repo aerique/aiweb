@@ -114,7 +114,8 @@ class Worker:
 			print("Compiling")
 			subm.compile()
 			print("Running functional test")
-			self.functional_test(game_id, subm)
+			if subm.compile_success():
+				self.functional_test(game_id, subm)
 	#		subprocess.call(["rm", "-rf", target])
 			#print(subm.full_report())
 			self.send_compile_result(path, subm_id, game_id, subm)

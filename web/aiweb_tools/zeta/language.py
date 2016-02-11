@@ -187,15 +187,37 @@ languages = {
 	},
 
 	"Java": {
-		"main_ext": ".java",
-		"output_ext": ".jar",
-		"nuke_globs": ["*.class", "*.jar"],
+		"main_ext": [".java"],
+		"nuke_globs": ["*.class", BOT],
 		"compile": [
-			System("javac", deepglobs=["*.java"]),
-			System("jar cfe {bot}.jar {bot}", deepglobs=["*.class"]),
+			System("gcj -O3 -C {file}",
+				   sourceglobs=["*.java"]),
+			System("gcj -O2 -lm --main={bot} -o {bot}", sourceglobs=["*.class"]),
 		],
-		"run": config.bin_dir + "java -jar {path}/{bot}.jar",
 	},
+
+#	"Java": {
+#		"main_ext": ".java",
+##		"output_ext": ".jar",
+#		"nuke_globs": ["*.class", "*.jar"],
+#		"compile": [
+##			System("javac", deepglobs=["*.java"]),
+##			System("jar cfe {bot}.jar {bot}", deepglobs=["*.class"]),
+#			System("gcj --main={bot} -o {path}/{bot} {path}/*.java")
+#		],
+##		"run": config.bin_dir + "java -jar {path}/{bot}.jar",
+#	},
+
+#	"Java": {
+#		"main_ext": ".java",
+#		"output_ext": ".jar",
+#		"nuke_globs": ["*.class", "*.jar"],
+#		"compile": [
+#			System("javac", deepglobs=["*.java"]),
+#			System("jar cfe {bot}.jar {bot}", deepglobs=["*.class"]),
+#		],
+#		"run": config.bin_dir + "java -jar {path}/{bot}.jar",
+#	},
 
 	"Javascript": {
 		"main_ext": ".js",
