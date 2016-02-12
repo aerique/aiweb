@@ -126,10 +126,13 @@ class Matchmaker:
 		# Later change this so the game chooses the map
 		map_path = config.map_path + gamename + "/"
 		print(map_path)
-		maps = glob.glob(map_path + "*_p%02d_*.map".format(num_bots))
+		maps = glob.glob(map_path + "*_p%02d_*.map"%(num_bots,))
+		print(str(maps))
 		if len(maps) < 1:
 			maps = glob.glob(map_path + "*.map".format(num_bots))
 			if len(maps) < 1:
 				raise FileNotFoundError("No maps for " + str(num_bots) + " bots playing " + gamename)
+			else:
+				return random.choice(maps)
 		else:
 			return random.choice(maps)

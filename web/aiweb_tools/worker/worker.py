@@ -203,7 +203,7 @@ class Worker:
 		players = self.get_bot_commands(match.bots)
 		player_names = [self.get_player_name(player) for player in match.bots]
 		game_class = games.get_game(match.gamename)
-		game = game_class(None, players, player_names)
+		game = game_class(None, players, player_names, match.map_file)
 		result = game.run_game()
 		comms.send_result(match, result)
 

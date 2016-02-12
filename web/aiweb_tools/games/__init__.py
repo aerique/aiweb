@@ -16,13 +16,15 @@ class Game:
 	teams = []
 	players = []
 	player_names = []
+	map_path = ""
 	opts = {}
 
 
-	def __init__(self, opts, players, player_names, teams=[]):
+	def __init__(self, opts, players, player_names, map_path="", teams=[]):
 		self.opts = opts
 		self.players = players
 		self.player_names = player_names
+		self.map_path = map_path
 		self.teams = teams
 
 	def player_name(self, player):

@@ -165,6 +165,7 @@ def process_match_results():
 		process_match_result(file)
 	
 def process_match_result(path):
+	""" Read match result from path and save new result object to db """
 	real = path[:-len('.ready')]
 	print("processing match result: " + real)
 	with open(real, 'rb') as fo:
@@ -188,19 +189,23 @@ def process_match_result(path):
 			for error in result_dict['errors']:
 				err_obj = aiweb.models.BotError.objects.create(text = error) 
 				errors.append(err_obj)
-		result = aiweb.models.Result.objects.create(
-			gamename = result_dict['challenge'],
-			player_names = " ".join(result_dict['playernames']),
-			scores = scores,
-			statuses = status,
-			ranks = rank,
-			game_message = "",
-			replay = replay_path.split("/")[-1])
-		for error in errors:
-			error.save()
-			print(error.text)
-			result.bot_errors.add(error)
-		result.save()
+		if 'challenge' in result_dict:
+			result = aiweb.models.Result.objects.create(
+				gamename = result_dict['challenge'],
+				player_names = " ".join(result_dict['playernames']),
+				scores = scores,
+				statuses = status,
+				ranks = rank,
+				game_message = "",
+				replay = replay_path.split("/")[-1])
+			for error in errors:
+				error.save()
+				print(error.text)
+				result.bot_errors.add(error)
+			result.save()
+		else:
+			# FIXME logging
+			print("Error: 'challenge' not found in result_dict:\n" + str(result_dict))
 
 		if 'replaydata' in result_dict:
 			replay = result_dict['replaydata']
