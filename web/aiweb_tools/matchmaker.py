@@ -77,29 +77,33 @@ class Matchmaker:
 		#aiweb_tools.comms.send_file_taskserver_ready(workerfile, config.task_worker_path)
 
 	def make_match(self):
+		""" Select game, players and map and return Match object """
 		games = config.games_active
 		gamename = random.choice(games)
 		print("chosen " + gamename)
 		bots = aiweb.models.Bot.objects.using('matchmaker').filter(game_id = gamename).order_by('selection_weight')
 		#bots = aiweb.models.Bot.objects.using('matchmaker').all()
-		num_bots = bots.count()
+		total_num_bots = bots.count()
 
 		game = aiweb_tools.games.get_game(gamename)
 
 		print ("Need: " + str(game.min_players))
-		print ("Have: " + str(num_bots))
+		print ("Have: " + str(total_num_bots))
 
-		if num_bots < game.min_players:
+		if total_num_bots < game.min_players:
 			print ("Not enough bots to play " + gamename)
 			print ("Need: " + str(game.min_players))
-			print ("Have: " + str(num_bots))
+			print ("Have: " + str(total_num_bots))
 			raise AssertionError("Not enough bots to play " + gamename)
 		else:
-			selected = self.select_random_players(game.min_players, num_bots)
+			# Later change this so the game chooses, in case it wants teams
+			bots_to_select = random.randint(game.min_players, min(game.max_players, total_num_bots))
+			selected = self.select_random_players(bots_to_select, total_num_bots)
 			print(selected)
 			print(str(len(selected)))
 			match = aiweb_tools.match.Match()
 			match.gamename = gamename
+			match.map_file = self.select_map(gamename, bots_to_select)
 			for i in selected:
 				match.add_bot(bots[i].submission_id)
 				print(bots[i].username)
@@ -116,3 +120,16 @@ class Matchmaker:
 			else:
 				result.append(selected)
 		return result
+
+	def select_map(self, gamename, num_bots):
+		""" Select a map for num_bots playing gamename """ 
+		# Later change this so the game chooses the map
+		map_path = config.map_path + gamename + "/"
+		print(map_path)
+		maps = glob.glob(map_path + "*_p%02d_*.map".format(num_bots))
+		if len(maps) < 1:
+			maps = glob.glob(map_path + "*.map".format(num_bots))
+			if len(maps) < 1:
+				raise FileNotFoundError("No maps for " + str(num_bots) + " bots playing " + gamename)
+		else:
+			return random.choice(maps)
