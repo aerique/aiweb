@@ -25,6 +25,8 @@ matchmaker_port = 22
 matchmaker_username = username
 matchmaker_path = prefix + "matchmaker/"
 
+map_path = prefix + "maps/" # maps stored on matchmaker server
+
 isolate_bin = prefix + "isolate/isolate"
 worker_compiled = prefix + "compiled/"
 runner_working = prefix + "runner/"

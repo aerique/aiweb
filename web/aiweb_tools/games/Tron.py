@@ -21,7 +21,6 @@ class Tron(games.Game):
 			self.map_path = map_path
 			turns = 1000
 		self.opts = {
-			## ants/engine opts:  (see http://aichallenge.org/game_settings.php)
 			'turns':turns,	
 			'loadtime': 5000,
 			'turntime': 500,
