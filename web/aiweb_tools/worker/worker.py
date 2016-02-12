@@ -180,7 +180,7 @@ class Worker:
 
 		zipfile = bot + "-compiled.zip"
 		comms.get_submission(zipfile)
-		subprocess.call(["unzip", config.datastore_submission_path + zipfile, "-d", path])
+		subprocess.call(["unzip", "-j", "-o", config.datastore_submission_path + zipfile, "-d", path])
 
 	def get_bot_command(self, bot):
 		print(bot)
