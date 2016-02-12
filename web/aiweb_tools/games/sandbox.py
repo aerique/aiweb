@@ -617,7 +617,7 @@ class IsolatedHouse(House):
 					print(lockfile)
 					print(str(e))
 					test += 1
-					sleep(config.sleeptime)
+					time.sleep(config.sleeptime)
 		return result
 
 

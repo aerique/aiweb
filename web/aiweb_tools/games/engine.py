@@ -145,10 +145,15 @@ def run_game(game, botcmds, options):
             else:
                 time_limit = turntime
 
-            if options.get('serial', False):
-                simul_num = int(options['serial']) # int(True) is 1
+            if 'parallel' in options:
+                simul_num = int(options['parallel'])
             else:
-                simul_num = len(bots)
+                simul_num = 1
+	    	
+            #if options.get('serial', False):
+                #simul_num = int(options['serial']) # int(True) is 1
+            #else:
+                #simul_num = len(bots)
 
             bot_moves = [[] for b in bots]
             error_lines = [[] for b in bots]
