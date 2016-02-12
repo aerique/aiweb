@@ -27,7 +27,7 @@ matchmaker_path = prefix + "matchmaker/"
 
 map_path = prefix + "maps/" # maps stored on matchmaker server
 
-isolate_bin = prefix + "isolate/isolate"
+isolate_bin = prefix + "web/aiweb_tools/isolate/isolate"
 worker_compiled = prefix + "compiled/"
 runner_working = prefix + "runner/"
 runner_prefix = "aiweb"
