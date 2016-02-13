@@ -407,11 +407,14 @@ class House:
 		"""
 		if self.is_alive:
 			try:
-				self.command_process.kill()
+				self.command_process.terminate()
+	#			time.sleep(3)
+	#			self.command_process.kill()
 			except OSError:
 				pass
 			self.command_process.wait()
 			self.child_queue.put(None)
+		print("Alive status after IsolatedHouse.kill(): " + str(self.is_alive))
 
 	def retrieve(self):
 		"""Copy the working directory back out of the sandbox."""
