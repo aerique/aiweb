@@ -142,6 +142,9 @@ def process_reports(add_submission_report):
 def add_submission_report(username, game, timestamp, prefix, status, language, content):
 	subm_list = aiweb.models.Submission.objects.filter(username=username, game_id = game, timestamp = timestamp, submission_id = prefix)
 	if len(subm_list) < 1:
+		active = False
+		if (status == "Ready"):
+			active = True
 		subm = aiweb.models.Submission.objects.create(
 			user = aiweb.models.User.objects.get(username=username),
 			username = username,
@@ -150,7 +153,8 @@ def add_submission_report(username, game, timestamp, prefix, status, language, c
 			submission_id = prefix,
 			status = status,
 			language = language,
-			report = content)
+			report = content,
+			active = active)
 	else:
 		subm = subm_list[0]
 		subm.status = status
@@ -189,7 +193,7 @@ def process_match_result(path):
 			for error in result_dict['errors']:
 				err_obj = aiweb.models.BotError.objects.create(text = error) 
 				errors.append(err_obj)
-		if 'challenge' in result_dict:
+		if 'challenge' in result_dict:			
 			result = aiweb.models.Result.objects.create(
 				gamename = result_dict['challenge'],
 				player_names = " ".join(result_dict['playernames']),
@@ -198,6 +202,14 @@ def process_match_result(path):
 				ranks = rank,
 				game_message = "",
 				replay = replay_path.split("/")[-1])
+			if 'bot_ids' in result_dict:
+				for bot_id in result_dict['bot_ids']:
+					try:
+						submission = aiweb.models.Submission.objects.get(submission_id = bot_id)
+						result.submissions.add(submission)
+					except KeyError:
+						# FIXME logging
+						pass
 			for error in errors:
 				error.save()
 				print(error.text)

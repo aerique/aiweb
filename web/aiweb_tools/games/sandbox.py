@@ -409,8 +409,8 @@ class House:
 			try:
 				self.command_process.terminate()
 				# using .kill() on the Isolate sandbox directly sometimes results in a zombie process which requires superuser privileges to kill
-	#			time.sleep(3)
-	#			self.command_process.kill()
+				time.sleep(3)
+				self.command_process.kill()
 			except OSError:
 				pass
 			self.command_process.wait()
