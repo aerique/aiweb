@@ -12,6 +12,10 @@ class Submission(models.Model):
 	language = models.CharField (max_length = 32, default="?")
 	status = models.CharField (max_length = 32)
 	report = models.CharField (max_length = 5000)
+	skill = models.FloatField (default = 20.0)
+	mu = models.FloatField (default = 50.0)
+	sigma = models.FloatField (default = 10.0)
+
 
 class BotError(models.Model):
 	text = models.CharField (max_length = 5000)
