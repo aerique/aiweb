@@ -25,6 +25,7 @@ Results:
 			{% for error in result.bot_errors.all %}
 				<p><pre>{{error.text}}</pre></p>
 			{% endfor %}
+			<p> {{result.errors}} </p>
 		<!--
 		{% for status in result.statuses_as_list %}
 			{% with forloop.counter0 as count_err %}
