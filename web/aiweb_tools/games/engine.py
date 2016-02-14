@@ -332,7 +332,7 @@ def run_game(game, botcmds, options):
 		# This ugly hack should be replaced with a better way
 		# of communicating the bot IDs to the report processor
 		bot_ids = [cmd[-1].split('/')[-2] for cmd in botcmds]
-		game_result['replaydata']['bot_ids'] = bot_ids
+		game_result['bot_ids'] = bot_ids
 
 		if capture_errors:
 			game_result['errors'] = [head.headtail() for head in error_logs]

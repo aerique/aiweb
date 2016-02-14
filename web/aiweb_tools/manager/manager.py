@@ -4,6 +4,7 @@ import datetime
 import glob
 import cloudpickle 
 import json
+import skills
 
 import sys
 from django.core.management.base import BaseCommand
@@ -203,13 +204,20 @@ def process_match_result(path):
 				game_message = "",
 				replay = replay_path.split("/")[-1])
 			if 'bot_ids' in result_dict:
+				submissions = []
 				for bot_id in result_dict['bot_ids']:
 					try:
 						submission = aiweb.models.Submission.objects.get(submission_id = bot_id)
 						result.submissions.add(submission)
+						submissions.append(submission)
 					except KeyError:
 						# FIXME logging
 						pass
+				if len(submissions) == len(result_dict['rank']):
+					update_ranks(submissions, result_dict['rank'])
+				else:
+					# FIXME logging
+					print("num submissions and num ranks differ!")
 			for error in errors:
 				error.save()
 				print(error.text)
@@ -228,4 +236,7 @@ def process_match_result(path):
 	subprocess.call(["rm", real])
 	subprocess.call(["rm", path])
 	
-
+def update_ranks(submissions, ranks):
+	print("update_ranks called")
+	print([submission.submission_id for submission in submissions])
+	print(ranks)
