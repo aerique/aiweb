@@ -13,6 +13,7 @@ import aiweb.models
 
 import aiweb_tools.comms
 import aiweb_tools.manager.manager
+from aiweb_tools import config
 
 #import imp
 
@@ -87,6 +88,7 @@ def replay(request, id="none"):
 			'replaydata': replaydata,
 		}
 		print(replaydata)
+		# refactor :)
 		if 'gamename' in replay:
 			if replay['gamename'].lower() == "ants":
 				return render_to_response('aiweb_templates/ants_visualizer.html', context)
@@ -98,3 +100,10 @@ def replay(request, id="none"):
 			return render_to_response('aiweb_templates/ants_visualizer.html', context)
 
 
+def rank(request, gamename=config.games_active[0]):
+	context={'gamename':gamename}
+	q1 = aiweb.models.Submission.objects.filter(game_id=gamename).order_by('skill')
+	limit = q1.count()
+	ranks = q1[max(0, limit - 100):].all().reverse()
+	context['ranks'] = ranks
+	return render_to_response('aiweb_templates/rank.html', context)

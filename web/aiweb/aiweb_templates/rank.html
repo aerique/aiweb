@@ -1,0 +1,20 @@
+
+<p> Leaderboard </p>
+<table>
+<tr>
+{% for player in ranks %}
+<td>
+{{ forloop.counter }}
+</td>
+<td>
+{{ player.username }}
+</td>
+<td>
+{{ player.skill }}
+</td>
+<td>
+{{ player.submission_id }}
+</td>
+</tr>
+{% endfor %}
+</table>

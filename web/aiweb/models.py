@@ -15,6 +15,7 @@ class Submission(models.Model):
 	skill = models.FloatField (default = 20.0)
 	mu = models.FloatField (default = 50.0)
 	sigma = models.FloatField (default = 10.0)
+	games_played = models.IntegerField (default = 0)
 	active = models.BooleanField (default = False)
 
 

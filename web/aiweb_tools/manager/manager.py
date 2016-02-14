@@ -254,6 +254,7 @@ def update_ranks(submissions, ranks):
 			submission = next(i for i in submissions if i.submission_id == player.player_id)
 			submission.mu = team[player].mean
 			submission.sigma = team[player].stdev
+			submission.skill = submission.mu - 3 * submission.sigma
 			submission.save()
 			print(str(player) + "\n")
 			print(str(team[player]) + "\n\n")
