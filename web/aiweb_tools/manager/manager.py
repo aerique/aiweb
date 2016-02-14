@@ -5,6 +5,7 @@ import glob
 import cloudpickle 
 import json
 import skills
+import skills.trueskill
 
 import sys
 from django.core.management.base import BaseCommand
@@ -240,3 +241,21 @@ def update_ranks(submissions, ranks):
 	print("update_ranks called")
 	print([submission.submission_id for submission in submissions])
 	print(ranks)
+	#players = [skills.Player(submission.submission_id) for submission in submissions]
+#	teams = [skills.Team({skills.Player(submission.submission_id): (submission.mu, submission.sigma)}) for submission in submissions]
+	teams = [skills.Team({submission.submission_id: skills.GaussianRating(submission.mu, submission.sigma)}) for submission in submissions]
+	match = skills.Match(teams, ranks)
+	calc = skills.trueskill.FactorGraphTrueSkillCalculator()
+	game_info = skills.trueskill.TrueSkillGameInfo()
+	updated = calc.new_ratings(match, game_info)
+	print("Updated:")
+	for team in updated:
+		for player in team.keys():
+			submission = next(i for i in submissions if i.submission_id == player.player_id)
+			submission.mu = team[player].mean
+			submission.sigma = team[player].stdev
+			submission.save()
+			print(str(player) + "\n")
+			print(str(team[player]) + "\n\n")
+
+
