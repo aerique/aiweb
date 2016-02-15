@@ -24,8 +24,13 @@ from aiweb_tools import config
 
 
 def index(request):
-	msg = "<p> <a href='/accounts/login'> Login </a> </p> <p> <a href='/accounts/register'> Register </a> </p>"
-	return HttpResponse(msg)
+	results = get_results(None, 25)
+	c = {'results_list' : results,
+		'user': request.user, 
+	}
+	return render_to_response('aiweb_templates/index.html', c)
+#	msg = "<p> <a href='/accounts/login'> Login </a> </p> <p> <a href='/accounts/register'> Register </a> </p>"
+#	return HttpResponse(msg)
 
 class UploadFileForm(forms.Form):
 	file  = forms.FileField()
@@ -42,6 +47,17 @@ def handle_uploaded_file(ffile, user):
 			destination.close()
 	aiweb_tools.manager.manager.handle_submission(os.path.abspath(filepath), user.username) # ,gamename
 #	aiweb_tools.manager.manager.assign_tasks()
+
+def get_results(username, limit):
+	if username:
+		results = aiweb.models.Result.objects.filter(player_names__contains=username).all()
+	else:
+		results = aiweb.models.Result.objects.all()
+	results_count = results.count()
+	results_limit = limit
+	count_from = max(0, results_count - results_limit)
+	results = reversed(results.order_by('id')[count_from:])
+	return results
 
 def profile(request, status="normal"):
 	if request.method == 'POST':
@@ -64,11 +80,12 @@ def profile(request, status="normal"):
 		subm_limit = 5
 		count_from = max(0, subm_count - subm_limit)
 		submissions = reversed(submissions.order_by('timestamp')[count_from:])
-		results = aiweb.models.Result.objects.all()
-		results_count = results.count()
-		results_limit = 25
-		count_from = max(0, results_count - results_limit)
-		results = reversed(results.order_by('id')[count_from:])
+#		results = aiweb.models.Result.objects.all()
+#		results_count = results.count()
+#		results_limit = 25
+#		count_from = max(0, results_count - results_limit)
+#		results = reversed(results.order_by('id')[count_from:])
+		results = get_results(request.user.username, 25)
 		c = {'form': form, 
 			'user': request.user, 
 			'upload_success': upload_success,

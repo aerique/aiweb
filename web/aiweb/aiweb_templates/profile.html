@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "aiweb_templates/base.html" %}
 {% load i18n %}
 
 {% block content %}
@@ -17,6 +17,13 @@
         {% include "aiweb_templates/upload.html" %}
     {% endwith %}
 
+<p>
+Results:
+</p>
+  {% with limit=5 %}
+  	{% include "aiweb_templates/results.html" %}
+  {% endwith %}
+
     {% with template_name='submissions.html' %}
         {% include "aiweb_templates/"|add:template_name %}
     {% endwith %}
@@ -31,9 +38,6 @@
 </form>
 -->
 
-  {% with limit=5 %}
-  	{% include "aiweb_templates/results.html" %}
-  {% endwith %}
 
 </center>
 

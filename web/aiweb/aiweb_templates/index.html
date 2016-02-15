@@ -1,0 +1,13 @@
+{% extends "aiweb_templates/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1> Welcome to AI web </h1>
+<p>
+Recent results:
+</p>
+  {% with limit=5 %}
+  	{% include "aiweb_templates/results.html" %}
+  {% endwith %}
+{% endblock %}
+

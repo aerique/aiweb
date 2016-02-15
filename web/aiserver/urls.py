@@ -25,6 +25,7 @@ from . import views
 urlpatterns = [
     url(r'^aiweb/', include('aiweb.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^accounts/register/complete', views.profile, name='profile'),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^accounts/profile', views.profile, name='profile'),
     
