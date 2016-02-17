@@ -34,27 +34,27 @@ def send_file_ready(filepath, remote, port, dest):
 	subprocess.call(["rm", filepath + ".ready"])
 
 def send_file_datastore_ready(filepath, target):
-	remote = config.datastore_username + "@" + config.datastore_ip + "://"  
+	remote = config.username + "@" + config.datastore_ip + "://"  
 	port = config.datastore_port
 	send_file_ready(filepath, remote, port, target)
 
 def send_file_webserver_ready(filepath, target):
-	remote = config.webserver_username + "@" + config.webserver_ip + "://"  
+	remote = config.username + "@" + config.webserver_ip + "://"  
 	port = config.webserver_port
 	send_file_ready(filepath, remote, port, target)
 
 def send_file_matchmaker_ready(filepath, target):
-	remote = config.matchmaker_username + "@" + config.matchmaker_ip + "://"
+	remote = config.username + "@" + config.matchmaker_ip + "://"
 	port = config.matchmaker_port
 	send_file_ready(filepath, remote, port, target)
 
 def send_file_taskserver_ready(filepath, target):
-	remote = config.task_username + "@" + config.task_ip + "://"  
+	remote = config.username + "@" + config.task_ip + "://"  
 	port = config.task_port
 	send_file_ready(filepath, remote, port, target)
 
 def send_task_worker_ip(filepath, ip_addr):
-	remote = config.task_username + "@" + ip_addr + "://"  
+	remote = config.username + "@" + ip_addr + "://"  
 	port = config.task_port
 	dest = config.task_worker_path
 	send_file_ready(filepath, remote, port, dest)
@@ -77,14 +77,14 @@ def have_submission(filename):
 	return os.path.exists(config.datastore_submission_path)
 
 def get_submission_from_filename(filename):
-	remote = config.datastore_username + "@" + config.datastore_ip + "://"
+	remote = config.username + "@" + config.datastore_ip + "://"
 	port = config.datastore_port
 	remotepath = config.datastore_submission_path + filename
 	targetpath = config.datastore_submission_path
 	get_file(remote, port, remotepath, targetpath)
 	
 def get_submission(filepath):
-	remote = config.datastore_username + "@" + config.datastore_ip + "://"
+	remote = config.username + "@" + config.datastore_ip + "://"
 	get_file(remote, config.datastore_port, filepath, filepath)
 
 def load_replaydata(id):
@@ -116,7 +116,7 @@ def get_replay_id():
 	return this_id
 
 def send_submission (filepath, destname):
-	remote = config.datastore_username + "@" + config.datastore_ip + "://"
+	remote = config.username + "@" + config.datastore_ip + "://"
 	port = config.datastore_port
 	send_file(filepath, remote, port, destname)
 	subprocess.call(["rm", filepath]);
@@ -126,7 +126,7 @@ def add_task(ip_addr, prefix, file_content):
 	f = open(srcname, 'w')
 	f.write(file_content)
 	f.close()
-	remote = config.task_username + "@" + ip_addr + "://"  
+	remote = config.username + "@" + ip_addr + "://"  
 	port = config.task_port
 	dest = config.task_path
 	send_file(srcname, remote, port, dest)
