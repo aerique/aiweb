@@ -33,17 +33,19 @@ class Worker:
 		f = open(srcname, 'w')
 		f.write(self.task_request_content())
 		f.close()
-		subprocess.call(["scp", srcname, config.task_username + "@" + 
-			config.task_ip + "://" +
-			config.task_worker_path ]);
-		ready_filename = srcname + ".ready"
+		comms.send_task_worker_ip (srcname, config.task_ip)
 
-		subprocess.call(["touch", ready_filename])
-		subprocess.call(["scp", ready_filename, config.task_username 
-			+ "@" + config.task_ip + "://" +
-			config.task_worker_path ])
+#		subprocess.call(["scp", srcname, config.task_username + "@" + 
+#			config.task_ip + "://" +
+#			config.task_worker_path ]);
+#		ready_filename = srcname + ".ready"
+#
+#		subprocess.call(["touch", ready_filename])
+#		subprocess.call(["scp", ready_filename, config.task_username 
+#			+ "@" + config.task_ip + "://" +
+#			config.task_worker_path ])
 		subprocess.call(["rm", srcname])
-		subprocess.call(["rm", ready_filename])
+#		subprocess.call(["rm", ready_filename])
 		
 
 	def await_task(self):
