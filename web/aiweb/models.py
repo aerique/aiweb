@@ -34,6 +34,12 @@ class Result(models.Model):
 	bot_errors = models.ManyToManyField(BotError)
 	def statuses_as_list(self):
 		return self.statuses.split(' ')
+	def player_names_as_list(self):
+		return self.player_names.split(' ')
+	def player_name(self, n):
+		return self.player_names_as_list()[n]
+	def ranks_as_list(self):
+		return self.ranks.split(' ')
 
 # This is for use by the matchmaking server with a separate DB
 class Bot(models.Model):

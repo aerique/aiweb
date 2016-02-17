@@ -25,7 +25,7 @@ from aiweb_tools import config
 
 
 def index(request):
-	results = get_results(None, 25)
+	results = get_results(request, None, 25)
 	c = {'results_list' : results,
 		'user': request.user, 
 		'games': config.games_active,
@@ -50,7 +50,30 @@ def handle_uploaded_file(ffile, user):
 	aiweb_tools.manager.handle_submission(os.path.abspath(filepath), user.username) # ,gamename
 #	aiweb_tools.manager.manager.assign_tasks()
 
-def get_results(username, limit):
+def get_result_error(request, result):
+	retval = ""
+	for count, error in enumerate(result.bot_errors.all()):
+		if result.player_name(count) == request.user.username:
+			retval += str(error.text)
+	return retval
+
+def add_error_messages(request, results):
+	retval = []
+	if (request.user.is_authenticated()):
+		for result in results:
+			retval.append ({'error' : get_result_error(request, result),
+				'result' : result
+			})
+			#result.error_message = get_result_error(request, result)
+	else:
+		for result in results:
+			retval.append ({'error' : "",
+				'result' : result
+			})
+	return retval
+	
+
+def get_results(request, username, limit):
 	if username:
 		results = aiweb.models.Result.objects.filter(player_names__contains=username).all()
 	else:
@@ -58,7 +81,10 @@ def get_results(username, limit):
 	results_count = results.count()
 	results_limit = limit
 	count_from = max(0, results_count - results_limit)
-	results = reversed(results.order_by('id')[count_from:])
+	results = results.order_by('id')[count_from:]
+	with_errors = add_error_messages(request, results)
+	logging.log(logging.ERROR, str(with_errors[0]))
+	results = reversed(with_errors)
 	return results
 
 def profile(request, status="normal"):
@@ -87,7 +113,7 @@ def profile(request, status="normal"):
 #		results_limit = 25
 #		count_from = max(0, results_count - results_limit)
 #		results = reversed(results.order_by('id')[count_from:])
-		results = get_results(request.user.username, 25)
+		results = get_results(request, request.user.username, 25)
 		c = {'form': form, 
 			'user': request.user, 
 			'games': config.games_active,
