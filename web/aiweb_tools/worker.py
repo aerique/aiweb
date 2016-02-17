@@ -20,10 +20,12 @@ my_ip = "127.0.0.1" # Change this for each server running workers, unless using 
 #worker_temp = "/home/" + config.task_username + "/aiweb/worker_tmp/"
 
 class Worker:
+	""" Workers are responsible for compiling submissions and running matches """
 	def __init__(self):
 		self.uuid = uuid.uuid4()
 
 	def task_request_content(self):
+		""" Content of a task request file for this worker """
 		content = my_ip + "\n" + self.uuid.hex
 		return content
 
@@ -66,6 +68,7 @@ class Worker:
 
 		
 	def task_is_mine(self, taskfile):
+		""" Check if the task is mine or not """
 		fname = taskfile.split("/")[-1]
 		if fname.startswith("compile"):
 			with open(taskfile) as fo:

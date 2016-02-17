@@ -24,6 +24,7 @@ def detect_game(filepath):
 	return result
 
 def handle_submission(filepath, username):
+	""" First point of entry from website after submission """
 
 	print("Processing submission at " + filepath);
 
@@ -57,6 +58,7 @@ def send_task_to_worker(task, worker_file):
 	subprocess.call(["rm", task])
 
 def find_game(worker_file):
+	""" Nothing to do, ask for a match. This function should be renamed """
 	comms.send_file_matchmaker_ready(worker_file, config.matchmaker_path)
 
 def find_task(worker_file):
