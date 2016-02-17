@@ -11,6 +11,7 @@ test_map_path = config.map_path + "Ants/test_map.map"
 
 class Ants(games.Game):
 
+
 	def __init__(self, opts, players, player_names, map_path="", teams=[]):
 		#self.opts = opts
 		self.gamename = "Ants"
@@ -42,6 +43,7 @@ class Ants(games.Game):
 		}
 		self.players = players
 		self.player_names = player_names
+		self.max_players = 10
 		#self.teams = teams
 
 	def run_game(self):
