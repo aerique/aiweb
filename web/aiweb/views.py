@@ -58,6 +58,7 @@ def get_result_error(request, result):
 	return retval
 
 def add_error_messages(request, results):
+	""" Add error messages for request.user to results """
 	retval = []
 	if (request.user.is_authenticated()):
 		for result in results:

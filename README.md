@@ -8,7 +8,9 @@ Still under active development.
 
  - It should now work as a standalone server without passwordless SSH. If you want to run multiple workers on separate servers, passwordless SSH authentication is needed.
 
- - Compile the Isolate submodule and make sure the path is correct in config.py
+ - Compile the Isolate submodule and set the suid bit on the isolate binary
+
+ - Make sure config.py has the correct prefix and isolate_bin
 
  - Run these commands to create the databases:
    - $ ./manage.py migrate
