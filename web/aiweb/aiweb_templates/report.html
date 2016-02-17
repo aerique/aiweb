@@ -1,8 +1,14 @@
 {% extends "aiweb_templates/base.html" %}
 {% block content %}
-<p>Report:</p>
-{% for line in report %}
-  {{ line }}<br>
-{% endfor %}
+    {% if user.is_authenticated and user.username == submission.username %}
+        <p>Report:</p>
+        {% for line in report %}
+          {{ line }}<br>
+        {% endfor %}
+    {% else %}
+        <p>
+        Sorry, you can only view reports for your own submissions.
+        </p>
+    {% endif %}
 {% endblock %}
 

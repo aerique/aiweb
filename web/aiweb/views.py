@@ -144,6 +144,7 @@ def report(request, id="0000"):
 			acc = acc + ["\n"]
 		report = acc
 	context={'user': request.user,
+		'submission' : subm,
 		'report' : report,
 	}
 	return render_to_response('aiweb_templates/report.html', context)
