@@ -136,7 +136,7 @@ def send_submission (filepath, destname):
 	""" Send submission at filepath to destname """
 	remote = config.username + "@" + config.datastore_ip + "://"
 	port = config.datastore_port
-	send_file(filepath, remote, port, destname)
+	send_file(filepath, remote, port, config.datastore_submission_path + destname)
 	subprocess.call(["rm", filepath]);
 
 def add_task(ip_addr, prefix, file_content):
