@@ -10,6 +10,12 @@ Still under active development.
 
  - Compile the Isolate submodule and make sure the path is correct in config.py
 
+ - Run these commands to create the databases:
+   - $ ./manage.py migrate
+   - $ ./manage.py migrate --database=matchmaker
+
+ - Matchmaker uses a separate database so that it can run on a separate server
+
  - Run all of the following in separate terminals:
 
    - $ ./manage.py runserver
