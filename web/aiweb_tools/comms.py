@@ -6,38 +6,58 @@ import datetime
 
 from aiweb_tools import config
 
-def send_file(filepath, dest, port):
-	subprocess.call(["scp", "-P", str(port), filepath, dest])
+# FIXME Not checking for return codes after sending/getting files
 
-def send_file_ready(filepath, dest, port):
-	send_file(filepath, dest, port)
+def send_file(filepath, remote, port, dest):
+	if "@127.0.0.1" in remote:
+		if filepath.startswith(dest):
+			print(filepath + " startswith " + dest)
+		else:
+			subprocess.call(["cp", filepath, dest])
+	else:
+		subprocess.call(["scp", "-P", str(port), remote + filepath, dest])
+
+def get_file(remote, port, remotepath, targetpath):
+	if "@127.0.0.1" in remote:
+		if remotepath.startswith(targetpath):
+			pass
+		else:
+			subprocess.call(["cp", remotepath, targetpath]);
+	else:
+		subprocess.call(["scp", "-P", port, remote + remotepath, targetpath]);
+
+def send_file_ready(filepath, remote, port, dest):
+	send_file(filepath, remote, port, dest)
 	subprocess.call(["touch", filepath + ".ready"])
-	send_file(filepath + ".ready", dest, port)
+	send_file(filepath + ".ready", remote, port, dest)
+	# FIXME on localhost, will this remove the file we just sent?
 	subprocess.call(["rm", filepath + ".ready"])
 
 def send_file_datastore_ready(filepath, target):
-	send_file_ready(filepath, config.datastore_username + "@" 
-			+ config.datastore_ip
-			+ "://" + target, config.datastore_port)
+	remote = config.datastore_username + "@" + config.datastore_ip + "://"  
+	port = config.datastore_port
+	send_file_ready(filepath, remote, port, target)
 
 def send_file_webserver_ready(filepath, target):
-	send_file_ready(filepath, config.webserver_username + "@" 
-			+ config.webserver_ip
-			+ "://" + target, config.webserver_port)
+	remote = config.webserver_username + "@" + config.webserver_ip + "://"  
+	port = config.webserver_port
+	send_file_ready(filepath, remote, port, target)
 
 def send_file_matchmaker_ready(filepath, target):
-	send_file_ready(filepath, config.matchmaker_username + "@" 
-			+ config.matchmaker_ip
-			+ "://" + target, config.matchmaker_port)
+	remote = config.matchmaker_username + "@" + config.matchmaker_ip + "://"
+	port = config.matchmaker_port
+	send_file_ready(filepath, remote, port, target)
 
 def send_file_taskserver_ready(filepath, target):
-	send_file_ready(filepath, config.task_username + "@" 
-			+ config.task_ip
-			+ "://" + target, config.task_port)
+	remote = config.task_username + "@" + config.task_ip + "://"  
+	port = config.task_port
+	send_file_ready(filepath, remote, port, target)
 
 def send_task_worker_ip(filepath, ip_addr):
-	send_file_ready(filepath, config.task_username + "@" + ip_addr
-			+ "://" + config.task_worker_path, config.task_port)
+	remote = config.task_username + "@" + ip_addr + "://"  
+	port = config.task_port
+	dest = config.task_worker_path
+	send_file_ready(filepath, remote, port, dest)
 
 def send_stringfile (file_content, filename, target, send):
 	f = open(filename, 'w')
@@ -57,13 +77,15 @@ def have_submission(filename):
 	return os.path.exists(config.datastore_submission_path)
 
 def get_submission_from_filename(filename):
-	subprocess.call(["scp", config.datastore_username + 
-		"@" + config.datastore_ip + "://" + 
-		config.datastore_submission_path + filename, 
-		config.datastore_submission_path])
+	remote = config.datastore_username + "@" + config.datastore_ip + "://"
+	port = config.datastore_port
+	remotepath = config.datastore_submission_path + filename
+	targetpath = config.datastore_submission_path
+	get_file(remote, port, remotepath, targetpath)
 	
 def get_submission(filepath):
-	subprocess.call(["scp", config.datastore_username + "@" + config.datastore_ip + "://" + filepath, filepath])
+	remote = config.datastore_username + "@" + config.datastore_ip + "://"
+	get_file(remote, config.datastore_port, filepath, filepath)
 
 def load_replaydata(id):
 	path = config.webserver_results_path + id
@@ -94,15 +116,9 @@ def get_replay_id():
 	return this_id
 
 def send_submission (filepath, destname):
-
-	# FIXME No checking for return codes
-	# FIXME not using port
-
-
-	subprocess.call(["sync"])
-	subprocess.call(["scp", filepath, config.datastore_username + "@" + 
-					config.datastore_ip + "://" +
-					config.datastore_submission_path + destname]);
+	remote = config.datastore_username + "@" + config.datastore_ip + "://"
+	port = config.datastore_port
+	send_file(filepath, remote, port, destname)
 	subprocess.call(["rm", filepath]);
 
 def add_task(ip_addr, prefix, file_content):
@@ -110,9 +126,10 @@ def add_task(ip_addr, prefix, file_content):
 	f = open(srcname, 'w')
 	f.write(file_content)
 	f.close()
-	subprocess.call(["scp", srcname, config.task_username + "@" + 
-					ip_addr + "://" +
-					config.task_path ]);
+	remote = config.task_username + "@" + ip_addr + "://"  
+	port = config.task_port
+	dest = config.task_path
+	send_file(srcname, remote, port, dest)
 	subprocess.call(["rm", srcname])
 
 
