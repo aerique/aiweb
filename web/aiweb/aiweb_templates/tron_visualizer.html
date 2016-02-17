@@ -1,16 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>TRON  revisited : visualizer</title>
-	<style type="text/css">
-		html { margin:0; padding:0; }
-		body { margin:0; padding:0; overflow:hidden; background-color:#444}
-		a { color:#777 }
-		a:hover { color:#ddd }
-	</style>
-</head>
-<body>
+{% extends "aiweb_templates/base.html" %}
+{% block content %}
 <p>
 <center>
 <canvas width=900 height=700 id="C">
@@ -211,7 +200,6 @@
 	<a href='javascript:forw()'>&gt;</a>&nbsp;
 	<a href='javascript:pos(nturns-1)'>&gt;&gt;</a>&nbsp;
 </div>
-</body>
-</html>
 
+{% endblock %}
 

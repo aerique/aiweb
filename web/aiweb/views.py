@@ -121,7 +121,8 @@ def replay(request, id="none"):
 
 
 def rank(request, gamename=config.games_active[0]):
-	context={'gamename':gamename,
+	context={'user' : request.user,
+		'gamename':gamename,
 		'games': config.games_active,
 	}
 	q1 = aiweb.models.Submission.objects.filter(game_id=gamename).order_by('skill')
