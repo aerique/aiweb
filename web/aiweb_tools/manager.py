@@ -127,6 +127,7 @@ def add_submission_report(username, game, timestamp, prefix, status, language, c
 		active = False
 		if (status == "Ready"):
 			active = True
+			#FIXME deactivate all the others
 		subm = aiweb.models.Submission.objects.create(
 			user = aiweb.models.User.objects.get(username=username),
 			username = username,
@@ -139,6 +140,9 @@ def add_submission_report(username, game, timestamp, prefix, status, language, c
 			active = active)
 	else:
 		subm = subm_list[0]
+		if (status == "Ready"):
+			subm.active = True
+			#FIXME deactivate all the others
 		subm.status = status
 		subm.language = language
 		subm.report = content

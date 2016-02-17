@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response
 
 import os
 import logging
+import textwrap
 
 import aiweb.models
 
@@ -130,3 +131,20 @@ def rank(request, gamename=config.games_active[0]):
 	ranks = q1[max(0, limit - 100):].all().reverse()
 	context['ranks'] = ranks
 	return render_to_response('aiweb_templates/rank.html', context)
+
+def report(request, id="0000"):
+	subm = aiweb.models.Submission.objects.filter(submission_id=id).get()
+	report = subm.report
+	if report == "":
+		report = "Nothing to report"
+	else:
+		acc = []
+		for line in report.split('\n'):
+			acc = acc + textwrap.wrap(line, width=78)
+			acc = acc + ["\n"]
+		report = acc
+	context={'user': request.user,
+		'report' : report,
+	}
+	return render_to_response('aiweb_templates/report.html', context)
+
