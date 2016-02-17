@@ -133,19 +133,27 @@ def rank(request, gamename=config.games_active[0]):
 	return render_to_response('aiweb_templates/rank.html', context)
 
 def report(request, id="0000"):
-	subm = aiweb.models.Submission.objects.filter(submission_id=id).get()
-	report = subm.report
-	if report == "":
-		report = "Nothing to report"
-	else:
-		acc = []
-		for line in report.split('\n'):
-			acc = acc + textwrap.wrap(line, width=78)
-			acc = acc + ["\n"]
-		report = acc
-	context={'user': request.user,
-		'submission' : subm,
-		'report' : report,
-	}
-	return render_to_response('aiweb_templates/report.html', context)
+	try:
+		subm = aiweb.models.Submission.objects.filter(submission_id=id).get()
+		report = subm.report
+		if report == "":
+			report = "Nothing to report"
+		else:
+			acc = []
+			for line in report.split('\n'):
+				acc = acc + textwrap.wrap(line, width=78)
+				acc = acc + ["\n"]
+			report = acc
+		context={'user': request.user,
+			'submission' : subm,
+			'report' : report,
+		}
+		return render_to_response('aiweb_templates/report.html', context)
+	except Exception:
+		report = ["Error: That submission does not exist"]
+		context={'user': request.user,
+			'submission' : {'username':request.user.username},
+			'report' : report,
+		}
+		return render_to_response('aiweb_templates/report.html', context)
 
