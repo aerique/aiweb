@@ -27,6 +27,7 @@ def index(request):
 	results = get_results(None, 25)
 	c = {'results_list' : results,
 		'user': request.user, 
+		'games': config.games_active,
 	}
 	return render_to_response('aiweb_templates/index.html', c)
 #	msg = "<p> <a href='/accounts/login'> Login </a> </p> <p> <a href='/accounts/register'> Register </a> </p>"
@@ -88,6 +89,7 @@ def profile(request, status="normal"):
 		results = get_results(request.user.username, 25)
 		c = {'form': form, 
 			'user': request.user, 
+			'games': config.games_active,
 			'upload_success': upload_success,
 			'submissions': submissions,
 			'results_list': results}
@@ -103,6 +105,7 @@ def replay(request, id="none"):
 		replay = aiweb_tools.comms.load_replay(id)
 		context = {
 			'replaydata': replaydata,
+			'games': config.games_active,
 		}
 		print(replaydata)
 		# refactor :)
@@ -118,7 +121,9 @@ def replay(request, id="none"):
 
 
 def rank(request, gamename=config.games_active[0]):
-	context={'gamename':gamename}
+	context={'gamename':gamename,
+		'games': config.games_active,
+	}
 	q1 = aiweb.models.Submission.objects.filter(game_id=gamename).order_by('skill')
 	limit = q1.count()
 	ranks = q1[max(0, limit - 100):].all().reverse()

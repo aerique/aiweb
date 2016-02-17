@@ -1,6 +1,23 @@
+{% extends "aiweb_templates/base.html" %}
 
+{% block content %}
 <p> Leaderboard </p>
-<table>
+<table border="1">
+<tr>
+<th>
+Rank
+</th>
+<th>
+Username
+</th>
+<th>
+Skill
+</th>
+<th>
+Submission ID
+</th>
+</tr>
+
 <tr>
 {% for player in ranks %}
 <td>
@@ -18,3 +35,5 @@
 </tr>
 {% endfor %}
 </table>
+{% endblock %}
+
