@@ -23,7 +23,7 @@ Still under active development.
    - $ ./manage.py run_matchmaker
    - $ ./manage.py run_worker
 
-   - You can run more workers by repeating the last command.
+     - You can run more workers by repeating the last command.
 
  - See the requirements of the Isolate submodule if you have trouble running games.
 
