@@ -92,13 +92,10 @@ class Worker:
 			self.run_match(match)
 		self.request_task()
 
-	def get_submission(self, filepath):
-		subprocess.call(["scp", config.datastore_username + "@" + config.datastore_ip + "://" + filepath, filepath])
-
 	def compile(self, subm_id):
 		print("compiling: " + subm_id)
 		if not os.path.isfile(config.datastore_submission_path + subm_id):
-			self.get_submission(config.datastore_submission_path + subm_id)
+			comms.get_submission(config.datastore_submission_path + subm_id)
 		path = self.compiled_bot_path(subm_id)
 		if not os.path.exists(path):
 			os.makedirs(path)
@@ -179,7 +176,7 @@ class Worker:
 		os.mkdir(path)
 
 		zipfile = bot + "-compiled.zip"
-		comms.get_submission(zipfile)
+		comms.get_submission_from_filename(zipfile)
 		subprocess.call(["unzip", "-j", "-o", config.datastore_submission_path + zipfile, "-d", path])
 
 	def get_bot_command(self, bot):

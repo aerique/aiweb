@@ -2,6 +2,7 @@ import subprocess
 import cloudpickle
 import os.path
 import json
+import datetime
 
 from aiweb_tools import config
 
@@ -55,12 +56,14 @@ def send_result (match, result):
 def have_submission(filename):
 	return os.path.exists(config.datastore_submission_path)
 
-def get_submission(filename):
+def get_submission_from_filename(filename):
 	subprocess.call(["scp", config.datastore_username + 
 		"@" + config.datastore_ip + "://" + 
 		config.datastore_submission_path + filename, 
 		config.datastore_submission_path])
 	
+def get_submission(filepath):
+	subprocess.call(["scp", config.datastore_username + "@" + config.datastore_ip + "://" + filepath, filepath])
 
 def load_replaydata(id):
 	path = config.webserver_results_path + id
@@ -89,5 +92,28 @@ def get_replay_id():
 	with open(filepath, 'w') as fo:
 		fo.write(str(next_id))
 	return this_id
+
+def send_submission (filepath, destname):
+
+	# FIXME No checking for return codes
+	# FIXME not using port
+
+
+	subprocess.call(["sync"])
+	subprocess.call(["scp", filepath, config.datastore_username + "@" + 
+					config.datastore_ip + "://" +
+					config.datastore_submission_path + destname]);
+	subprocess.call(["rm", filepath]);
+
+def add_task(ip_addr, prefix, file_content):
+	srcname = prefix + config.delimiter + (datetime.datetime.now().isoformat()).replace(":", "-")
+	f = open(srcname, 'w')
+	f.write(file_content)
+	f.close()
+	subprocess.call(["scp", srcname, config.task_username + "@" + 
+					ip_addr + "://" +
+					config.task_path ]);
+	subprocess.call(["rm", srcname])
+
 
 

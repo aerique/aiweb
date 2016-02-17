@@ -11,31 +11,9 @@ import sys
 from django.core.management.base import BaseCommand
 
 import aiweb.models
-import aiweb_tools.comms
+from aiweb_tools import comms
 
 from . import config
-
-def send_submission (filepath, destname):
-
-	# FIXME No checking for return codes
-	# FIXME not using port
-
-
-	subprocess.call(["sync"])
-	subprocess.call(["scp", filepath, config.datastore_username + "@" + 
-					config.datastore_ip + "://" +
-					config.datastore_submission_path + destname]);
-	subprocess.call(["rm", filepath]);
-
-def add_task(ip_addr, prefix, file_content):
-	srcname = prefix + config.delimiter + (datetime.datetime.now().isoformat()).replace(":", "-")
-	f = open(srcname, 'w')
-	f.write(file_content)
-	f.close()
-	subprocess.call(["scp", srcname, config.task_username + "@" + 
-					ip_addr + "://" +
-					config.task_path ]);
-	subprocess.call(["rm", srcname])
 
 def detect_game(filepath):
 	filename = filepath.split('/')[-1]
@@ -60,11 +38,11 @@ def handle_submission(filepath, username):
 	else:
 
 
-		send_submission (filepath, destname)
+		comms.send_submission (filepath, destname)
 		add_submission_report(username, gamename, timestamp, destname, "Uncompiled", "Unknown", "")
 
 	# FIXME better protection against filename collisions desirable
-	add_task (config.task_ip, "compile", "compile " + destname)
+	comms.add_task (config.task_ip, "compile", "compile " + destname)
 
 def send_task_to_worker(task, worker_file):
 	print("send_task_to_worker")
@@ -75,11 +53,11 @@ def send_task_to_worker(task, worker_file):
 	with open (task, "a") as taskfile:
 		taskfile.write(" " + worker_id)
 	print("id = " + worker_id)
-	aiweb_tools.comms.send_task_worker_ip(task, worker_ip)
+	comms.send_task_worker_ip(task, worker_ip)
 	subprocess.call(["rm", task])
 
 def find_game(worker_file):
-	aiweb_tools.comms.send_file_matchmaker_ready(worker_file, config.matchmaker_path)
+	comms.send_file_matchmaker_ready(worker_file, config.matchmaker_path)
 
 def find_task(worker_file):
 	tasks = glob.glob(config.task_path + "*")
@@ -176,7 +154,7 @@ def process_match_result(path):
 	print("processing match result: " + real)
 	with open(real, 'rb') as fo:
 		result_dict = cloudpickle.load(fo)
-		replay_id = aiweb_tools.comms.get_replay_id()
+		replay_id = comms.get_replay_id()
 		replay_path = config.webserver_results_path + str(replay_id) + ".replay"
 		if 'scores' in result_dict:
 			scores = " ".join([str(x) for x in result_dict['score']])
