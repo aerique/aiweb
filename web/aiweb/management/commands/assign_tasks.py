@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-import aiweb_tools.manager.manager
+import aiweb_tools.manager
 
 class Command(BaseCommand):
 	help = 'assign tasks'
@@ -10,7 +10,7 @@ class Command(BaseCommand):
 		pass
 
 	def handle(self, *args, **options):
-		aiweb_tools.manager.manager.assign_tasks()
+		aiweb_tools.manager.assign_tasks()
 		self.stdout.write(self.style.SUCCESS('Assigning tasks'))
 
 

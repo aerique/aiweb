@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-import aiweb_tools.worker.worker
+import aiweb_tools.worker
 
 class Command(BaseCommand):
 	help = 'Runs a worker'
@@ -10,7 +10,7 @@ class Command(BaseCommand):
 		pass
 
 	def handle(self, *args, **options):
-		worker = aiweb_tools.worker.worker.Worker()
+		worker = aiweb_tools.worker.Worker()
 		worker.request_task()
 		self.stdout.write(self.style.SUCCESS('Running worker %s' % worker.uuid.hex))
 		worker.await_task()

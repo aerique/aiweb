@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-import aiweb_tools.manager.manager
+import aiweb_tools.manager
 
 import aiweb.models
 
@@ -25,7 +25,7 @@ class Command(BaseCommand):
 		subm.save()
 		
 	def handle(self, *args, **options):
-		aiweb_tools.manager.manager.process_reports(self.add_submission_report)
+		aiweb_tools.manager.process_reports(self.add_submission_report)
 		self.stdout.write(self.style.SUCCESS('Processed reports'))
 
 

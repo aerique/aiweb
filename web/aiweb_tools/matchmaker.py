@@ -9,7 +9,7 @@ import os.path
 import aiweb.models
 import aiweb_tools.games
 import aiweb_tools.match
-import aiweb_tools.worker.worker
+import aiweb_tools.worker
 import random
 
 class Matchmaker:
@@ -65,7 +65,7 @@ class Matchmaker:
 		bot.save(using='matchmaker')
 
 	def  send_match_to_worker(self, match, workerfile):
-		worker_data = aiweb_tools.worker.worker.Worker_data()
+		worker_data = aiweb_tools.worker.Worker_data()
 		worker_data.read(workerfile)
 		filepath = config.matchmaker_path + "match" + config.delimiter + worker_data.uuid + match.short_string()
 		match.set_for_worker(worker_data.uuid)

@@ -13,7 +13,7 @@ from django.core.management.base import BaseCommand
 import aiweb.models
 import aiweb_tools.comms
 
-from .. import config
+from . import config
 
 def send_submission (filepath, destname):
 
