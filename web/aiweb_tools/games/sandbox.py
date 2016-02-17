@@ -595,6 +595,7 @@ class IsolatedHouse(House):
 		"""
 		if self.is_alive:
 			raise SandboxError("Sandbox released while still alive")
+		subprocess.call ([config.isolate_bin, "--box-id", str(self.box_id), "--cleanup"])
 		lockfile = config.lock_dir + "lock_box." + str(self.box_id)
 		subprocess.call(["rm", lockfile])
 
