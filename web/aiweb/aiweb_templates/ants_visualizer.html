@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>Ant Canvas</title>
-<script type="text/javascript" src="/static/aiweb/ants/visualizer.js"></script>	
+<script type="text/javascript" src="/static/aiweb/ants/vis/visualizer.js"></script>	
 <script type="text/javascript">
 	window.isFullscreenSupported = function() {
 	return false;
@@ -9,7 +9,7 @@
 
 	function init() {
 		var options = new Options();
-		options.data_dir = '/static/aiweb/ants/data/';
+		options.data_dir = '/static/aiweb/ants/vis/data/';
 		options.embedded = true;
 		var visualizer = new Visualizer(document.body, options);
 		visualizer.loadReplayData('{{ replaydata|safe }}');
