@@ -132,6 +132,7 @@ def replay(request, id="none"):
 		replaydata = aiweb_tools.comms.load_replaydata(id)
 		replay = aiweb_tools.comms.load_replay(id)
 		context = {
+			'user' : request.user,
 			'replaydata': replaydata,
 			'games': config.games_active,
 		}
@@ -153,7 +154,7 @@ def rank(request, gamename=config.games_active[0]):
 		'gamename':gamename,
 		'games': config.games_active,
 	}
-	q1 = aiweb.models.Submission.objects.filter(game_id=gamename).order_by('skill')
+	q1 = aiweb.models.Submission.objects.filter(game_id=gamename).filter(active=True).order_by('skill')
 	limit = q1.count()
 	ranks = q1[max(0, limit - 100):].all().reverse()
 	context['ranks'] = ranks

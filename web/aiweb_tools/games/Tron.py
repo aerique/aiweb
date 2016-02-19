@@ -11,6 +11,8 @@ test_map_path = config.map_path + "Tron/test_map.map"
 
 class Tron(games.Game):
 
+	max_players = 2
+
 	def __init__(self, opts, players, player_names, map_path="", teams=[]):
 		#self.opts = opts
 		self.gamename = "Tron"
@@ -29,6 +31,7 @@ class Tron(games.Game):
 			'kill_points': 2,
 			'secure_jail' : True,
 			'capture_errors' : True,
+			'agents_per_player' : 1,
 		}
 		self.players = players
 		self.player_names = player_names

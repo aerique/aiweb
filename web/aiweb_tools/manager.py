@@ -120,14 +120,19 @@ def process_reports(add_submission_report):
 	for file in glob.glob(config.webserver_results_path + "*-report.txt.ready"):
 		process_report(file, add_submission_report)
 
+def deactivate_bots(username, game):
+	submissions = aiweb.models.Submission.objects.filter(username=username, game_id = game).all()
+	for subm in submissions:
+		subm.active = False
+		subm.save()
 
 def add_submission_report(username, game, timestamp, prefix, status, language, content):
 	subm_list = aiweb.models.Submission.objects.filter(username=username, game_id = game, timestamp = timestamp, submission_id = prefix)
 	if len(subm_list) < 1:
 		active = False
 		if (status == "Ready"):
+			deactivate_bots(username, game)
 			active = True
-			#FIXME deactivate all the others
 		subm = aiweb.models.Submission.objects.create(
 			user = aiweb.models.User.objects.get(username=username),
 			username = username,
@@ -141,8 +146,8 @@ def add_submission_report(username, game, timestamp, prefix, status, language, c
 	else:
 		subm = subm_list[0]
 		if (status == "Ready"):
+			deactivate_bots(username, game)
 			subm.active = True
-			#FIXME deactivate all the others
 		subm.status = status
 		subm.language = language
 		subm.report = content
