@@ -1,7 +1,7 @@
 {% extends "aiweb_templates/base.html" %}
 
 {% block content %}
-<p> Leaderboard </p>
+<p> {{ gamename }} Leaderboard </p>
 <table border="1">
 <tr>
 <th>
@@ -15,6 +15,9 @@ Skill
 </th>
 <th>
 Submission ID
+</th>
+<th>
+Games played
 </th>
 </tr>
 
@@ -31,6 +34,9 @@ Submission ID
 </td>
 <td>
 {{ player.submission_id }}
+</td>
+<td>
+{{ player.games_played }}
 </td>
 </tr>
 {% endfor %}

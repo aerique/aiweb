@@ -198,6 +198,8 @@ def process_match_result(path):
 				for bot_id in result_dict['bot_ids']:
 					try:
 						submission = aiweb.models.Submission.objects.get(submission_id = bot_id)
+						submission.games_played += 1
+						submission.save()
 						result.submissions.add(submission)
 						submissions.append(submission)
 					except KeyError:
