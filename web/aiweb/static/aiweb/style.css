@@ -1,10 +1,6 @@
 body 
 {
-   margin:1em 1em 1em 1em;
-   padding:0px;
    background-color: #fbe8d1;
-   font-family: Arial,sans-serif;
-   font-size: 1em;
 }
 
 
@@ -20,5 +16,18 @@ body
    max-width:43em;
    margin-left:auto;
    margin-right:auto;
+}
+
+#visualizer {
+   margin-left: 0em;
+   margin-right: 0em;
+   margin-top: 0em;
+   margin-bottom: 0em;
+   padding-left: 0em;
+   padding-right: 0em;
+   padding-top: 0em;
+   padding-bottom: 0em;
+   line-height: 1.3em;
+   background-color: rgba(255,255,255,0.3);
 }
 
