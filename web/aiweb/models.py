@@ -40,6 +40,11 @@ class Result(models.Model):
 		return self.player_names_as_list()[n]
 	def ranks_as_list(self):
 		return self.ranks.split(' ')
+	def ranks_plus_one_as_list(self):
+		retval = []
+		for rank in self.ranks_as_list():
+			retval.append(str( int(rank) + 1) )
+		return retval
 
 # This is for use by the matchmaking server with a separate DB
 class Bot(models.Model):

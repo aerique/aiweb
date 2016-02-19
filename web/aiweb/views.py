@@ -25,7 +25,7 @@ from aiweb_tools import config
 
 
 def index(request):
-	results = get_results(request, None, 25)
+	results = get_results(request, None, None, config.results_limit)
 	c = {'results_list' : results,
 		'user': request.user, 
 		'games': config.games_active,
@@ -72,19 +72,44 @@ def add_error_messages(request, results):
 				'result' : result
 			})
 	return retval
+
+def add_playerlines(request, results):
+	for presult in results:
+		result = presult['result']
+		zipped = zip(result.ranks_plus_one_as_list(), result.player_names_as_list(), result.statuses_as_list())
+		playerlines = []
+		sortzip = sorted(zipped, key=lambda r: (r[0]))
+		for rank, player, status in sortzip:
+			playerlines.append("&nbsp;[" + str(rank) + "]&nbsp;  " + player + "&nbsp;  (" + status + ")&nbsp;")
+		presult['playerlines'] = playerlines
 	
 
-def get_results(request, username, limit):
+def match_results(request, gamename):
+	results = get_results(request, None, gamename, config.results_limit)
+	c = {
+		'user':request.user,
+		'gamename':gamename,
+		'results_list':results,
+		'games': config.games_active,
+	}
+	return render_to_response('aiweb_templates/results_page.html', c)
+
+
+def get_results(request, username, gamename, limit):
+	presults = aiweb.models.Result.objects
+	if gamename:
+		print(gamename)
+		presults = presults.filter(gamename__startswith=gamename, gamename__endswith=gamename)
 	if username:
-		results = aiweb.models.Result.objects.filter(player_names__contains=username).all()
-	else:
-		results = aiweb.models.Result.objects.all()
+		presults = presults.filter(player_names__contains=username)
+	results = presults.all()
 	results_count = results.count()
 	results_limit = limit
 	count_from = max(0, results_count - results_limit)
 	results = results.order_by('id')[count_from:]
 	with_errors = add_error_messages(request, results)
-	logging.log(logging.ERROR, str(with_errors[0]))
+	add_playerlines(request, with_errors)
+#	logging.log(logging.ERROR, str(with_playerlines[0]))
 	results = reversed(with_errors)
 	return results
 
@@ -114,7 +139,7 @@ def profile(request, status="normal"):
 #		results_limit = 25
 #		count_from = max(0, results_count - results_limit)
 #		results = reversed(results.order_by('id')[count_from:])
-		results = get_results(request, request.user.username, 25)
+		results = get_results(request, request.user.username, None, config.results_limit)
 		c = {'form': form, 
 			'user': request.user, 
 			'games': config.games_active,

@@ -1,24 +1,26 @@
 
-
 {% if results_list %}
 	<table border="1">
 	<th>game</th>
-	<th>player_names</th>
+<!--	<th>player_names</th> -->
 	<th>ranks</th>
 	<th>scores</th>
-	<th>status</th>
+	<th>errors</th>
 	<th>game_message</th>
 	<th>replay</th>
 	{% for result in results_list %}
 		<tr>
 		<td>{{result.result.gamename}}</td>
+<!--
 		<td>{{result.result.player_names}}</td>
-		<td>{{result.result.ranks}}</td>
+-->
+		<td>
+			{% for player in result.playerlines %}
+				{{ player|safe }} <br>
+			{% endfor %}
+		</td>
 		<td>{{result.result.scores}}</td>
 		<td>
-			<p>
-			{{result.result.statuses}}
-			</p>
 			{% if result.error%}
 				<pre>
 				{{result.error}}
