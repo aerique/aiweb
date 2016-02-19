@@ -210,3 +210,5 @@ def report(request, id="0000"):
 		}
 		return render_to_response('aiweb_templates/report.html', context)
 
+def game_info(request, gamename=config.games_active[0]):
+	pass
