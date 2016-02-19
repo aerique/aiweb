@@ -8,7 +8,7 @@ Still under active development.
 
  - It should now work as a standalone server without passwordless SSH. If you want to run multiple workers on separate servers, passwordless SSH authentication is needed.
 
- - Compile the Isolate submodule and set the suid bit on the isolate binary
+ - Look at setup.sh and run the commands found there (possibly just by running the script, but it will need sudo for some steps)
 
  - Make sure config.py has the correct prefix and isolate_bin
 
