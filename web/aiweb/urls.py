@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^(?P<gamename>[a-zA-Z0-9_.]+)/rank/$', views.rank, name='rank'),
     url(r'^(?P<gamename>[a-zA-Z0-9_.]+)/results/$', views.match_results, name='results'),
     url(r'^(?P<gamename>[a-zA-Z0-9_.]+)/info/$', views.game_info, name='game_info'),
+    url(r'^(?P<gamename>[a-zA-Z0-9_.]+)/problem/$', views.problem_description, name='problem_description'),
 ]

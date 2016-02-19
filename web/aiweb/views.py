@@ -211,4 +211,16 @@ def report(request, id="0000"):
 		return render_to_response('aiweb_templates/report.html', context)
 
 def game_info(request, gamename=config.games_active[0]):
-	pass
+		context = {'user': request.user, 
+			'games': config.games_active,
+			'gamename' : gamename,
+			}
+		return render_to_response('aiweb_templates/' + gamename + '_info.html', context)
+
+def problem_description(request, gamename=config.games_active[0]):
+		context = {'user': request.user, 
+			'games': config.games_active,
+			'gamename' : gamename,
+			}
+		return render_to_response('aiweb_templates/' + gamename + '_problem.html', context)
+
