@@ -17,6 +17,7 @@ datastore_submission_path = prefix + "submissions/"
 webserver_ip = "127.0.0.1"
 webserver_port = 22
 webserver_results_path = prefix + "results/"
+webserver_staticfiles = prefix + "web/aiweb/static/aiweb/"
  
 matchmaker_ip = "127.0.0.1"
 matchmaker_port = 22
