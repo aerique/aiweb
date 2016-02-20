@@ -6,6 +6,8 @@ from django import forms
 from django.template.context_processors import csrf
 from django.shortcuts import render_to_response
 
+import glob
+
 import os
 import logging
 import textwrap
@@ -223,4 +225,20 @@ def problem_description(request, gamename=config.games_active[0]):
 			'gamename' : gamename,
 			}
 		return render_to_response('aiweb_templates/' + gamename + '_problem.html', context)
+
+def starter_packages(request, gamename=config.games_active[0]):
+		dist = ('/static/aiweb/' + gamename.lower() + '/' + gamename + '_dist.zip', gamename + '_dist.zip')
+		starters = []
+		starterpath = gamename.lower() + "/starter/" + gamename + "*.zip"
+		for filepath in glob.glob(config.webserver_staticfiles + starterpath):
+			filename = filepath.split('/')[-1]
+			starters.append((filepath.replace(config.webserver_staticfiles, "/static/aiweb/"), filename))
+		context = {'user': request.user, 
+			'games': config.games_active,
+			'gamename' : gamename,
+			'dist': dist,
+			'starters': starters,
+			}
+		return render_to_response('aiweb_templates/starter.html', context)
+
 

@@ -1,0 +1,10 @@
+{% extends "aiweb_templates/base.html" %}
+{% block content %}
+<p>{{gamename}} game files:</p>
+<a href="{{dist.0}}">{{dist.1}}</a>
+<p>{{gamename}} starter packages:</p>
+{% for starter in starters %}
+<p><a href="{{starter.0}}">{{starter.1}}</a></p>
+{% endfor %}
+{% endblock %}
+
