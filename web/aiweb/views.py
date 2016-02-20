@@ -241,4 +241,16 @@ def starter_packages(request, gamename=config.games_active[0]):
 			}
 		return render_to_response('aiweb_templates/starter.html', context)
 
+def mission(request):
+		context = {'user': request.user, 
+			'games': config.games_active,
+			}
+		return render_to_response('aiweb_templates/mission.html', context)
+
+def contact(request):
+		context = {'user': request.user, 
+			'games': config.games_active,
+			}
+		return render_to_response('aiweb_templates/contact.html', context)
+
 

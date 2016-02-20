@@ -20,10 +20,13 @@
     {% else %}
        <a href="{% url 'auth_login' %}">{% trans "Log in" %}</a>
     {% endif %}
+    <a href="/aiweb/mission/">Mission statement</a>&nbsp;
+    <a href="/aiweb/contact/">Contact</a>&nbsp; 
     Games:
     {% for game in games %}
         <a href="/aiweb/{{game}}/info/">{{game}}</a>&nbsp;
     {% endfor %}
+
     <hr />
     {% endblock %}
     </div>

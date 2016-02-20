@@ -1,10 +1,142 @@
 {% extends "aiweb_templates/base.html" %}
 {% block content %}
-<center>
 <h1>Tron Game Specification</h1>
 <p>
-Not written yet
+<pre>
+Tron artificial intelligence programming game.
+
+This is still being developed and tested. It's playable, but
+there will be revisions along the way.
+
+At present it allows multiple agents per bot. This may be changed in a future
+version of the game (the change will probably be made soon).
+
+If you discover a bug, write a starter package or improve something, please
+post about it on the forum, on IRC or on Github:
+
+https://github.com/smiley1983/aiweb
+
+== I/O format ==
+================
+
+Server to Bot:
+
+
+Game setup:
+
+turn n
+loadtime n
+turntime n
+player_id n
+cols n
+rows n
+turns n
+player_seed n
+num_players n
+agents_per_player n
+
+All of the above 'n' values are integers.
+
+Formatted communication lines:
+
+a r c h o       :       agent row col heading owner
+w r c           :       wall row col
+
+'r' and 'c' and 'o' are integers
+'h' is one of the four letters 'n', 'e', 's' and 'w' for the
+    four cardinal directions
+'w' is a wall, though it is referred to throughout the code as water.
+    The wall lines are only sent at the start of the game; bots can track
+    subsequent blocked tiles from agent locations.
+
+During game:
+
+a r c h o       :       agent row col heading owner
+d r c h o       :       dead row col heading owner
+
+Players can see all walls and other agents, and they may have any
+integer for a player ID.
+
+Example bot input:
+
+turn 0
+loadtime 3000
+turntime 1000
+player_id 0
+cols 10
+rows 10
+turns 1000
+player_seed -683903255894423924
+num_players 2
+a 2 1 s 0
+a 2 2 s 0
+a 7 7 n 1
+a 7 8 n 1
+w 2 7
+w 7 2
+ready
+turn 1
+a 2 1 s 0
+a 2 2 s 0
+a 7 7 n 1
+a 7 8 n 1
+go
+
+Bot to server:
+
+o r c h         :       order row col heading
+
+This orders the agent at row, col to proceed in the direction specified
+by heading. Having been set upon a course, you don't need to continue
+issuing orders to maintain it; the agent will proceed until told to change
+direction again.
+
+Example bot output:
+
+# turn 1
+o 2 1 n
+o 2 2 n
+# turn 2
+o 1 2 n
+o 1 1 n
+
+Map file format:
+
+Map generators needed!
+
+rows n
+cols n
+players n
+agents_per_player n
+
+a r c h o       :       agent row col heading owner
+
+m .%            :       map land water
+
+Example map file:
+
+#
+# tron_01.map
+#
+cols 10
+rows 10
+players 2
+agents_per_player 1
+
+a 2 2 s 0
+a 7 7 n 1
+
+m ..........
+m ..........
+m .......%..
+m ..........
+m ..........
+m ..........
+m ..........
+m ..%.......
+m ..........
+m ..........
+</pre>
 </p>
-</center>
 {% endblock %}
 

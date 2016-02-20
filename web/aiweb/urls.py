@@ -6,6 +6,8 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^profile/$', views.profile, name='profile'),
+    url(r'^mission/$', views.mission, name='mission'),
+    url(r'^contact/$', views.contact, name='contact'),
     url(r'^profile/(?P<status>[a-zA-Z_.]+)/$', views.profile, name='profile'),
     url(r'^replay/(?P<id>[a-zA-Z0-9_.]+)/$', views.replay, name='replay'),
     url(r'^report/(?P<id>[a-zA-Z0-9_.\-]+)/$', views.report, name='report'),
