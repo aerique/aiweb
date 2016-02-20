@@ -2,7 +2,7 @@
 
 {% block content %}
 <p> {{ gamename }} Leaderboard </p>
-<table border="1">
+<table border="1" class="center">
 <tr>
 <th>
 Rank
@@ -12,9 +12,6 @@ Username
 </th>
 <th>
 Skill
-</th>
-<th>
-Submission ID
 </th>
 <th>
 Games played
@@ -31,9 +28,6 @@ Games played
 </td>
 <td>
 {{ player.skill }}
-</td>
-<td>
-{{ player.submission_id }}
 </td>
 <td>
 {{ player.games_played }}
