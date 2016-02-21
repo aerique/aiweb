@@ -55,12 +55,22 @@ class Worker:
 		while not os.path.isfile(stopfile):
 			ready = ".ready"
 			for file in glob.glob(config.task_worker_path + "*" + ready):
-				print(file)
+#				print(file)
 				real = (file[:-len(ready)])
 				if (self.task_is_mine(real)):
 					self.do_task(real)
 					subprocess.call(["rm", real])
 					subprocess.call(["rm", file])
+				else:
+					try:
+						lockfile = file + ".lock"
+						with open(lockfile, 'x') as fo:
+							self.do_task(real)
+							subprocess.call(["rm", real])
+							subprocess.call(["rm", file])
+					except Exception as e:
+						pass
+					
 			time.sleep(config.sleeptime)
 			print("checking for tasks")
 
