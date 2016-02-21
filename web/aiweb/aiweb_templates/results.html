@@ -17,11 +17,11 @@
 				{{ player|safe }} <br>
 			{% endfor %}
 		</td>
-		<td>
+		<td class="left">
 			{% if result.error%}
-				<pre>
+				<p>
 				{{result.error}}
-				</pre>
+				</p>
 			{% endif %}
 			<p> {{result.result.errors}} </p>
 		</td>

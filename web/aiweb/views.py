@@ -56,7 +56,7 @@ def get_result_error(request, result):
 	retval = ""
 	for count, error in enumerate(result.bot_errors.all()):
 		if result.player_name(count) == request.user.username:
-			retval += str(error.text)
+			retval += str(error.text).replace("\n", " \\n ")
 	return retval
 
 def add_error_messages(request, results):
