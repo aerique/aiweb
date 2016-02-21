@@ -7,7 +7,7 @@ prefix = "/home/" + username + "/aiweb/"
 task_ip = "127.0.0.1"
 task_port = 22
 task_path = prefix + "tasks/"
-task_worker_path = prefix + "workers/"
+task_worker_path = prefix + "worker/"
 
 datastore_ip = "127.0.0.1"
 datastore_port = 22
@@ -17,7 +17,7 @@ datastore_submission_path = prefix + "submissions/"
 webserver_ip = "127.0.0.1"
 webserver_port = 22
 webserver_results_path = prefix + "results/"
-webserver_staticfiles = prefix + "web/aiweb/static/aiweb/"
+webserver_staticfiles = "/home/" + username + "/ast/source/aiweb/web/aiweb/static/aiweb/"
  
 matchmaker_ip = "127.0.0.1"
 matchmaker_port = 22
@@ -25,7 +25,7 @@ matchmaker_path = prefix + "matchmaker/"
 
 map_path = prefix + "maps/" # maps stored on matchmaker server
 
-isolate_bin = prefix + "isolate/isolate"
+isolate_bin = prefix + "web/aiweb_tools/isolate/isolate"
 worker_compiled = prefix + "compiled/"
 runner_working = prefix + "runner/"
 runner_prefix = "aiweb"
