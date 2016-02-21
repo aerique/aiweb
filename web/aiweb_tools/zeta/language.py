@@ -270,7 +270,7 @@ languages = {
 	"Python3": {
 		"main_ext": ".py3",
 		"nuke_globs": ["*.pyc"],
-		"run": config.bin_dir + "python {path}/{bot}.py3",
+		"run": config.bin_dir + "python3 {path}/{bot}.py3",
 	},
 
 	"Ruby": {
