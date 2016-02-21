@@ -8,7 +8,7 @@ sudo chown root isolate
 sudo chmod u+s isolate
 cd ../../..
 
-pip install django django-registration-redux cloudpickle
+pip3 install django django-registration-redux cloudpickle skills
 
 for f in compiled lock maps matchmaker results runner submissions tasks worker maps/Ants maps/Tron
 do
