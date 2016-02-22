@@ -5,6 +5,7 @@ import glob
 import os.path
 import time
 import shutil
+import cloudpickle
 
 #from .. import config
 from aiweb_tools import config
@@ -57,19 +58,23 @@ class Worker:
 			for file in glob.glob(config.task_worker_path + "*" + ready):
 #				print(file)
 				real = (file[:-len(ready)])
-				if (self.task_is_mine(real)):
-					self.do_task(real)
-					subprocess.call(["rm", real])
-					subprocess.call(["rm", file])
+				if (real.startswith("worker-ready")):
+					pass
 				else:
-					try:
+					if (self.task_is_mine(real)):
+						self.do_task(real)
+						subprocess.call(["rm", real])
+						subprocess.call(["rm", file])
+					else:
 						lockfile = file + ".lock"
-						with open(lockfile, 'x') as fo:
-							self.do_task(real)
-							subprocess.call(["rm", real])
-							subprocess.call(["rm", file])
-					except Exception as e:
-						pass
+						try:
+							with open(lockfile, 'x') as fo:
+								self.do_task(real)
+								subprocess.call(["rm", real])
+								subprocess.call(["rm", file])
+							subprocess.call(["rm", lockfile])
+						except Exception as e:
+							pass
 					
 			time.sleep(config.sleeptime)
 			print("checking for tasks")
@@ -164,8 +169,9 @@ class Worker:
 		if os.path.exists(runfile):	# make sure they don't put malicious commands in here, by deleting the file if it exists
 			subprocess.call(["chmod", "u+rw", runfile])
 			subprocess.call("rm", "-f", runfile)
-		with open(runfile, 'w') as fo:
-			fo.write(submission.get_command(config.worker_compiled + subm_id))
+		with open(runfile, 'wb') as fo:
+#			fo.write(submission.get_command(config.worker_compiled + subm_id))
+			cloudpickle.dump(submission, fo)
 		subprocess.call(["chmod", "u+r", path + "*"])
 		zipfile = path + subm_id + "-compiled.zip"
 		subprocess.call(["zip", "-r", zipfile, path, "-i", path + "*"])
@@ -199,10 +205,18 @@ class Worker:
 		path = self.compiled_bot_path(bot)
 		if not os.path.exists(path):
 			self.get_compiled_bot(bot)
-		with open(path + "run_command") as fo:
-			run_command = fo.readline().strip()
+		#with open(path + "run_command") as fo:
+		#	run_command = fo.readline().strip()
+		#with open(path + "run_command") as fo:
+		#	run_command = fo.readline().strip()
+		run_command = self.get_run_command(path + "run_command")
 		print(run_command)
 		return (path, run_command)
+
+	def get_run_command(self, filepath):
+		with open (filepath, 'rb') as fo:
+			subm = cloudpickle.load(fo)
+			return subm.get_command(config.worker_compiled + subm.sub_id)
 
 	def get_bot_commands(self, bots):
 		print("Bot commands:")
