@@ -1,0 +1,13 @@
+{% extends "aiweb_templates/base.html" %}
+{% block content %}
+    {% with template_name='submissions.html' %}
+        {% include "aiweb_templates/"|add:template_name %}
+    {% endwith %}
+    {% if newer %}
+	    <a href="/aiweb/submission/{{username}}/?min={{newer_val}}">&lt;&lt; Newer</a>
+    {% endif %}
+    {% if older %}
+	    <a href="/aiweb/submission/{{username}}/?min={{older_val}}">Older &gt;&gt;</a>
+    {% endif %}
+{% endblock %}
+

@@ -253,10 +253,38 @@ def contact(request):
 			}
 		return render_to_response('aiweb_templates/contact.html', context)
 
-def submission(request):
+def submission(request, uusername=None):
+		if uusername:
+			username = uusername
+		else:
+			username = request.user.username
+		min_sub = int(request.GET.get('min', '0'))
+		submissions = aiweb.models.Submission.objects.filter(username=username)
+		subm_count = submissions.count()
+		subm_limit = 25
+		count_from = max(0, (subm_count - (subm_limit) - min_sub))
+		count_to = min(subm_count, count_from + subm_limit)
+		submissions = reversed(submissions.order_by('timestamp')[count_from:count_to])
+		older = False
+		newer = False
+		if subm_count > subm_limit:
+			older = True
+			newer = True
+			older_val = min (subm_count - subm_limit, min_sub + subm_limit)
+			if older_val == min_sub:
+				older = False
+			newer_val = max(0, min_sub - subm_limit)
+			if newer_val == min_sub:
+				newer = False
+			
 		context = {'user': request.user, 
 			'games': config.games_active,
+			'submissions': submissions,
+			'older' : older,
+			'newer' : newer,
+			'older_val' : older_val,
+			'newer_val' : newer_val,
 			}
-		return render_to_response('aiweb_templates/submission.html', context)
+		return render_to_response('aiweb_templates/submission_page.html', context)
 
 

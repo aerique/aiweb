@@ -32,7 +32,11 @@ report
 <td>
 {{ subm.language }}
 </td>
+{% if subm.active %}
+<td style="color:green">
+{% else %}
 <td>
+{% endif %}
 {{ subm.status }}
 </td>
 <td>
