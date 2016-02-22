@@ -27,7 +27,7 @@ from aiweb_tools import config
 
 
 def index(request):
-	results = get_results(request, None, None, config.results_limit)
+	(_, results) = get_results(request, None, None, 0, config.results_limit)
 	c = {'results_list' : results,
 		'user': request.user, 
 		'games': config.games_active,
@@ -87,7 +87,7 @@ def add_playerlines(request, results):
 	
 
 def match_results(request, gamename):
-	results = get_results(request, None, gamename, config.results_limit)
+	(_, results) = get_results(request, None, gamename, config.results_limit)
 	c = {
 		'user':request.user,
 		'gamename':gamename,
@@ -96,8 +96,24 @@ def match_results(request, gamename):
 	}
 	return render_to_response('aiweb_templates/results_page.html', c)
 
+def older_newer_vals(total_count, min_val, limit):
+	older = False
+	newer = False
+	older_val = 0
+	newer_val = 0
+	if total_count > limit:
+		older = True
+		newer = True
+		older_val = min (total_count - limit, min_val + limit)
+		if older_val == min_val:
+			older = False
+		newer_val = max(0, min_val - limit)
+		if newer_val == min_val:
+			newer = False
+	return (older, newer, older_val, newer_val)
 
-def get_results(request, username, gamename, limit):
+
+def get_results(request, username, gamename, min_val, limit):
 	presults = aiweb.models.Result.objects
 	if gamename:
 		print(gamename)
@@ -107,13 +123,15 @@ def get_results(request, username, gamename, limit):
 	results = presults.all()
 	results_count = results.count()
 	results_limit = limit
-	count_from = max(0, results_count - results_limit)
-	results = results.order_by('id')[count_from:]
+	count_from = max(0, (results_count - results_limit) - min_val)
+	count_to = min(results_count, count_from + limit)
+	results = results.order_by('id')[count_from:count_to]
 	with_errors = add_error_messages(request, results)
 	add_playerlines(request, with_errors)
 #	logging.log(logging.ERROR, str(with_playerlines[0]))
 	results = reversed(with_errors)
-	return results
+	vals = older_newer_vals(results_count, min_val, limit)
+	return (vals, results)
 
 def profile(request, status="normal"):
 	if request.method == 'POST':
@@ -141,7 +159,7 @@ def profile(request, status="normal"):
 #		results_limit = 25
 #		count_from = max(0, results_count - results_limit)
 #		results = reversed(results.order_by('id')[count_from:])
-		results = get_results(request, request.user.username, None, config.results_limit)
+		(_, results) = get_results(request, request.user.username, None, 0, 5)
 		c = {'form': form, 
 			'user': request.user, 
 			'games': config.games_active,
@@ -267,6 +285,8 @@ def submission(request, uusername=None):
 		submissions = reversed(submissions.order_by('timestamp')[count_from:count_to])
 		older = False
 		newer = False
+		older_val = 0
+		newer_val = 0
 		if subm_count > subm_limit:
 			older = True
 			newer = True
@@ -286,5 +306,23 @@ def submission(request, uusername=None):
 			'newer_val' : newer_val,
 			}
 		return render_to_response('aiweb_templates/submission_page.html', context)
+
+def result_page(request, username=""):
+	if username=="":
+		username = request.user.username
+
+	min_val = int(request.GET.get('min', '0'))
+
+	((older, newer, older_val, newer_val), results) = get_results(request, request.user.username, None, min_val, config.results_limit)
+	context = {'user': request.user, 
+		'games': config.games_active,
+		'username': username,
+		'results_list': results,
+		'older' : older,
+		'newer' : newer,
+		'older_val' : older_val,
+		'newer_val' : newer_val,
+		}
+	return render_to_response('aiweb_templates/results_page.html', context)
 
 

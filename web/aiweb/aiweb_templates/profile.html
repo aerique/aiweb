@@ -23,6 +23,7 @@ Results:
   {% with limit=5 %}
   	{% include "aiweb_templates/results.html" %}
   {% endwith %}
+  <a href="/aiweb/result/"> More results </a>
 
     {% with template_name='submissions.html' %}
         {% include "aiweb_templates/"|add:template_name %}

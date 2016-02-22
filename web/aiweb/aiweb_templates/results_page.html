@@ -3,5 +3,11 @@
 {% with var="" %}
         {% include "aiweb_templates/results.html" %}
 {% endwith %}
+    {% if newer %}
+	    <a href="/aiweb/result/?min={{newer_val}}">&lt;&lt; Newer</a>
+    {% endif %}
+    {% if older %}
+	    <a href="/aiweb/result/?min={{older_val}}">Older &gt;&gt;</a>
+    {% endif %}
 {% endblock %}
 
