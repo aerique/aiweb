@@ -87,12 +87,18 @@ def add_playerlines(request, results):
 	
 
 def match_results(request, gamename):
-	(_, results) = get_results(request, None, gamename, config.results_limit)
+	min_val = int(request.GET.get('min', '0'))
+
+	((older, newer, older_val, newer_val), results) = get_results(request, None, gamename, min_val, config.results_limit)
 	c = {
 		'user':request.user,
 		'gamename':gamename,
 		'results_list':results,
 		'games': config.games_active,
+		'older' : older,
+		'newer' : newer,
+		'older_val' : older_val,
+		'newer_val' : newer_val,
 	}
 	return render_to_response('aiweb_templates/results_page.html', c)
 
@@ -159,7 +165,7 @@ def profile(request, status="normal"):
 #		results_limit = 25
 #		count_from = max(0, results_count - results_limit)
 #		results = reversed(results.order_by('id')[count_from:])
-		(_, results) = get_results(request, request.user.username, None, 0, 5)
+		(_, results) = get_results(request, request.user.username, None, 0, config.profile_results_limit)
 		c = {'form': form, 
 			'user': request.user, 
 			'games': config.games_active,
