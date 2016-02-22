@@ -253,4 +253,10 @@ def contact(request):
 			}
 		return render_to_response('aiweb_templates/contact.html', context)
 
+def submission(request):
+		context = {'user': request.user, 
+			'games': config.games_active,
+			}
+		return render_to_response('aiweb_templates/submission.html', context)
+
 

@@ -58,7 +58,8 @@ class Worker:
 			for file in glob.glob(config.task_worker_path + "*" + ready):
 #				print(file)
 				real = (file[:-len(ready)])
-				if (real.startswith("worker-ready")):
+				prefix = file.split('/')[-1]
+				if (prefix.startswith("worker-ready")):
 					pass
 				else:
 					if (self.task_is_mine(real)):
