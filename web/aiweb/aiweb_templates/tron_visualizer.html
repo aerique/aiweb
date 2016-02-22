@@ -21,8 +21,8 @@
 		};
 		the_turn = 0;
 		color = new Array(10);
-		color[0] = [0, 0, 255];
-		color[1] = [0, 255, 0];
+		color[0] = [25, 25, 255];
+		color[1] = [15, 200, 15];
 		color[2] = [255, 255, 0];
 		color[3] = [0, 255, 255];
 		color[4] = [128, 128, 255];
@@ -137,8 +137,8 @@
 		if (iter_frame != 0) {
 			V.fillRect((x1 + (sx / 2) * revdir[agent[3]][0]), (y1 + (sy / 2) * revdir[agent[3]][1]), w, h)
 			d = frame[i][3]
-			V.strokeStyle='rgba(0,0,0,0.2)';
-			V.fillStyle='rgba(0,0,0,0.2)';
+			V.strokeStyle='rgba(255,255,255,0.3)';
+			V.fillStyle='rgba(255,255,255,0.3)';
 			V.beginPath();
 			V.moveTo(x1 + w * arrow[d][0][0], y1 + h * arrow[d][0][1])
 			V.lineTo(x1 + w * arrow[d][1][0], y1 + h * arrow[d][1][1])
