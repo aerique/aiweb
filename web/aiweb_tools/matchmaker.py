@@ -79,6 +79,7 @@ class Matchmaker:
 	def make_match(self):
 		""" Select game, players and map and return Match object """
 		games = config.games_active
+		print(games)
 		gamename = random.choice(games)
 		print("chosen " + gamename)
 		bots = aiweb.models.Bot.objects.using('matchmaker').filter(game_id = gamename).order_by('selection_weight')

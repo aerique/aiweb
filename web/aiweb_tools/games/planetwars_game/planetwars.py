@@ -28,6 +28,7 @@ HEADING = {'n' : (-1, 0),
 class PlanetWars(Game):
 	def __init__(self, options=None):
 		# setup options
+		self.cutoff = None
 		map_text = options['map']
 		self.turns = int(options['turns'])
 		self.loadtime = int(options['loadtime'])
@@ -56,7 +57,7 @@ class PlanetWars(Game):
 		self.ranking_turn = 0
 
 		# initialize scores
-		self.score = [self.agents_per_player]*self.num_players
+		self.score = [0]*self.num_players
 		self.bonus = [0]*self.num_players
 		self.score_history = [[s] for s in self.score]
 
@@ -85,10 +86,11 @@ class PlanetWars(Game):
 	def parse_map(self, map_text):
 		
 		""" Parse the map_text into a more friendly data structure """
-		planets, fleets = original.read_map(map_text)
+		planets, fleets = original.read_map_file(map_text)
 		return {
 			"planets": planets,
 			"fleets": fleets,
+			"players": 2,
 		}
 
 	def render_changes(self, player):
@@ -490,6 +492,10 @@ class PlanetWars(Game):
 		return [None if i not in s else data[s.index(i)]
 				for i in range(max(len(data),self.num_players))]
 
+	def remaining_players(self):
+		""" Return the players still alive """
+		return [p for p in range(self.num_players) if self.is_alive(p)]
+
 	def get_stats(self):
 		"""  Used by engine to report stats
 		"""
@@ -525,7 +531,5 @@ class PlanetWars(Game):
 		replay['fleets'] = self.fleets
 		
 		### 
-		replay['width'] = self.cols
-		replay['height'] = self.rows
 		replay['data'] = self.replay_data
 		return replay

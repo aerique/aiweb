@@ -30,6 +30,7 @@ class PlanetWars(games.Game):
 			'cutoff_turn': 150,
 			'secure_jail' : True,
 			'capture_errors' : True,
+			'players' : 2,
 		}
 		self.players = players
 		self.player_names = player_names

@@ -6,7 +6,6 @@ import subprocess
 import sys
 import time
 import select
-from user_sadbox import Sadbox
 
 # Reads a text file that contains a game state, and returns the game state. A
 # game state is composed of a list of fleets and a list of planets.
@@ -288,131 +287,131 @@ def error(submission_id, error_type, turn=1):
 #            path: the path where the player's files are located
 #            command: the command that invokes the player, assuming the given
 #                     path is the current working directory.
-def play_game(map, max_turn_time, max_turns, players, debug=False):
-  planets, fleets = read_map_file(map)
-  playback = planet_to_playback_format(planets) + "|"
-  clients = []
-  errors_data = []
-  killed = {}
-  wait_counts = {'select':0,'sleep':0}
-  if debug:
-    sys.stderr.write("starting client programs\n")
-  for i, p in enumerate(players):
-    client = Sadbox(working_directory=p["path"],
-                    shell_command=p["command"],
-                    security_on=True)
-    if client.is_alive:
-      if debug:
-        sys.stderr.write("    started player " + str(i+1) + "\n")
-      clients.append(client)
-    else:
-      if debug:
-        sys.stderr.write("    failed to start player " + str(i+1) + "\n")
-      return {"error" : "failure_to_start_client",
-              'errors_data':[error(p['submission_id'],'STARTUP_FAILURE')]}
-  if debug:
-    sys.stderr.write("waiting for players to spin up\n")
-  time.sleep(0.05)
-  turn_number = 1
-  turn_strings = []
-  outcome = dict()
-  remaining = remaining_players(planets, fleets)
-  while turn_number <= max_turns and len(remaining) > 1:
-    temp_fleets = {}
-    for i, c in enumerate(clients):
-      if (i+1) not in remaining:
-        continue
-      message = serialize_game_state(planets, fleets, i+1)
-      if debug:
-        sys.stderr.write("engine > player" + str(i+1) + ":\n")
-        sys.stderr.write(message)
-      c.write(message)
-    client_done = [False] * len(clients)
-    start_time = time.time()
-    time_limit = float(max_turn_time) / 1000
-    if turn_number <= 2:
-      time_limit = time_limit * 3
-    # Get orders from players
-    while not all_true(client_done) and time.time() - start_time < time_limit:
-      for i, c in enumerate(clients):
-        if client_done[i] or not c.is_alive or (i+1) not in remaining:
-          continue
-        line = c.read_line()
-        if line is None:
-          continue
-        line = line.strip().lower()
-        if line == "go":
-          client_done[i] = True
-        else:
-          order = parse_order_string(line)
-          if order is None:
-            sys.stderr.write("player " + str(i+1) + " kicked for making " + \
-              "an unparseable order: " + line + "\n")
-            errors_data.append(error(players[i]['submission_id'],
-                'UNPARSEABLE_ORDER', turn_number))
-            killed[i]=True
-            c.kill()
-            kick_player_from_game(i+1, planets, fleets)
-          else:
-            if not issue_order(order, i+1, planets, fleets, temp_fleets):
-              if int(i) not in killed:
-                errors_data.append(error(players[i]['submission_id'],
-                    'BAD_ORDER', turn_number))
-                killed[int(i)]=True
-              sys.stderr.write("player %d bad order: %s\n" % (i+1, line))
-              c.kill()
-              kick_player_from_game(i+1, planets, fleets)
-            elif debug:
-              sys.stderr.write("player " + str(i+1) + " order: " + line + "\n")
-
-      file_descriptors_to_wait_on = []
-      for i, c in enumerate(clients):
-        if c.stdout_fd <> None and c.stdout_queue.empty():
-          file_descriptors_to_wait_on.append(c.stdout_fd)
-      if file_descriptors_to_wait_on:
-        # Yeah, this doesn't change anything until I change the engine to not use a seperate read thread.
-        select.select(file_descriptors_to_wait_on,[],[], 0.002)
-        wait_counts['select']+=1
-      else:
-        time.sleep(0.007)
-        wait_counts['sleep']+=1
-      
-      
-    process_new_fleets(planets, fleets, temp_fleets)
-    # Kick players that took too long to move.
-    for i, c in enumerate(clients):
-      if (i+1) not in remaining or client_done[i]:
-        continue
-      if int(i) not in killed:
-        errors_data.append(error(players[i]['submission_id'], 'TIMEOUT',
-            turn_number))
-        killed[int(i)]=True
-      sys.stderr.write("player " + str(i+1) + " kicked for taking too " + \
-        "long to move\n")
-      if "timeout" not in outcome:
-        outcome["timeout"] = []
-      outcome["timeout"].append(i+1)
-      c.kill()
-      kick_player_from_game(i+1, planets, fleets)
-    planets, fleets = do_time_step(planets, fleets)
-    turn_strings.append(frame_representation(planets, fleets))
-    remaining = remaining_players(planets, fleets)
-    turn_number += 1
-  for i, c in enumerate(clients):
-    if not c.is_alive:
-      if int(i) not in killed:
-        errors_data.append(error(players[i]['submission_id'], 'QUIT',
-            turn_number))
-        killed[int(i)]=True
-      if "fail" not in outcome:
-        outcome["fail"] = []
-      outcome["fail"].append(i+1)
-    c.kill()
-  playback += ":".join(turn_strings)
-  outcome["winner"] = player_with_most_ships(planets, fleets)
-  outcome["playback"] = playback
-  outcome["engine_stats"] = "sleeps: %d, selects: %d " % (wait_counts['sleep'], wait_counts['select'])
-  if errors_data:
-    outcome["errors_data"] = errors_data
-  return outcome
+#def play_game(map, max_turn_time, max_turns, players, debug=False):
+#  planets, fleets = read_map_file(map)
+#  playback = planet_to_playback_format(planets) + "|"
+#  clients = []
+#  errors_data = []
+#  killed = {}
+#  wait_counts = {'select':0,'sleep':0}
+#  if debug:
+#    sys.stderr.write("starting client programs\n")
+#  for i, p in enumerate(players):
+#    client = Sadbox(working_directory=p["path"],
+#                    shell_command=p["command"],
+#                    security_on=True)
+#    if client.is_alive:
+#      if debug:
+#        sys.stderr.write("    started player " + str(i+1) + "\n")
+#      clients.append(client)
+#    else:
+#      if debug:
+#        sys.stderr.write("    failed to start player " + str(i+1) + "\n")
+#      return {"error" : "failure_to_start_client",
+#              'errors_data':[error(p['submission_id'],'STARTUP_FAILURE')]}
+#  if debug:
+#    sys.stderr.write("waiting for players to spin up\n")
+#  time.sleep(0.05)
+#  turn_number = 1
+#  turn_strings = []
+#  outcome = dict()
+#  remaining = remaining_players(planets, fleets)
+#  while turn_number <= max_turns and len(remaining) > 1:
+#    temp_fleets = {}
+#    for i, c in enumerate(clients):
+#      if (i+1) not in remaining:
+#        continue
+#      message = serialize_game_state(planets, fleets, i+1)
+#      if debug:
+#        sys.stderr.write("engine > player" + str(i+1) + ":\n")
+#        sys.stderr.write(message)
+#      c.write(message)
+#    client_done = [False] * len(clients)
+#    start_time = time.time()
+#    time_limit = float(max_turn_time) / 1000
+#    if turn_number <= 2:
+#      time_limit = time_limit * 3
+#    # Get orders from players
+#    while not all_true(client_done) and time.time() - start_time < time_limit:
+#      for i, c in enumerate(clients):
+#        if client_done[i] or not c.is_alive or (i+1) not in remaining:
+#          continue
+#        line = c.read_line()
+#        if line is None:
+#          continue
+#        line = line.strip().lower()
+#        if line == "go":
+#          client_done[i] = True
+#        else:
+#          order = parse_order_string(line)
+#          if order is None:
+#            sys.stderr.write("player " + str(i+1) + " kicked for making " + \
+#              "an unparseable order: " + line + "\n")
+#            errors_data.append(error(players[i]['submission_id'],
+#                'UNPARSEABLE_ORDER', turn_number))
+#            killed[i]=True
+#            c.kill()
+#            kick_player_from_game(i+1, planets, fleets)
+#          else:
+#            if not issue_order(order, i+1, planets, fleets, temp_fleets):
+#              if int(i) not in killed:
+#                errors_data.append(error(players[i]['submission_id'],
+#                    'BAD_ORDER', turn_number))
+#                killed[int(i)]=True
+#              sys.stderr.write("player %d bad order: %s\n" % (i+1, line))
+#              c.kill()
+#              kick_player_from_game(i+1, planets, fleets)
+#            elif debug:
+#              sys.stderr.write("player " + str(i+1) + " order: " + line + "\n")
+#
+#      file_descriptors_to_wait_on = []
+#      for i, c in enumerate(clients):
+#        if c.stdout_fd != None and c.stdout_queue.empty():
+#          file_descriptors_to_wait_on.append(c.stdout_fd)
+#      if file_descriptors_to_wait_on:
+#        # Yeah, this doesn't change anything until I change the engine to not use a seperate read thread.
+#        select.select(file_descriptors_to_wait_on,[],[], 0.002)
+#        wait_counts['select']+=1
+#      else:
+#        time.sleep(0.007)
+#        wait_counts['sleep']+=1
+#      
+#      
+#    process_new_fleets(planets, fleets, temp_fleets)
+#    # Kick players that took too long to move.
+#    for i, c in enumerate(clients):
+#      if (i+1) not in remaining or client_done[i]:
+#        continue
+#      if int(i) not in killed:
+#        errors_data.append(error(players[i]['submission_id'], 'TIMEOUT',
+#            turn_number))
+#        killed[int(i)]=True
+#      sys.stderr.write("player " + str(i+1) + " kicked for taking too " + \
+#        "long to move\n")
+#      if "timeout" not in outcome:
+#        outcome["timeout"] = []
+#      outcome["timeout"].append(i+1)
+#      c.kill()
+#      kick_player_from_game(i+1, planets, fleets)
+#    planets, fleets = do_time_step(planets, fleets)
+#    turn_strings.append(frame_representation(planets, fleets))
+#    remaining = remaining_players(planets, fleets)
+#    turn_number += 1
+#  for i, c in enumerate(clients):
+#    if not c.is_alive:
+#      if int(i) not in killed:
+#        errors_data.append(error(players[i]['submission_id'], 'QUIT',
+#            turn_number))
+#        killed[int(i)]=True
+#      if "fail" not in outcome:
+#        outcome["fail"] = []
+#      outcome["fail"].append(i+1)
+#    c.kill()
+#  playback += ":".join(turn_strings)
+#  outcome["winner"] = player_with_most_ships(planets, fleets)
+#  outcome["playback"] = playback
+#  outcome["engine_stats"] = "sleeps: %d, selects: %d " % (wait_counts['sleep'], wait_counts['select'])
+#  if errors_data:
+#    outcome["errors_data"] = errors_data
+#  return outcome
 

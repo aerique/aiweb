@@ -74,10 +74,12 @@ class Worker:
 								subprocess.call(["rm", real])
 								subprocess.call(["rm", file])
 							subprocess.call(["rm", lockfile])
-						except Exception as e:
+						except OSError as e:
 							pass
 					
 			time.sleep(config.sleeptime)
+			self.request_task()
+
 			print("checking for tasks")
 
 		subprocess.call(["rm", stopfile])
@@ -111,7 +113,6 @@ class Worker:
 			match.read(taskfile)
 			print("Running match: " + str(match))
 			self.run_match(match)
-		self.request_task()
 
 	def compile(self, subm_id):
 		print("compiling: " + subm_id)
@@ -134,6 +135,9 @@ class Worker:
 			print("Running functional test")
 			if subm.compile_success():
 				self.functional_test(game_id, subm)
+				print("finished functional test")
+			else:
+				print("Not testing because compile failed")
 	#		subprocess.call(["rm", "-rf", target])
 			#print(subm.full_report())
 			self.send_compile_result(path, subm_id, game_id, subm)
