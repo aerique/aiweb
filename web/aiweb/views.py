@@ -195,6 +195,8 @@ def replay(request, id="none"):
 				return render_to_response('aiweb_templates/ants_visualizer.html', context)
 			elif replay['gamename'].lower() == "tron":
 				return render_to_response('aiweb_templates/tron_visualizer.html', context)
+			elif replay['gamename'].lower() == "planetwars":
+				return render_to_response('aiweb_templates/planetwars_visualizer.html', context)
 			else:
 				return render_to_response('aiweb_templates/ants_visualizer.html', context)
 		else:

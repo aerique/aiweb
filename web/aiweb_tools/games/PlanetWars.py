@@ -21,7 +21,7 @@ class PlanetWars(games.Game):
 			turns = 10
 		else:
 			self.map_path = map_path
-			turns = 1000
+			turns = 200
 		self.opts = {
 			'turns':turns,	
 			'loadtime': 5000,
