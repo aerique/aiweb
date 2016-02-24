@@ -14,7 +14,7 @@ from user_sadbox import Sadbox
 def read_map_file(map):
   fleets = []
   planets = []
-  f = open(map)
+  f = map.split('\n')
   for line in f:
     tokens = line.lower().strip().split(" ")
     if len(tokens) == 0:
