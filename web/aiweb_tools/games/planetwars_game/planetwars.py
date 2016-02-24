@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from random import randrange, choice, shuffle, randint, seed, random
 from math import cos, pi, sin, sqrt, atan
@@ -9,7 +9,7 @@ import operator
 from .game import Game
 from copy import deepcopy
 
-import .original
+from . import original
 
 try:
 	from sys import maxint
@@ -41,6 +41,7 @@ class PlanetWars(Game):
 		map_data = self.parse_map(map_text)
 		self.planets = map_data['planets']
 		self.fleets = map_data['fleets']
+		self.temp_fleets = {}
 
 		self.turn = 0
 		self.num_players = map_data["players"]
@@ -145,182 +146,193 @@ class PlanetWars(Game):
 
 		return orders, valid, ignored, invalid
 
-	def validate_orders(self, player, orders, lines, ignored, invalid):
-		""" Validate orders from a given player
-
-			Location (row, col) must be ant belonging to the player
-			direction must not be blocked
-			Can't multiple orders to one ant
-		"""
-		valid = []
-		valid_orders = []
-		seen_locations = set()
-		for line, (player, row, col, heading) in zip(lines, orders):
-			if not self.player_has_agent(player, row, col):
-				invalid.append((line,'no agent belonging to this player at this location'))
-				continue
-			if row < 0 or col < 0:
-				invalid.append((line,'out of bounds'))
-				continue
-
-			# this order is valid!
-			valid_orders.append((player, row, col, heading))
-			valid.append(line)
-
-		return valid_orders, valid, ignored, invalid
-
-
-	def update_move_sequence(self):
-		self.player_to_begin = self.player_to_begin + 1
-		if self.player_to_begin >= self.num_players:
-			self.player_to_begin = self.player_to_begin - self.num_players
-
-	def get_move_sequence(self):
-		""" Sequence for cycling through players so they all sometimes 
-			get to move first
-		"""
-		p1 = range(self.player_to_begin, self.num_players)
-		result = p1 + (range(0, self.player_to_begin))
-		return result
-
-	def do_move_phase_order(self, dtuple):
-		(player, action, num, source, target) = dtuple
-		valid = False
-		if action == "d": pass
-		elif action == "a":
-			if self.territory[target]["owner"] != player and num > 0 and self.territory[source]["owner"] == player and self.territory[source]["armies"] > 1:
-				valid = True
-				will_send = min (num, (self.territory[source]["armies"] - 1))
-				self.attack (player, num, source, target)
-		elif action == "t":
-			if self.territory[target]["owner"] == player and self.territory[source]["owner"] == player and num > 0 and self.territory[source]["armies"] > 1:
-				valid = True
-				will_send = min (num, (self.territory[source]["armies"] - 1))
-				self.transfer (player, num, source, target)
-		elif action == "m":
-			if num > 0 and self.territory[source]["armies"] > 1:
-				if self.territory[source]["owner"] == player:
-					valid = True
-					will_send = min (num, (self.territory[source]["armies"] - 1))
-					if self.territory[target]["owner"] == player:
-						self.transfer (player, will_send, source, target)
-					else:
-						self.attack (player, will_send, source, target)
-		return valid
-
-	def process_next_order(self, player):
-		""" Process one player order in which something actually happens
-		"""
-		if not player["finished_turn"]:
-			done = False
-			while not done:
-				if len(self.orders[player]) <= player["move_index"]:
-					player["finished_turn"] = True
-					done = True
-				else:
-					order = self.orders[player][player["move_index"]]
-					valid = self.do_move_phase_order(order)
-					player["move_index"] += 1
-					if valid:
-						done = True
+#	def validate_orders(self, player, orders, lines, ignored, invalid):
+#		""" Validate orders from a given player
+#
+#			Location (row, col) must be ant belonging to the player
+#			direction must not be blocked
+#			Can't multiple orders to one ant
+#		"""
+#		valid = []
+#		valid_orders = []
+#		seen_locations = set()
+#		for line, (player, row, col, heading) in zip(lines, orders):
+#			if not self.player_has_agent(player, row, col):
+#				invalid.append((line,'no agent belonging to this player at this location'))
+#				continue
+#			if row < 0 or col < 0:
+#				invalid.append((line,'out of bounds'))
+#				continue
+#
+#			# this order is valid!
+#			valid_orders.append((player, row, col, heading))
+#			valid.append(line)
+#
+#		return valid_orders, valid, ignored, invalid
 
 
-	def destination(self, loc, d):
-		""" Returns the location produced by offsetting loc by d """
-		return ((loc[0] + d[0]) % self.rows, (loc[1] + d[1]) % self.cols)
+#	def update_move_sequence(self):
+#		self.player_to_begin = self.player_to_begin + 1
+#		if self.player_to_begin >= self.num_players:
+#			self.player_to_begin = self.player_to_begin - self.num_players
 
-	def tron_orders(self, player):
-		""" Enacts orders for the Tron game
+#	def get_move_sequence(self):
+#		""" Sequence for cycling through players so they all sometimes 
+#			get to move first
+#		"""
+#		p1 = range(self.player_to_begin, self.num_players)
+#		result = p1 + (range(0, self.player_to_begin))
+#		return result
+
+#	def do_move_phase_order(self, dtuple):
+#		(player, action, num, source, target) = dtuple
+#		valid = False
+#		if action == "d": pass
+#		elif action == "a":
+#			if self.territory[target]["owner"] != player and num > 0 and self.territory[source]["owner"] == player and self.territory[source]["armies"] > 1:
+#				valid = True
+#				will_send = min (num, (self.territory[source]["armies"] - 1))
+#				self.attack (player, num, source, target)
+#		elif action == "t":
+#			if self.territory[target]["owner"] == player and self.territory[source]["owner"] == player and num > 0 and self.territory[source]["armies"] > 1:
+#				valid = True
+#				will_send = min (num, (self.territory[source]["armies"] - 1))
+#				self.transfer (player, num, source, target)
+#		elif action == "m":
+#			if num > 0 and self.territory[source]["armies"] > 1:
+#				if self.territory[source]["owner"] == player:
+#					valid = True
+#					will_send = min (num, (self.territory[source]["armies"] - 1))
+#					if self.territory[target]["owner"] == player:
+#						self.transfer (player, will_send, source, target)
+#					else:
+#						self.attack (player, will_send, source, target)
+#		return valid
+
+#	def process_next_order(self, player):
+#		""" Process one player order in which something actually happens
+#		"""
+#		if not player["finished_turn"]:
+#			done = False
+#			while not done:
+#				if len(self.orders[player]) <= player["move_index"]:
+#					player["finished_turn"] = True
+#					done = True
+#				else:
+#					order = self.orders[player][player["move_index"]]
+#					valid = self.do_move_phase_order(order)
+#					player["move_index"] += 1
+#					if valid:
+#						done = True
+
+
+#	def destination(self, loc, d):
+#		""" Returns the location produced by offsetting loc by d """
+#		return ((loc[0] + d[0]) % self.rows, (loc[1] + d[1]) % self.cols)
+#
+#	def tron_orders(self, player):
+#		""" Enacts orders for the Tron game
+#		"""
+#		player_orders = self.orders[player]
+#		done = False
+#		for order in player_orders:
+#			if not done:
+#				(player_id, row, col, heading) = order
+#				for agent in self.agents:
+#					if agent["row"] == row and agent["col"] == col and agent["owner"] == player_id:
+#						agent["heading"] = heading
+#
+#
+#	def pre_move_agents(self):
+#		""" Process the portion of the agent's move which should take
+#			place before the agent's location and map obstacles are updated.
+#		"""
+#		for agent in self.agents:
+#			row, col = agent["row"], agent["col"]
+#			heading = agent["heading"]
+#			dest = self.destination([row, col], HEADING[heading])
+#			if not self.grid[dest[0]][dest[1]] == LAND:
+#				self.killed_agent_locations.append([dest, agent["owner"]])
+#			else: self.agent_destinations.append([dest, agent["owner"]])
+#
+#	def kill_overlap(self):
+#		""" Kills agents who step onto the same square in the same turn
+#		"""
+#		unique = []
+#		for value in self.agent_destinations:
+#			location, owner = value
+#			if not location in unique:
+#				unique.append(location)
+#			else:
+#				self.killed_agent_locations.append(value)
+#
+#	def mark_trail(self):
+#		""" Mark trails as obstacles on the map
+#		"""
+#		for (row, col), owner in self.agent_destinations:
+#			self.grid[row][col] = owner
+#
+#	def update_scores_for_agent_demise(self):
+#		""" When an agent dies, its owner loses a point and everybody else
+#			alive at the start of this turn gains one
+#		"""
+#		for agent in self.agents:
+#			if (agent["row"], agent["col"]) in [(r, c) for (r, c), _ in self.killed_agent_locations]:
+#				for count in range(self.num_players):
+#					if count == agent["owner"]:
+#						self.score[count] -= 1
+#					elif self.is_alive(count):
+#						self.score[count] +=1  
+
+#	def remove_killed(self):
+#		""" Remove dead agents from the list of active ones
+#		"""
+#		remaining = []
+#		for agent in self.agents:
+#			if (agent["row"], agent["col"]) in [(r, c) for (r, c), _ in self.killed_agent_locations]:
+#				self.killed_agents.append(agent)
+#			else:
+#				remaining.append(agent)
+#		self.agents = remaining
+#
+#	def update_agents(self):
+#		""" Update the agent's location in preparation for next turn
+#		"""
+#		for agent in self.agents:
+#			row, col = agent["row"], agent["col"]
+#			heading = agent["heading"]
+#			dest_row, dest_col = self.destination([row, col], HEADING[heading])
+#			agent["row"] = dest_row
+#			agent["col"] = dest_col
+
+	def pw_orders(self, player):
+		""" Enacts orders for the PlanetWars game
 		"""
 		player_orders = self.orders[player]
 		done = False
 		for order in player_orders:
 			if not done:
-				(player_id, row, col, heading) = order
-				for agent in self.agents:
-					if agent["row"] == row and agent["col"] == col and agent["owner"] == player_id:
-						agent["heading"] = heading
-
-
-	def pre_move_agents(self):
-		""" Process the portion of the agent's move which should take
-			place before the agent's location and map obstacles are updated.
-		"""
-		for agent in self.agents:
-			row, col = agent["row"], agent["col"]
-			heading = agent["heading"]
-			dest = self.destination([row, col], HEADING[heading])
-			if not self.grid[dest[0]][dest[1]] == LAND:
-				self.killed_agent_locations.append([dest, agent["owner"]])
-			else: self.agent_destinations.append([dest, agent["owner"]])
-
-	def kill_overlap(self):
-		""" Kills agents who step onto the same square in the same turn
-		"""
-		unique = []
-		for value in self.agent_destinations:
-			location, owner = value
-			if not location in unique:
-				unique.append(location)
-			else:
-				self.killed_agent_locations.append(value)
-
-	def mark_trail(self):
-		""" Mark trails as obstacles on the map
-		"""
-		for (row, col), owner in self.agent_destinations:
-			self.grid[row][col] = owner
-
-	def update_scores_for_agent_demise(self):
-		""" When an agent dies, its owner loses a point and everybody else
-			alive at the start of this turn gains one
-		"""
-		for agent in self.agents:
-			if (agent["row"], agent["col"]) in [(r, c) for (r, c), _ in self.killed_agent_locations]:
-				for count in range(self.num_players):
-					if count == agent["owner"]:
-						self.score[count] -= 1
-					elif self.is_alive(count):
-						self.score[count] +=1  
-
-	def remove_killed(self):
-		""" Remove dead agents from the list of active ones
-		"""
-		remaining = []
-		for agent in self.agents:
-			if (agent["row"], agent["col"]) in [(r, c) for (r, c), _ in self.killed_agent_locations]:
-				self.killed_agents.append(agent)
-			else:
-				remaining.append(agent)
-		self.agents = remaining
-
-	def update_agents(self):
-		""" Update the agent's location in preparation for next turn
-		"""
-		for agent in self.agents:
-			row, col = agent["row"], agent["col"]
-			heading = agent["heading"]
-			dest_row, dest_col = self.destination([row, col], HEADING[heading])
-			agent["row"] = dest_row
-			agent["col"] = dest_col
+				if not original.issue_order(order, player, self.planets, self.fleets, self.temp_fleets):
+					self.replay_data.append("Bad order: " + str(order))
+					
 
 	def do_orders(self):
 		""" Execute player orders and handle conflicts
 		"""
 		for player in range(self.num_players):
 			if self.is_alive(player):
-				self.tron_orders(player)
+				self.pw_orders(player)
 #			else: self.killed[player] == True
-		self.pre_move_agents()
-		self.kill_overlap()
-		self.update_agents()
-		self.update_scores_for_agent_demise()
-		self.remove_killed()
-		self.mark_trail()
+#		self.pre_move_agents()
+#		self.kill_overlap()
+#		self.update_agents()
+#		self.update_scores_for_agent_demise()
+#		self.remove_killed()
+#		self.mark_trail()
 
-	def remaining_players(self):
-		""" Return the players still alive """
-		return [p for p in range(self.num_players) if self.is_alive(p)]
+#	def remaining_players(self):
+#		""" Return the players still alive """
+#		return [p for p in range(self.num_players) if self.is_alive(p)]
 
 	# Common functions for all games
 
@@ -367,9 +379,7 @@ class PlanetWars(Game):
 		""" Called by engine at the start of the turn """
 		self.turn += 1
 		self.orders = [[] for _ in range(self.num_players)]
-		self.agent_destinations = []
-		self.killed_agents = []
-		self.killed_agent_locations = []
+		self.temp_fleets = {}
 
 	def finish_turn(self):
 		""" Called by engine at the end of the turn """
@@ -420,16 +430,14 @@ class PlanetWars(Game):
 		result.append(['loadtime', self.loadtime])
 		result.append(['turntime', self.turntime])
 		result.append(['player_id', player])
-		result.append(['rows', self.rows])
-		result.append(['cols', self.cols])
 		result.append(['turns', self.turns])
 		result.append(['player_seed', self.player_seed])
 		result.append(['num_players', self.num_players])
-		result.append(['agents_per_player', self.agents_per_player])
-		for row, col in self.water:
-			result.append(['w', row, col])
+		message = self.get_player_state(player)
+
 		result.append([]) # newline
-		return '\n'.join(' '.join(map(str,s)) for s in result)
+		pen = '\n'.join(' '.join(map(str,s)) for s in result)
+		return pen + message
 
 	def get_player_state(self, player):
 		""" Get state changes visible to player
@@ -438,21 +446,12 @@ class PlanetWars(Game):
 		"""
 		return self.render_changes(player)
 
-	def living_agents(self, player):
-		""" Called to determine whether a player has living agents remaining
-		"""
-		count = 0
-		for agent in self.agents:
-			if agent["owner"] == player:
-				count += 1
-		return count
-
 	def is_alive(self, player):
 		""" Determine if player is still alive
 
 			Used by engine to determine players still in the game
 		"""
-		if self.killed[player] or self.living_agents(player) == 0:
+		if self.killed[player]:
 			return False
 		else:
 			return True
@@ -468,7 +467,7 @@ class PlanetWars(Game):
 	def do_moves(self, player, moves):
 		""" Called by engine to give latest player orders """
 		orders, valid, ignored, invalid = self.parse_orders(player, moves)
-		orders, valid, ignored, invalid = self.validate_orders(player, orders, valid, ignored, invalid)
+#		orders, valid, ignored, invalid = self.validate_orders(player, orders, valid, ignored, invalid)
 		self.orders[player] = orders
 		return valid, ['%s # %s' % ignore for ignore in ignored], ['%s # %s' % error for error in invalid]
 
@@ -514,8 +513,6 @@ class PlanetWars(Game):
 		replay['turns'] = self.turns
 		replay['engine_seed'] = self.engine_seed
 		replay['player_seed'] = self.player_seed
-		replay['rows'] = self.rows
-		replay['cols'] = self.cols
 
 		# scores
 		replay['scores'] = self.score_history
@@ -523,8 +520,10 @@ class PlanetWars(Game):
 		replay['winning_turn'] = self.winning_turn
 		replay['ranking_turn'] = self.ranking_turn
 		replay['cutoff'] =  self.cutoff
+
+		replay['planets'] = self.planets
+		replay['fleets'] = self.fleets
 		
-		replay['water'] = self.water
 		### 
 		replay['width'] = self.cols
 		replay['height'] = self.rows
