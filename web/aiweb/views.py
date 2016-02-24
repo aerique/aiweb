@@ -91,6 +91,7 @@ def match_results(request, gamename):
 
 	((older, newer, older_val, newer_val), results) = get_results(request, None, gamename, min_val, config.results_limit)
 	c = {
+		'request':request,
 		'user':request.user,
 		'gamename':gamename,
 		'results_list':results,
