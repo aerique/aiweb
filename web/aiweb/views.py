@@ -202,14 +202,26 @@ def replay(request, id="none"):
 
 
 def rank(request, gamename=config.games_active[0]):
+	q1 = aiweb.models.Submission.objects.filter(game_id=gamename).filter(active=True).order_by('skill')
+	results_count = q1.count()
+	limit = config.results_limit
+	min_val = int(request.GET.get('min', '0'))
+	count_from = max(0, (results_count - limit) - min_val)
+	count_to = min(results_count, count_from + limit)
+	ranks = q1[count_from : count_to].all().reverse()
+	numbered_ranks = enumerate(ranks, start=min_val + 1)
+	vals = older_newer_vals(results_count, min_val, limit)
+	(older, newer, older_val, newer_val) = vals
 	context={'user' : request.user,
 		'gamename':gamename,
 		'games': config.games_active,
+		'ranks' : numbered_ranks,
+		'older' : older,
+		'newer' : newer,
+		'older_val' : older_val,
+		'newer_val' : newer_val,
+		'request':request,
 	}
-	q1 = aiweb.models.Submission.objects.filter(game_id=gamename).filter(active=True).order_by('skill')
-	limit = q1.count()
-	ranks = q1[max(0, limit - 100):].all().reverse()
-	context['ranks'] = ranks
 	return render_to_response('aiweb_templates/rank.html', context)
 
 def report(request, id="0000"):

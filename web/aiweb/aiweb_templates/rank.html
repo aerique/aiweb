@@ -1,6 +1,8 @@
 {% extends "aiweb_templates/base.html" %}
+{% load replace %}
 
 {% block content %}
+<center>
 <p> {{ gamename }} Leaderboard </p>
 <table border="1" class="center">
 <tr>
@@ -18,22 +20,36 @@ Games played
 </th>
 </tr>
 
-{% for player in ranks %}
+{% for rank in ranks %}
 <tr>
 <td>
-{{ forloop.counter }}
+{{ rank.0 }}
 </td>
 <td>
-{{ player.username }}
+{{ rank.1.username }}
 </td>
 <td>
-{{ player.skill }}
+{{ rank.1.skill }}
 </td>
 <td>
-{{ player.games_played }}
+{{ rank.1.games_played }}
 </td>
 </tr>
 {% endfor %}
 </table>
+	{% if newer %}
+		<a href="?{% replace request 'min' newer_val %}">
+<!--		<a href="/aiweb/result/?min={{newer_val}}"> -->
+		&lt;&lt;</a> &nbsp; &nbsp;
+	{% endif %}
+	{% if older %}
+		<a href="?{% replace request 'min' older_val %}">
+<!--		<a href="/aiweb/result/?min={{older_val}}"> -->
+		&gt;&gt;</a>
+	{% endif %}
+</center>
 {% endblock %}
+
+
+
 
