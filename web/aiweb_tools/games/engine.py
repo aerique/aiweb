@@ -383,9 +383,11 @@ def get_moves(game, bots, bot_nums, time_limit, turn):
 					break
 				line = line.strip()
 				if line.lower() == 'go':
+					print("Bot " + str(b) + " finished")
 					bot_finished[b] = True
 					# bot finished sending data for this turn
 					break
+				print(line)
 				bot_moves[b].append(line)
 
 			for x in range(100):

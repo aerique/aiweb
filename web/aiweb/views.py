@@ -179,6 +179,9 @@ def profile(request, status="normal"):
 		c.update(csrf(request))
 		return render_to_response('aiweb_templates/profile.html', c)
 
+def replace_newlines(replay):
+	return ('\\n').join(replay)
+
 def replay(request, id="none"):
 	if not (id=="none"):
 		replaydata = aiweb_tools.comms.load_replaydata(id)
@@ -196,6 +199,7 @@ def replay(request, id="none"):
 			elif replay['gamename'].lower() == "tron":
 				return render_to_response('aiweb_templates/tron_visualizer.html', context)
 			elif replay['gamename'].lower() == "planetwars":
+#				context['replaydata'] = replace_newlines(context['replaydata'])
 				return render_to_response('aiweb_templates/planetwars_visualizer.html', context)
 			else:
 				return render_to_response('aiweb_templates/ants_visualizer.html', context)

@@ -45,6 +45,9 @@ class PlanetWars(games.Game):
 		game = planetwars.PlanetWars(self.opts)
 		game_result = engine.run_game(game, self.players, self.opts)
 		game_result['playernames'] = self.player_names
+		if 'replaydata' in game_result:
+			game_result['replaydata']['player_one'] = self.player_names[0]
+			game_result['replaydata']['player_two'] = self.player_names[1]
 		print(game_result)
 		return game_result
 

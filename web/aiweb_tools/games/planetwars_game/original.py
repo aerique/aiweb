@@ -124,7 +124,7 @@ def issue_order(order, player_id, planets, fleets, temp_fleets):
 # Processes fleets launched this turn into the normal
 # fleets array.
 def process_new_fleets(planets, fleets, temp_fleets):
-  for src, destd in temp_fleets.iteritems():
+  for src, destd in list(temp_fleets.items()):
     source_planet = planets[src]
     owner = source_planet["owner"]
     if owner == 0:

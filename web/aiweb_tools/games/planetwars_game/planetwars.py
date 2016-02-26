@@ -42,7 +42,7 @@ class PlanetWars(Game):
 		map_data = self.parse_map(map_text)
 		self.planets = map_data['planets']
 		self.fleets = map_data['fleets']
-		self.temp_fleets = {}
+		self.temp_fleets = []
 
 		self.turn = 0
 		self.num_players = map_data["players"]
@@ -311,10 +311,12 @@ class PlanetWars(Game):
 		""" Enacts orders for the PlanetWars game
 		"""
 		player_orders = self.orders[player]
+		print("player_orders" + str(player_orders))
 		done = False
 		for order in player_orders:
 			if not done:
-				if not original.issue_order(order, player, self.planets, self.fleets, self.temp_fleets):
+				porder = original.parse_order(order)
+				if not original.issue_order(porder, player, self.planets, self.fleets, self.temp_fleets):
 					self.replay_data.append("Bad order: " + str(order))
 					
 
@@ -324,6 +326,8 @@ class PlanetWars(Game):
 		for player in range(self.num_players):
 			if self.is_alive(player):
 				self.pw_orders(player)
+			else:
+				print("Player dead: " + player)
 #			else: self.killed[player] == True
 #		self.pre_move_agents()
 #		self.kill_overlap()
@@ -386,6 +390,9 @@ class PlanetWars(Game):
 	def finish_turn(self):
 		""" Called by engine at the end of the turn """
 		self.do_orders()
+		original.process_new_fleets(self.planets, self.fleets, self.temp_fleets)
+		self.planets, self.fleets = original.do_time_step(self.planets, self.fleets)
+		print(self.fleets)
 		# record score in score history
 		for i, s in enumerate(self.score):
 			if self.is_alive(i):
@@ -471,6 +478,7 @@ class PlanetWars(Game):
 		orders, valid, ignored, invalid = self.parse_orders(player, moves)
 #		orders, valid, ignored, invalid = self.validate_orders(player, orders, valid, ignored, invalid)
 		self.orders[player] = orders
+		print("do_moves called: " + str(orders))
 		return valid, ['%s # %s' % ignore for ignore in ignored], ['%s # %s' % error for error in invalid]
 
 	def get_scores(self, player=None):
@@ -529,6 +537,7 @@ class PlanetWars(Game):
 
 		replay['planets'] = self.planets
 		replay['fleets'] = self.fleets
+
 		
 		### 
 		replay['data'] = self.replay_data
