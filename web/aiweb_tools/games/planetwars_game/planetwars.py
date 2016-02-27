@@ -296,8 +296,9 @@ class PlanetWars(Game):
 			Used by engine to determine players still in the game
 		"""
 		#FIXME setting this here isn't right, it should be in finish_turn
-		if original.num_ships_for_player(self.planets, self.fleets, player) < 1:
-			self.killed[player] = True;
+		if len(original.remaining_players(self.planets, self.fleets)) < 2:
+			if original.num_ships_for_player(self.planets, self.fleets, player + 1) < 1:
+				self.killed[player] = True;
 		if self.killed[player]:
 			return False
 		else:
