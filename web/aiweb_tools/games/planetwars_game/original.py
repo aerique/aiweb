@@ -206,7 +206,7 @@ def remaining_players(planets, fleets):
 # Returns a string representation of the entire game state.
 def serialize_game_state(planets, fleets, pov):
   message = "\n".join([serialize_planet(p, pov) for p in planets]) + \
-    "\n" + "\n".join([serialize_fleet(f, pov) for f in fleets]) + "\ngo\n"
+    "\n" + "\n".join([serialize_fleet(f, pov) for f in fleets]) +"\n"#+ "\ngo\n"
   return message.replace("\n\n", "\n")
 
 # Turns a list of planets into a string in playback format. This is the initial
