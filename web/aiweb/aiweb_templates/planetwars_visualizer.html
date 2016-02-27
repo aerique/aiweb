@@ -33,6 +33,7 @@
   </script> -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <script>
+		var replay_data = {{replaydata|safe}};
 var Visualizer = {
     canvas: null,
     ctx: null,
@@ -44,6 +45,7 @@ var Visualizer = {
     frameDrawEnded: null,
     players: ["Player A", "Player B"],
     playerIds: ["-1", "-1"],
+    playernames: ["Player A", "Player B"],
     map_id: 0,
     planets: [],
     moves: [],
@@ -141,7 +143,7 @@ var Visualizer = {
     },
 
     drawFrame: function(frame) {
-	console.log("Frame:" + frame);
+//	console.log("Frame:" + frame);
         var disp_x = 0, disp_y = 0;
         var ctx = this.ctx;
         var frameNumber = Math.floor(frame);
@@ -167,7 +169,7 @@ var Visualizer = {
             planet.owner = planetStats[z].owner;
             planet.numShips = planetStats[z].numShips;
 		if (planetStats[z].owner == 1 || planetStats[z].owner == 2) {
-			console.log(planetStats[z].numShips);
+//			console.log(planetStats[z].numShips);
 		}
 
             this.shipCount[planet.owner] += planet.numShips;
@@ -209,6 +211,7 @@ var Visualizer = {
             ctx.fill();
 
             ctx.fillStyle = "#fff";
+//            ctx.fillText(planet.x + ", " + planet.y, disp_x, this.canvas.height - disp_y + 5);
             ctx.fillText(planet.numShips, disp_x, this.canvas.height - disp_y + 5);
 
         }
@@ -217,6 +220,7 @@ var Visualizer = {
         this.ctx.font = this.config.fleet_font
         for(var i = 0; i < fleets.length; i++) {
           var fleet = fleets[i];
+//	  console.log(fleet);
 
           numShips[fleet.owner-1] += fleet.numShips;
           
@@ -279,14 +283,14 @@ var Visualizer = {
 
         // update status next to usernames
         $('.player1Name').html(
-                '<a href="profile.php?user_id='+ Visualizer.playerIds[0] +'">'+
-                Visualizer.players[0] +'</a><br /> ('+  numShips[0] +'/'+
+                '<a href="profile.php?user_id='+ Visualizer.playernames[0] +'">'+
+                Visualizer.playernames[0] +'</a><br /> ('+  numShips[0] +'/'+
                 production[0] +')');
 
         $('.player1Name a').css({'color':Visualizer.config.teamColor[1],'text-decoration':'none'})
         $('.player2Name').html(
-                '<a href="profile.php?user_id='+ Visualizer.playerIds[1] +'">'+
-                Visualizer.players[1] +'</a><br /> ('+ numShips[1] +'/'+
+                '<a href="profile.php?user_id='+ Visualizer.playernames[1] +'">'+
+                Visualizer.playernames[1] +'</a><br /> ('+ numShips[1] +'/'+
                 production[1] +')');
 
         $('.player2Name a').css({'color':Visualizer.config.teamColor[2],'text-decoration':'none'})
@@ -422,15 +426,16 @@ var Visualizer = {
     },
     
     parseData: function(input) {
-	console.log(input);
         this.players[0] = input["player_one"];
         this.players[1] = input["player_two"];
         this.playerIds[0] = input["user_one_id"];
         this.playerIds[1] = input["user_two_id"];
-	console.log(this.players[0]);
-	console.log(this.players[1]);
-	console.log(this.playerIds[0]);
-	console.log(this.playerIds[1]);
+	this.playernames[0] = input["playernames"][0];
+	this.playernames[1] = input["playernames"][1];
+//	console.log(this.players[0]);
+//	console.log(this.players[1]);
+//	console.log(this.playerIds[0]);
+//	console.log(this.playerIds[1]);
 	if (input["error"] == undefined) {
 		this.error_message = "";
 	}
@@ -439,10 +444,11 @@ var Visualizer = {
 	}
 	this.map_id = input["map_id"];
 	var data = input["data"];
+	//var data = input['replaydata']["data"];
 
 
         this.planets = data[0].map(ParserUtils.parsePlanet);
-	console.log(this.planets);
+//	console.log(this.planets);
         this.moves.push({
            'planets': this.planets.map(function(a) { return {
                 owner: parseInt(a.owner),
@@ -451,6 +457,7 @@ var Visualizer = {
             }; }),
            'moving': []
         });
+//	console.log(this.moves);
 
 
         if(data.length < 2){ 
@@ -459,8 +466,8 @@ var Visualizer = {
 
 
         var turns = data.slice(0,-1);
-	console.log("turns:");
-	console.log(turns);
+//	console.log("turns:");
+//	console.log(turns);
         for(var i = 0; i < turns.length; i++) {
             var turn = turns[i];
             var move = {}
@@ -564,11 +571,12 @@ var Visualizer = {
 var ParserUtils = {
     parseFleet: function(data) {
         // (owner,numShips,sourcePlanet,destinationPlanet,totalTripLength,turnsRemaining)
+//	console.log(data);
         return {
             owner: parseInt(data[1]),
             numShips: parseInt(data[2]),
             source: Visualizer.planets[data[3]],
-            source_id: data[4],
+            source_id: data[3],
             destination: Visualizer.planets[data[4]],
             destination_id: data[4],
             tripLength: parseInt(data[5]),
@@ -599,7 +607,7 @@ var ParserUtils = {
 };
 
 (function($) {
-    var data = {{ replaydata|safe }}
+    var data = replay_data;
     Visualizer.setup(data);
     
     // Hook buttons
@@ -726,22 +734,6 @@ var ParserUtils = {
 })(window.jQuery);
 
   </script>
-  <!--
-  <script>
-	window.isFullscreenSupported = function() {
-	return false;
-	};
-
-	function init() {
-		var options = new Options();
-		options.data_dir = '/static/aiweb/ants/vis/data/';
-		options.embedded = true;
-		var visualizer = new Visualizer(document.getElementById('visualizer'), options);
-		visualizer.loadReplayData('{{ replaydata|safe }}');
-	}
-  </script>
-  -->
-
 
 {% endblock %}
 

@@ -130,7 +130,7 @@ def process_new_fleets(planets, fleets, temp_fleets):
     if owner == 0:
       # player launched fleets then died, so "erase" these fleets
       continue
-    for dest, num_ships in destd.iteritems():
+    for dest, num_ships in list(destd.items()):
       if num_ships > 0:
         destination_planet = planets[dest]
         t = travel_time(source_planet, destination_planet)

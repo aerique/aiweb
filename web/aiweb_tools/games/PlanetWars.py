@@ -48,6 +48,7 @@ class PlanetWars(games.Game):
 		if 'replaydata' in game_result:
 			game_result['replaydata']['player_one'] = self.player_names[0]
 			game_result['replaydata']['player_two'] = self.player_names[1]
+			game_result['replaydata']['playernames'] = self.player_names
 		print(game_result)
 		return game_result
 
