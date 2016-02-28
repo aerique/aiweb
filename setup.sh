@@ -10,7 +10,7 @@ cd ../../..
 
 pip3 install django django-registration-redux cloudpickle skills
 
-for f in compiled lock maps matchmaker results runner submissions tasks worker maps/Ants maps/Tron
+for f in compiled lock maps matchmaker results runner submissions tasks worker temp maps/Ants maps/Tron
 do
 	if [ ! -e "$f" ]
 	then
