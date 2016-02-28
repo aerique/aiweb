@@ -1,6 +1,6 @@
 username = "aiweb"
 games_defunct = []
-games_active = ["Tron", "Ants"]
+games_active = ["Tron", "Ants", "PlanetWars"]
 
 prefix = "/home/" + username + "/aiweb/"
 
@@ -31,12 +31,13 @@ runner_working = prefix + "runner/"
 runner_prefix = "aiweb"
 lock_dir = prefix + "lock/"
 bin_dir = "/usr/bin/"
+temp_dir = prefix + "temp/"
 
 sleeptime = 0.5
 delimiter = "____" # FIXME filter for this in usernames!
 
 results_limit = 25
+profile_results_limit = 5
 
-#temp_dir = "temp/"
 
 

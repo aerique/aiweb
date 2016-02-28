@@ -94,7 +94,7 @@ def send_stringfile (file_content, filename, target, send):
 
 def send_result (match, result):
 	""" Send a match result to the webserver """
-	filename = match.uuid.hex + "-match-result.txt"
+	filename = config.temp_dir + match.uuid.hex + "-match-result.txt"
 	f = open(filename, 'wb')
 	cloudpickle.dump(result, f)
 	f.close()
