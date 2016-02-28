@@ -54,7 +54,7 @@ class Worker:
 		f.close()
 		comms.send_task_worker_ip (srcname, config.task_ip)
 
-		subprocess.call(["rm", srcname])
+		comms.delete_file(srcname)
 		
 
 	def await_task(self):
@@ -71,16 +71,16 @@ class Worker:
 				else:
 					if (self.task_is_mine(real)):
 						self.do_task(real)
-						subprocess.call(["rm", real])
-						subprocess.call(["rm", file])
+						comms.delete_file(real)
+						comms.delete_file(file)
 					else:
 						lockfile = file + ".lock"
 						try:
 							with open(lockfile, 'x') as fo:
 								self.do_task(real)
-								subprocess.call(["rm", real])
-								subprocess.call(["rm", file])
-							subprocess.call(["rm", lockfile])
+								comms.delete_file(real)
+								comms.delete_file(file)
+							comms.delete_file(lockfile)
 						except OSError as e:
 							pass
 					
@@ -89,7 +89,7 @@ class Worker:
 
 			print("checking for tasks")
 
-		subprocess.call(["rm", stopfile])
+		comms.delete_file(stopfile)
 
 		
 	def task_is_mine(self, taskfile):
