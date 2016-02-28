@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 
-import aiweb_tools.comms
+from aiweb_tools import comms
 import datetime
 import time
 
@@ -36,15 +36,15 @@ class Matchmaker:
 				print(file)
 				real = (file[:-len(ready)])
 				self.process_request(real)
-				subprocess.call(["rm", real])
-				subprocess.call(["rm", file])
+				comms.delete_file(real)
+				comms.delete_file(file)
 			time.sleep(config.sleeptime)
 			#print("checking for requests")
 
-		subprocess.call(["rm", stopfile])
+		comms.delete_file(stopfile)
 
 	def process_request(self, filepath):
-		filename = aiweb_tools.comms.filename(filepath)
+		filename = comms.filename(filepath)
 		if filename.startswith('compiled'):
 			self.add_compile_data(filepath)
 		else:
@@ -52,7 +52,7 @@ class Matchmaker:
 				match = self.make_match()
 				self.send_match_to_worker(match, filepath)
 			except AssertionError as e:
-				aiweb_tools.comms.send_file_taskserver_ready(filepath, config.task_worker_path)
+				comms.send_file_taskserver_ready(filepath, config.task_worker_path)
 
 	def add_compile_data(self, filepath):
 		with open(filepath) as fo:
@@ -86,8 +86,8 @@ class Matchmaker:
 		match.set_for_worker(worker_data.uuid)
 		match.write_file(filepath)
 
-		aiweb_tools.comms.send_task_worker_ip(filepath, worker_data.ip_addr)
-		subprocess.call(["rm", filepath])
+		comms.send_task_worker_ip(filepath, worker_data.ip_addr)
+		comms.delete_file(filepath)
 
 		#aiweb_tools.comms.send_file_taskserver_ready(workerfile, config.task_worker_path)
 

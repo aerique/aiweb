@@ -169,5 +169,9 @@ def add_task(ip_addr, prefix, file_content):
 	send_file(srcname, remote, port, dest)
 	subprocess.call(["rm", srcname])
 
+def delete_file(filepath):
+	""" Delete the file at filepath """
+	if os.path.exists(filepath):
+		subprocess.call(["rm", filepath])
 
 

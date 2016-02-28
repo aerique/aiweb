@@ -72,7 +72,7 @@ def send_task_to_worker(task, worker_file):
 		taskfile.write(" " + worker_id)
 	print("id = " + worker_id)
 	comms.send_task_worker_ip(task, worker_ip)
-	subprocess.call(["rm", task])
+	comms.delete_file(task)
 
 def request_match(worker_file):
 	""" Nothing to do, ask for a match. This function should be renamed """
@@ -101,8 +101,8 @@ def assign_tasks():
 			real = file[:-len(ending)]
 			if find_task(real):
 				print(real)
-				subprocess.call(["rm", file])
-				subprocess.call(["rm", real])
+				comms.delete_file(file)
+				comms.delete_file(real)
 
 # FIXME remove add_submission_report argument, it's redundant
 def process_report(path, add_submission_report):
@@ -126,8 +126,8 @@ def process_report(path, add_submission_report):
 		print(status)
 		print(content)
 		add_submission_report(username, game, timestamp, prefix, status, language, "".join(content))
-	subprocess.call(["rm", real])
-	subprocess.call(["rm", path])
+	comms.delete_file(real)
+	comms.delete_file(path)
 
 
 def process_reports(add_submission_report):
@@ -243,8 +243,8 @@ def process_match_result(path):
 			with open(replay_path, 'w') as fo:
 				json.dump(replay, fo)
 
-	subprocess.call(["rm", real])
-	subprocess.call(["rm", path])
+	comms.delete_file(real)
+	comms.delete_file(path)
 	
 def update_ranks(submissions, ranks):
 	""" Update skills based on ranks from a match """
