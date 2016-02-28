@@ -46,6 +46,7 @@ class Worker:
 		return content
 
 	def request_task(self):
+		""" Send a task request to the task server"""
 		print("Requesting task")
 		srcname = "worker-ready" + config.delimiter + (datetime.datetime.now().isoformat()).replace(":", "-") + config.delimiter + self.uuid.hex
 		f = open(srcname, 'w')
@@ -53,20 +54,11 @@ class Worker:
 		f.close()
 		comms.send_task_worker_ip (srcname, config.task_ip)
 
-#		subprocess.call(["scp", srcname, config.task_username + "@" + 
-#			config.task_ip + "://" +
-#			config.task_worker_path ]);
-#		ready_filename = srcname + ".ready"
-#
-#		subprocess.call(["touch", ready_filename])
-#		subprocess.call(["scp", ready_filename, config.task_username 
-#			+ "@" + config.task_ip + "://" +
-#			config.task_worker_path ])
 		subprocess.call(["rm", srcname])
-#		subprocess.call(["rm", ready_filename])
 		
 
 	def await_task(self):
+		""" Wait for a task and complete it if appropriate """
 		stopfile = (config.task_worker_path + "stop" + config.delimiter + self.uuid.hex) 
 		while not os.path.isfile(stopfile):
 			ready = ".ready"
@@ -112,6 +104,7 @@ class Worker:
 			return stripped.startswith(self.uuid.hex)
 
 	def do_task(self, taskfile):
+		""" Do the task found in taskfile """
 		print("doing task: " + taskfile)
 		fname = taskfile.split("/")[-1]
 		if fname.startswith("compile"):
@@ -130,6 +123,7 @@ class Worker:
 			self.run_match(match)
 
 	def compile(self, subm_id):
+		""" Compile the named submission """
 		print("compiling: " + subm_id)
 		if not os.path.isfile(config.datastore_submission_path + subm_id):
 			comms.get_submission(config.datastore_submission_path + subm_id)
@@ -137,7 +131,6 @@ class Worker:
 		if not os.path.exists(path):
 			os.makedirs(path)
 			target = (path )#+ "compile/")
-#			os.makedirs (target)
 			subprocess.call(["unzip", config.datastore_submission_path + subm_id, "-d", target])
 	
 			subm_data = subm_id.split(config.delimiter)
@@ -153,8 +146,6 @@ class Worker:
 				print("finished functional test")
 			else:
 				print("Not testing because compile failed")
-	#		subprocess.call(["rm", "-rf", target])
-			#print(subm.full_report())
 			self.send_compile_result(path, subm_id, game_id, subm)
 
 	def functional_test(self, gamename, submission):
@@ -177,6 +168,7 @@ class Worker:
 		
 
 	def save_report(self, submission, path):
+		""" Save a submission report located at path """
 		lang = ""
 		if not (submission.language == None):
 			lang = submission.language
@@ -185,12 +177,12 @@ class Worker:
 			fo.write(content)
 
 	def send_compile_result(self, path, subm_id, game_id, submission):
+		""" send results of compilation back to webserver """
 		runfile = path + "run_command"
 		if os.path.exists(runfile):	# make sure they don't put malicious commands in here, by deleting the file if it exists
 			subprocess.call(["chmod", "u+rw", runfile])
 			subprocess.call("rm", "-f", runfile)
 		with open(runfile, 'wb') as fo:
-#			fo.write(submission.get_command(config.worker_compiled + subm_id))
 			cloudpickle.dump(submission, fo)
 		subprocess.call(["chmod", "u+r", path + "*"])
 		zipfile = path + subm_id + "-compiled.zip"
@@ -203,6 +195,7 @@ class Worker:
 			self.send_matchmaker_compile_info(path, submission.username, game_id, subm_id)
 
 	def send_matchmaker_compile_info(self, path, username, game_id, submission_id):
+		""" Send relevant compile info to matchmaker """
 		filepath = path + "compiled" + config.delimiter + submission_id
 		content = username + "\n" + game_id + "\n" + submission_id + "\n"
 		with open (filepath, 'w') as fo:
@@ -210,9 +203,11 @@ class Worker:
 		comms.send_file_matchmaker_ready(filepath, config.matchmaker_path)
 
 	def compiled_bot_path(self, bot):
+		""" Get the path for the compiled bot """
 		return config.worker_compiled + bot + "/"
 
 	def get_compiled_bot(self, bot):
+		""" Download and unzip the named compiled bot """
 		path = self.compiled_bot_path(bot)
 		os.mkdir(path)
 
@@ -221,31 +216,34 @@ class Worker:
 		subprocess.call(["unzip", "-j", "-o", config.datastore_submission_path + zipfile, "-d", path])
 
 	def get_bot_command(self, bot):
+		""" Get the command to run bot
+		(also get the bot if not present FIXME function name) """
 		print(bot)
 		path = self.compiled_bot_path(bot)
 		if not os.path.exists(path):
 			self.get_compiled_bot(bot)
-		#with open(path + "run_command") as fo:
-		#	run_command = fo.readline().strip()
-		#with open(path + "run_command") as fo:
-		#	run_command = fo.readline().strip()
 		run_command = self.get_run_command(path + "run_command")
 		print(run_command)
 		return (path, run_command)
 
 	def get_run_command(self, filepath):
+		""" Load the submission object and get the command to run
+		the compiled bot """
 		with open (filepath, 'rb') as fo:
 			subm = cloudpickle.load(fo)
 			return subm.get_command(config.worker_compiled + subm.sub_id)
 
 	def get_bot_commands(self, bots):
+		""" Get the commands to run listed bots """
 		print("Bot commands:")
 		return [self.get_bot_command(bot) for bot in bots]
 
 	def get_player_name(self, bot):
+		""" Get the name of the player who owns bot """
 		return bot.split(config.delimiter)[0]
 
 	def run_match(self, match):
+		""" run specified match """
 		players = self.get_bot_commands(match.bots)
 		player_names = [self.get_player_name(player) for player in match.bots]
 		game_class = games.get_game(match.gamename)
@@ -254,6 +252,7 @@ class Worker:
 		comms.send_result(match, result)
 
 class Worker_data:
+	#FIXME just pickle the data instead
 	uuid = ""
 	ip_addr = ""
 	def write(self, filepath):
