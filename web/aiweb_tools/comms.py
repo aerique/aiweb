@@ -13,6 +13,8 @@
 #   limitations under the License.
 
 
+# Communication between servers is done by secure copying of files.
+# This file contains logic for those operations.
 
 import subprocess
 import cloudpickle

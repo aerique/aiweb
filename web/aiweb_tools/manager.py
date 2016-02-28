@@ -31,6 +31,7 @@ from aiweb_tools import comms
 from . import config
 
 def detect_game(filepath):
+	""" Detect which game a submission is for based on its filename """
 	filename = filepath.split('/')[-1]
 	result = None
 	for game in config.games_active:
@@ -61,6 +62,7 @@ def handle_submission(filepath, username):
 	comms.add_task (config.task_ip, "compile", "compile " + destname)
 
 def send_task_to_worker(task, worker_file):
+	""" send task to the worker specified in worker_file """
 	print("send_task_to_worker")
 	with open(worker_file) as worker_fo:
 		worker_ip = worker_fo.readline().strip()
@@ -72,11 +74,12 @@ def send_task_to_worker(task, worker_file):
 	comms.send_task_worker_ip(task, worker_ip)
 	subprocess.call(["rm", task])
 
-def find_game(worker_file):
+def request_match(worker_file):
 	""" Nothing to do, ask for a match. This function should be renamed """
 	comms.send_file_matchmaker_ready(worker_file, config.matchmaker_path)
 
 def find_task(worker_file):
+	""" Find a task for the worker specified in worker_file """
 	tasks = glob.glob(config.task_path + "*")
 	finished = False
 	for task in tasks:
@@ -86,17 +89,13 @@ def find_task(worker_file):
 				send_task_to_worker (task, worker_file)
 				finished = True
 	if not finished:
-		find_game(worker_file)
+		request_match(worker_file)
 	#return True # return finished
 	return True
 
 def assign_tasks():
-	#print('Assigning tasks')
-#	tasks = glob.glob(task_path + "*")
-#	for task in tasks:
-#		print("Task: " + task.split("/")[-1])
+	""" Assign tasks to all waiting workers """
 	for file in glob.glob(config.task_worker_path + "worker-ready*"):
-#		print ("considering task file: " + file)
 		ending = ".ready"
 		if (file.endswith(ending)):
 			real = file[:-len(ending)]
@@ -104,9 +103,10 @@ def assign_tasks():
 				print(real)
 				subprocess.call(["rm", file])
 				subprocess.call(["rm", real])
-	#print('tasks assigned')
 
+# FIXME remove add_submission_report argument, it's redundant
 def process_report(path, add_submission_report):
+	""" Process the submission report found at path """
 	real = path[:-len('.ready')]
 	filename = real.split('/')[-1]
 	fsplit = filename.split('.')
@@ -131,17 +131,20 @@ def process_report(path, add_submission_report):
 
 
 def process_reports(add_submission_report):
-#	print("processing reports")
+	""" Process all submission reports """
 	for file in glob.glob(config.webserver_results_path + "*-report.txt.ready"):
 		process_report(file, add_submission_report)
 
 def deactivate_bots(username, game):
+	""" Deactivate all bots for username playing game """
 	submissions = aiweb.models.Submission.objects.filter(username=username, game_id = game).all()
 	for subm in submissions:
 		subm.active = False
 		subm.save()
 
 def add_submission_report(username, game, timestamp, prefix, status, language, content):
+	""" Add a submission report to the database. If ready for matches,
+	deactivate all previous bots before adding and then activate. """
 	subm_list = aiweb.models.Submission.objects.filter(username=username, game_id = game, timestamp = timestamp, submission_id = prefix)
 	if len(subm_list) < 1:
 		active = False
@@ -170,7 +173,7 @@ def add_submission_report(username, game, timestamp, prefix, status, language, c
 	subm.save()
 
 def process_match_results():
-#	print("processing match results")
+	""" Process all match results """
 	for file in glob.glob(config.webserver_results_path + "*-match-result.txt.ready"):
 		process_match_result(file)
 	
@@ -244,6 +247,7 @@ def process_match_result(path):
 	subprocess.call(["rm", path])
 	
 def update_ranks(submissions, ranks):
+	""" Update skills based on ranks from a match """
 	print("update_ranks called")
 	print([submission.submission_id for submission in submissions])
 	print(ranks)
