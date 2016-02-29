@@ -4,6 +4,10 @@ AI Web
 A framework for running AI programming challenges
 -------------------------------------------------
 
+A temporary testing server is running here:
+
+http://139.162.145.181/aiweb/Tron/rank/
+
 Still under active development.
 
  - It should now work as a standalone server without passwordless SSH. If you want to run multiple workers on separate servers, passwordless SSH authentication is needed.
