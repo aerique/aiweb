@@ -88,8 +88,7 @@ def run_game(game, botcmds, options):
 		# create bot sandboxes
 		for b, bot in enumerate(botcmds):
 			bot_cwd, bot_cmd = bot
-			sandbox = get_sandbox(bot_cwd,
-					secure=options.get('secure_jail', None))
+			sandbox = get_sandbox(bot_cwd, secure=options.get('secure_jail', None), verbose=verbose_log)
 			sandbox.start(bot_cmd)
 			bots.append(sandbox)
 			bot_status.append('survived')

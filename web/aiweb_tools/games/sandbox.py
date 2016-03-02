@@ -347,7 +347,7 @@ class House:
 
 	"""
 
-	def __init__(self, working_directory):
+	def __init__(self, working_directory, verbose_log=None):
 		"""Initialize a new sandbox for the given working directory.
 
 		working_directory: the directory in which the shell command should
@@ -357,6 +357,7 @@ class House:
 		self.command_process = None
 		self.stdout_queue = Queue()
 		self.stderr_queue = Queue()
+		self.verbose_log = verbose_log
 		self.working_directory = working_directory
 
 	@property
@@ -417,7 +418,8 @@ class House:
 				pass
 			self.command_process.wait()
 			self.child_queue.put(None)
-		print("Alive status after House.kill(): " + str(self.is_alive))
+		if self.verbose_log:
+			self.verbose_log.write("Alive status after House.kill(): " + str(self.is_alive) + "\n")
 
 	def retrieve(self):
 		"""Copy the working directory back out of the sandbox."""
@@ -540,7 +542,7 @@ class IsolatedHouse(House):
 
 	"""
 
-	def __init__(self, working_directory):
+	def __init__(self, working_directory, verbose_log=None):
 		"""Initialize a new sandbox for the given working directory.
 
 		working_directory: the directory in which the shell command should
@@ -552,6 +554,7 @@ class IsolatedHouse(House):
 		self.stderr_queue = Queue()
 		self.origin = working_directory
 		self.box_id = self.get_isolated_box()
+		self.verbose_log = verbose_log
 		self.working_directory = self.get_working_directory(self.box_id)
 
 	def start(self, shell_command):
@@ -628,17 +631,20 @@ class IsolatedHouse(House):
 		return result
 
 
-def get_sandbox(working_dir, secure=None):
-	print("secure: " + str(secure))
+def get_sandbox(working_dir, secure=None, verbose=None):
+	if verbose:
+		verbose.write("secure: " + str(secure) + "\n")
 	if secure is None:
 		secure = _SECURE_DEFAULT
 	if secure:
 #		return Jail(working_dir)
-		print("IsolatedHouse sandbox chosen for " + working_dir)
-		return IsolatedHouse(working_dir)
+		if verbose:
+			verbose.write("IsolatedHouse sandbox chosen for " + working_dir + "\n")
+		return IsolatedHouse(working_dir, verbose_log=verbose)
 	else:
-		print("House sandbox chosen")
-		return House(working_dir)
+		if verbose:
+			verbose.write("House sandbox chosen\n")
+		return House(working_dir, verbose_log=verbose)
 
 def main():
 	parser = OptionParser(usage="usage: %prog [options] <command to run>")
