@@ -5,11 +5,14 @@ register = template.Library()
 @register.simple_tag
 def replace(request, field, value):
 
-    dict_ = request.GET.copy()
+    try:
+        dict_ = request.GET.copy()
 
-    dict_[field] = value
+        dict_[field] = value
 
-    return dict_.urlencode()
+        return dict_.urlencode()
+    except Exception:
+        return request
 
 # Use as:
 

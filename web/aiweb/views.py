@@ -31,6 +31,7 @@ def index(request):
 	c = {'results_list' : results,
 		'user': request.user, 
 		'games': config.games_active,
+		'request': request,
 	}
 	return render_to_response('aiweb_templates/index.html', c)
 #	msg = "<p> <a href='/accounts/login'> Login </a> </p> <p> <a href='/accounts/register'> Register </a> </p>"
@@ -172,7 +173,9 @@ def profile(request, status="normal"):
 			'games': config.games_active,
 			'upload_success': upload_success,
 			'submissions': submissions,
-			'results_list': results}
+			'results_list': results,
+			'request' : request,
+		}
 #		for result in results:
 #			for error in result.bot_errors.all():
 #				print(error.text)
@@ -347,6 +350,7 @@ def result_page(request, username=""):
 		'newer' : newer,
 		'older_val' : older_val,
 		'newer_val' : newer_val,
+		'request': request,
 		}
 	return render_to_response('aiweb_templates/results_page.html', context)
 
