@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="shortcut icon" type="image/png" href="/static/aiweb/favicon.ico"/>
+    <link rel="stylesheet" href="/static/aiweb/style.css" />
+    <title>AI web</title>
+</head>
+
+<body>
+    <div id="header">
+    
+    <a href="/aiweb/">Home</a> | 
+
+    
+       <a href="/accounts/login/">Log in</a>
+    
+    <a href="/aiweb/mission/">Mission statement</a>&nbsp;
+    <a href="/aiweb/contact/">Contact</a>&nbsp; 
+    Games:
+    
+        <a href="/aiweb/Tron/info/">Tron</a>&nbsp;
+    
+        <a href="/aiweb/Ants/info/">Ants</a>&nbsp;
+    
+        <a href="/aiweb/PlanetWars/info/">PlanetWars</a>&nbsp;
+    
+
+    <hr />
+    
+    </div>
+
+    <div id="content">
+    
+<p>
+<center>
+<canvas width=900 height=700 id="C">
+	<script type="text/javascript">
+		replay_data = %s
+		C = document.getElementById('C');
+		V = C.getContext('2d');
+		C.setSize = function(width, height) {
+		        if (this.w !== width || this.h !== height) {
+		                this.w = width;
+		                this.h = height;
+//		                if (width > 0 && height > 0) {
+//		                        this.canvas.width = width;
+//		                        this.canvas.height = height;
+//              		}
+	                this.invalid = true;
+        	        this.resized = true;
+	        	}
+		};
+		the_turn = 0;
+		color = new Array(10);
+		color[0] = [25, 25, 255];
+		color[1] = [15, 200, 15];
+		color[2] = [255, 255, 0];
+		color[3] = [0, 255, 255];
+		color[4] = [128, 128, 255];
+		color[5] = [128, 0, 255];
+		color[6] = [0, 128, 255];
+		color[7] = [128, 255, 128];
+		color[8] = [255, 0, 0];
+		color[9] = [128, 128, 128];
+		dir = {"n": [-1, 0],
+		       "s": [1, 0],
+		       "e": [0, 1],
+		       "w": [0, -1]};
+		revdir = {"n": [0, 1],
+			  "s": [0, -1],
+			  "e": [-1, 0],
+			  "w": [1, 0]};
+		arrow = {"n": [[0, 1], [0.5, 0.5], [1, 1]],
+			 "s": [[0, 0], [0.5, 0.5], [1, 0]],
+			 "e": [[0, 0], [0.5, 0.5], [0, 1]],
+			 "w": [[1, 0], [0.5, 0.5], [1, 1]]};
+		function init() {
+			width  = replay_data["width"];
+			height = replay_data["height"];
+			nturns = replay_data["data"].length;
+			player = replay_data["players"];
+			scores = replay_data["scores"];
+			water = replay_data["water"];
+			rows = replay_data["rows"];
+			cols = replay_data["cols"];
+			max_width = 900
+			max_height = 700
+			max_display_width = Math.min(max_width, 50 * cols)
+			max_display_height = Math.min(max_height, 50 * rows)
+			max_sx = max_display_width / cols;
+			max_sy = max_display_height / rows;
+			scale = Math.min(max_sx, max_sy);
+			sx = scale;
+			sy = scale;
+			display_width = cols * sx;
+			display_height = rows * sy
+			C.setSize(display_width, display_height); // don't think this is actually doing anything
+			play();
+		}
+		function clear() {
+			V.fillStyle = 'black';
+			V.fillRect(0,0,display_width,display_height);
+		}
+		function draw_frame(f) {
+			clear()
+			for (w_index=0; w_index < water.length; w_index++) {
+				w = water[w_index]
+				row = w[0]
+				col = w[1]
+				x = col * sx
+				y = row * sy
+				V.fillStyle = 'darkgray'
+				V.fillRect(x,y,sx,sy)
+			}
+			for (iter_frame=0;iter_frame<f;iter_frame++) {
+				frame = replay_data["data"][iter_frame]
+				for (i in frame) {
+					x = frame[i][2] * sx
+					y = frame[i][1] * sy
+					if (frame[i][0] == 'a')
+					{
+						var index = frame[i][4];
+						alpha = fade(0.4, 0.8, 2, (the_turn - iter_frame))
+						set_color(index, alpha)
+						if (iter_frame != 0)
+							V.fillRect(x,y,sx,sy);
+						alpha = fade(0.6, 1, 2, (the_turn - iter_frame))
+						set_color(index, alpha)
+						paint_trail(frame[i], x, y, iter_frame)
+					}
+					else if (frame[i][0] == 'd')
+					{
+						var index = frame[i][4];
+						V.fillStyle = 'red';
+						V.fillRect((x + sx / 4), (y + sy / 4) ,(sx / 2), (sy / 2))
+						alpha = 0.8
+						V.fillStyle='rgba(' + color[index][0] + "," + color[index][1] + ',' + color[index][2] + ',' + alpha + ')'
+						x1 = x + sx / 4;
+						y1 = y + sy / 4;
+						w = sx / 2;
+						h = sy / 2;
+//						if (iter_frame != 0)
+						{V.fillRect((x1 + (sx / 2) * revdir[frame[i][3]][0]), (y1 + (sy / 2) * revdir[frame[i][3]][1]), w, h)}
+					}
+				}
+			}
+			display_scores ()
+		}
+//        }
+	function display_scores () {
+			V.fillStyle = 'white'
+			V.strokeStyle = 'white'
+			info = "turn "+the_turn + "  ["
+			for ( i=0; i<player; i++ ) {
+				info += scores[i][the_turn] 
+				if (i !=player-1)
+					info += ","
+			}
+			info += "]"
+			V.fillText(info, 260,10)
+	}
+	function paint_trail(agent, x, y, iter_frame) {
+		x1 = x + sx / 4;
+		y1 = y + sy / 4;
+		w = sx / 2;
+		h = sy / 2;
+		V.fillRect(x1,y1,w,h)
+		if (iter_frame != 0) {
+			V.fillRect((x1 + (sx / 2) * revdir[agent[3]][0]), (y1 + (sy / 2) * revdir[agent[3]][1]), w, h)
+			d = frame[i][3]
+			V.strokeStyle='rgba(255,255,255,0.3)';
+			V.fillStyle='rgba(255,255,255,0.3)';
+			V.beginPath();
+			V.moveTo(x1 + w * arrow[d][0][0], y1 + h * arrow[d][0][1])
+			V.lineTo(x1 + w * arrow[d][1][0], y1 + h * arrow[d][1][1])
+			V.lineTo(x1 + w * arrow[d][2][0], y1 + h * arrow[d][2][1])
+			V.closePath();
+			V.stroke();
+		}
+	}
+	function set_color(index, alpha) {
+		V.fillStyle='rgba(' + color[index][0] + "," + color[index][1] + ',' + color[index][2] + ',' + alpha + ')'
+	}
+	function fade(base, limit, steps, count) {
+		if (count > steps) return base
+		else {
+			stepsize = (limit - base) / steps
+			return limit - (stepsize * count)
+		}
+	}
+        function stop() {
+            clearInterval(tick)
+            tick=-1
+        }
+        function back() {
+            stop()
+            if ( the_turn > 0 ) 
+                the_turn -= 1
+            draw_frame(the_turn)
+        }
+        function forw() {
+            stop()
+            if ( the_turn < nturns-1 ) 
+                the_turn += 1
+            draw_frame(the_turn)
+        }
+        function pos(t) {
+            stop()
+            the_turn = t
+            draw_frame(the_turn)
+        }
+        function play() {
+            tick = setInterval( function() {
+                if (the_turn < nturns)
+                {
+                    draw_frame(the_turn)
+                    the_turn += 1
+                } else {
+                    stop()
+                }
+            },200)
+        }
+		init()
+	</script>
+</canvas>
+<div>
+	<a href='javascript:pos(0)'>&lt;&lt;</a>&nbsp;
+	<a href='javascript:back()'>&lt;</a>&nbsp;
+	<a href='javascript:stop()'>stop</a>&nbsp;
+	<a href='javascript:play()'>play</a>&nbsp;
+	<a href='javascript:forw()'>&gt;</a>&nbsp;
+	<a href='javascript:pos(nturns-1)'>&gt;&gt;</a>&nbsp;
+</div>
+
+
+    </div>
+
+    <div id="visualizer">
+    
+    </div>
+
+    <div id="footer">
+    
+        <hr />
+    
+    </div>
+</body>
+
+</html>
