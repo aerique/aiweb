@@ -417,7 +417,7 @@ class House:
 				pass
 			self.command_process.wait()
 			self.child_queue.put(None)
-		print("Alive status after IsolatedHouse.kill(): " + str(self.is_alive))
+		print("Alive status after House.kill(): " + str(self.is_alive))
 
 	def retrieve(self):
 		"""Copy the working directory back out of the sandbox."""
